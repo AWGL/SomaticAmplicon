@@ -430,6 +430,17 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
         awk -v minimumCoverage="$minimumCoverage" '{ if(NR > 1 && $2 < minimumCoverage) {split($1,array,":"); print array[1]"\t"array[2]-1"\t"array[2]} }' "$seqId"_"$sampleId"_"$target" | \
         /share/apps/bedtools-distros/bedtools-2.26.0/bin/bedtools merge > hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed
 
+        #annotate the gaps with HGVS nomenclature using bed2hgvs.py
+
+        source /home/transfer/miniconda3/bin/activate bed2hgvs
+
+        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
+        --input hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed \
+        --output hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps_anno.bed \
+        --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
+
+        source /home/transfer/miniconda3/bin/deactivate
+
         #calculate average coverage
         avg=$(awk '{if (NR > 1) n+= $2} END {print n /(NR-1)}' "$seqId"_"$sampleId"_"$target")
 
