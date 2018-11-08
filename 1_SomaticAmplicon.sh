@@ -439,6 +439,8 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
         --output hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps_anno.bed \
         --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
 
+        rm hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed
+
         source /home/transfer/miniconda3/bin/deactivate
 
         #calculate average coverage
