@@ -476,26 +476,44 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
         -L "$bedFile" \
         -o hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf \
         -dt NONE
+	
+	#write targeted dataset to table using vcf_parse python utility
 
-        #write targeted dataset to table
-        /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -jar /data/diagnostics/apps/VCFParse/VCFParse-1.0.0/VCFParse.jar \
-        -V hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf \
-        -T /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
-        -C /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
-        -K
+	source /home/transfer/miniconda3/bin/activate vcf_parse
+	
+	python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/vcf_parse.py \
+	--transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
+	--transcript_strictness low \
+	--known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
+	--config /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/config/somatic_amplicon_config.txt \
+	hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf
+	
+	source /home/transfer/miniconda3/bin/deactivate
 
         #move to hotspot_variants
-        mv "$seqId"_"$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
+        mv "$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
 
     done
 fi
 
-#write full dataset to table
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -jar /data/diagnostics/apps/VCFParse/VCFParse-1.0.0/VCFParse.jar \
--V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
--T /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
--C /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
--K
+#write big vcf dataset to table using vcf_parse python utility
+
+source /home/transfer/miniconda3/bin/activate vcf_parse
+
+python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/vcf_parse.py \
+--transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
+--transcript_strictness low \
+--known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
+--config /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/config/somatic_amplicon_config.txt \
+"$seqId"_"$sampleId"_filtered_meta_annotated.vcf
+
+mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
+
+source /home/transfer/miniconda3/bin/deactivate
+
+# Merge QC files
+python /data/diagnostics/scripts/merge_qc_files.py ..
+
 
 ### Clean up ###
 
