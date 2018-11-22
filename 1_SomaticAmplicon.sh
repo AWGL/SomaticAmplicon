@@ -434,7 +434,7 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
 
         source /home/transfer/miniconda3/bin/activate bed2hgvs
 
-        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
+        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/configs/cluster.yaml \
         --input hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed \
         --output hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps_anno.bed \
         --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
