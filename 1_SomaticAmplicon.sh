@@ -500,11 +500,11 @@ fi
 
 source /home/transfer/miniconda3/bin/activate vcf_parse
 
-python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/vcf_parse.py \
+python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.1/vcf_parse.py \
 --transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
 --transcript_strictness low \
 --known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
---config /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/config/somatic_amplicon_config.txt \
+--config /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/somatic_amplicon_config.txt \
 "$seqId"_"$sampleId"_filtered_meta_annotated.vcf
 
 mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
