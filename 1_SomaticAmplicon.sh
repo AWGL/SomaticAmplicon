@@ -481,11 +481,11 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
 
 	source /home/transfer/miniconda3/bin/activate vcf_parse
 	
-	python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/vcf_parse.py \
+	python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.1/vcf_parse.py \
 	--transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
 	--transcript_strictness low \
 	--known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
-	--config /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/config/somatic_amplicon_config.tx \
+	--config /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ReportConfig.txt \
 	hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf
 	
 	source /home/transfer/miniconda3/bin/deactivate
