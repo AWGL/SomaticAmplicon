@@ -481,7 +481,7 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
 
 	source /home/transfer/miniconda3/bin/activate vcf_parse
 	
-	python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.1/vcf_parse.py \
+	python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/vcf_parse.py \
 	--transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
 	--transcript_strictness low \
 	--known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
@@ -500,7 +500,7 @@ fi
 
 source /home/transfer/miniconda3/bin/activate vcf_parse
 
-python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.1/vcf_parse.py \
+python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/vcf_parse.py \
 --transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
 --transcript_strictness low \
 --known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
