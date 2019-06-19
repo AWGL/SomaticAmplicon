@@ -8,7 +8,7 @@ cd $PBS_O_WORKDIR
 #Description: Somatic Amplicon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
 #Author: Matt Lyon, All Wales Medical Genetics Lab
 #Mode: BY_SAMPLE
-version="1.7.6"
+version="1.7.7"
 
 # Directory structure required for pipeline
 #
@@ -400,10 +400,12 @@ fi
 -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
 -dt NONE
 
+
 #custom coverage reporting
 if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage ]; then
-    mkdir hotspot_coverage
-    echo -e "Target\tSampleId\tAverage\tPercentageAbove$minimumCoverage" > hotspot_coverage/"$seqId"_"$sampleId"_coverage_summary.txt
+    
+    hscoverage_outdir=/data/results/$seqId/$panel/$sampleId/hotspot_coverage/
+    mkdir $hscoverage_outdir
 
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage/*.bed); do
 
@@ -426,31 +428,54 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
         -nt 12 \
         -dt NONE
 
-        #extract low depth bases
-        awk -v minimumCoverage="$minimumCoverage" '{ if(NR > 1 && $2 < minimumCoverage) {split($1,array,":"); print array[1]"\t"array[2]-1"\t"array[2]} }' "$seqId"_"$sampleId"_"$target" | \
-        /share/apps/bedtools-distros/bedtools-2.26.0/bin/bedtools merge > hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed
+        # generate tabix index for depth of coverage
+        sed 's/:/\t/g' /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_"$target"_DepthOfCoverage \
+            | grep -v "^Locus" \
+            | sort -k1,1 -k2,2n \
+            | /share/apps/htslib-distros/htslib-1.4.1/bgzip > /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_"$target"_DepthOfCoverage.gz
 
-        #annotate the gaps with HGVS nomenclature using bed2hgvs.py
+        /share/apps/htslib-distros/htslib-1.4.1/tabix -b 2 -e 2 -s 1 /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_"$target"_DepthOfCoverage.gz
 
-        source /home/transfer/miniconda3/bin/activate bed2hgvs
+        # calcualte coverage
+        source /home/transfer/miniconda3/bin/activate CoverageCalculatorPy
 
-        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/configs/cluster.yaml \
-        --input hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed \
-        --output hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps_anno.bed \
-        --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
+        python /home/transfer/pipelines/CoverageCalculatorPy/CoverageCalculatorPy.py \
+            -B $bedFile \
+            -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_"target"_DepthOfCoverage.gz \
+            --depth $minimumCoverage \
+            --padding 0 \
+            --groupfile /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$name".groups \
+            --outname "$seqId"_"$sampleId"_"$target" \
+            --outdir $hscoverage_outdir
 
-        rm hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed
+        # remove header from gaps file
+        if [[ $(wc -l < $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps) -eq 1 ]]; then
+            
+            # no gaps
+            touch $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
+        else
+            # gaps
+            grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscov_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
+        fi
+
+        rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
+
+        done
 
         source /home/transfer/miniconda3/bin/deactivate
 
-        #calculate average coverage
-        avg=$(awk '{if (NR > 1) n+= $2} END {print n /(NR-1)}' "$seqId"_"$sampleId"_"$target")
+        #annotate the gaps with HGVS nomenclature using bed2hgvs.py
+        source /home/transfer/miniconda3/bin/activate bed2hgvs
 
-        #count bases above minimumCoverage
-        pctAboveThreshold=$(awk -v minimumCoverage="$minimumCoverage" '{if (NR > 1 && $2 >= minimumCoverage) n++} END {print (n /(NR-1)) * 100}' "$seqId"_"$sampleId"_"$target")
+        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/configs/cluster.yaml \
+            --input $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps \
+            --output $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps.bed \
+            --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
 
-        #write summary to file
-        echo -e "$target\t$sampleId\t$avg\t$pctAboveThreshold" >> hotspot_coverage/"$seqId"_"$sampleId"_coverage_summary.txt
+        rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
+
+        source /home/transfer/miniconda3/bin/deactivate
+
 
         rm "$seqId"_"$sampleId"_"$target".sample_statistics
         rm "$seqId"_"$sampleId"_"$target".sample_summary
