@@ -1,9 +1,4 @@
 #!/bin/bash
-#PBS -l walltime=20:00:00
-#PBS -l ncpus=12
-set -euo pipefail
-PBS_O_WORKDIR=(`echo $PBS_O_WORKDIR | sed "s/^\/state\/partition1//" `)
-cd $PBS_O_WORKDIR
 
 #Description: Somatic Amplicon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
 #Author: Matt Lyon, All Wales Medical Genetics Lab
@@ -323,6 +318,16 @@ TARGET_INTERVALS="$panel"_ROI.interval_list
 -nt 12 \
 -dt NONE
 
+
+# generate tabix index for depth of coverage
+sed 's/:/\t/g' /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage \
+    | grep -v "^Locus" \
+    | sort -k1,1 -k2,2n \
+    | /share/apps/htslib-distros/htslib-1.4.1/bgzip > /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz
+
+/share/apps/htslib-distros/htslib-1.4.1/tabix -b 2 -e 2 -s 1 /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz
+
+
 #Calculate gene (clinical) percentage coverage
 /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /data/diagnostics/apps/CoverageCalculator-2.0.2/CoverageCalculator-2.0.2.jar \
 "$seqId"_"$sampleId"_DepthOfCoverage \
@@ -412,39 +417,17 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
         #extract target name
         target=$(basename "$bedFile" | sed 's/\.bed//g')
 
-        #generate per-base coverage
-        /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx12g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
-        -T DepthOfCoverage \
-        -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-        -o "$seqId"_"$sampleId"_"$target" \
-        -I "$seqId"_"$sampleId".bam \
-        -L "$bedFile" \
-        --countType COUNT_FRAGMENTS \
-        --minMappingQuality 20 \
-        --minBaseQuality 20 \
-        --omitIntervalStatistics \
-        --omitLocusTable \
-        -ct "$minimumCoverage" \
-        -nt 12 \
-        -dt NONE
-
-        # generate tabix index for depth of coverage
-        sed 's/:/\t/g' /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_"$target"_DepthOfCoverage \
-            | grep -v "^Locus" \
-            | sort -k1,1 -k2,2n \
-            | /share/apps/htslib-distros/htslib-1.4.1/bgzip > /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_"$target"_DepthOfCoverage.gz
-
-        /share/apps/htslib-distros/htslib-1.4.1/tabix -b 2 -e 2 -s 1 /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_"$target"_DepthOfCoverage.gz
+        echo $target
 
         # calcualte coverage
         source /home/transfer/miniconda3/bin/activate CoverageCalculatorPy
 
         python /home/transfer/pipelines/CoverageCalculatorPy/CoverageCalculatorPy.py \
             -B $bedFile \
-            -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_"target"_DepthOfCoverage.gz \
+            -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
             --depth $minimumCoverage \
             --padding 0 \
-            --groupfile /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$name".groups \
+            --groupfile /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$target".groups \
             --outname "$seqId"_"$sampleId"_"$target" \
             --outdir $hscoverage_outdir
 
@@ -455,12 +438,10 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
             touch $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         else
             # gaps
-            grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscov_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
+            grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         fi
 
         rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
-
-        done
 
         source /home/transfer/miniconda3/bin/deactivate
 
@@ -469,20 +450,22 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
 
         python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/configs/cluster.yaml \
             --input $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps \
-            --output $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps.bed \
+            --output $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps \
             --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
 
         rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
 
         source /home/transfer/miniconda3/bin/deactivate
 
-
-        rm "$seqId"_"$sampleId"_"$target".sample_statistics
-        rm "$seqId"_"$sampleId"_"$target".sample_summary
-        rm "$seqId"_"$sampleId"_"$target"
-
     done
 fi
+
+# combine all total coverage files
+if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
+    cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$sampleId"_coverage.txt
+    cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$sampleId"_coverage.txt
+    rm $hscoverage_outdir/*.totalCoverage
+    rm $hscoverage_outdir/*combined*
 
 #custom variant reporting
 if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants ]; then
