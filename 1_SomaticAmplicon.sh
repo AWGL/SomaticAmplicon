@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#PBS -l walltime=20:00:00
+#PBS -l ncpus=12
+set -euo pipefail
+PBS_O_WORKDIR=(`echo $PBS_O_WORKDIR | sed "s/^\/state\/partition1//" `)
+cd $PBS_O_WORKDIR
+
 #Description: Somatic Amplicon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
 #Author: Matt Lyon, All Wales Medical Genetics Lab
 #Mode: BY_SAMPLE
