@@ -530,6 +530,45 @@ source /home/transfer/miniconda3/bin/deactivate
 python /data/diagnostics/scripts/merge_qc_files.py ..
 
 
+# Generate Analysis Workseets
+# This block should only be carried out when all samples for the
+# panel have been processed
+
+# number of samples to be processed (i.e. count variables files)
+expected=$(for i in /data/results/$seqId/$panel/*/*.variables; do echo $i; done | wc -l)
+
+# number of samples that have completed
+complete=$(for i in /data/results/$seqId/$panel/*/*VariantReport.txt; do echo $i; done | wc -l)
+
+if [ $complete -eq $expected ]; then
+   
+   source ~/miniconda3/bin/activate VirtualHood
+
+   # identify name of NTC
+   ntc=$(for s in /data/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
+
+   # loop over all samples and generate a report
+   for s in /data/results/$seqId/$panel/*/; do 
+       sample=$(basename $s)
+       . /data/results/$seqId/$panel/$sample/*.variables
+
+       # do not generate report where NTC is the query sample
+       if [ $sample != $ntc]; then
+           
+           if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ];then
+               python /data/diagnostics/apps/VirtualHood/CRM_report.py $seqId $sample $worklistId $referral $ntc
+           elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ];then
+               python /data/diagnostics/apps/VirtualHood/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
+           fi
+
+       fi
+   done
+
+   source ~/miniconda3/bin/deactivate
+fi
+
+
+
 ### Clean up ###
 
 #delete unused files
