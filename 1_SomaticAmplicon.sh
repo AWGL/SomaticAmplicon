@@ -553,7 +553,7 @@ if [ $complete -eq $expected ]; then
        . /data/results/$seqId/$panel/$sample/*.variables
 
        # do not generate report where NTC is the query sample
-       if [ $sample != $ntc]; then
+       if [ $sample != $ntc ]; then
            
            if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ];then
                python /data/diagnostics/apps/VirtualHood/CRM_report.py $seqId $sample $worklistId $referral $ntc
