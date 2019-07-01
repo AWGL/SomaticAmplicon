@@ -548,9 +548,19 @@ if [ $complete -eq $expected ]; then
    ntc=$(for s in /data/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
 
    # loop over all samples and generate a report
-   for s in /data/results/$seqId/$panel/*/; do 
+   for s in /data/results/$seqId/$panel/*/; do
+       
+       # clear previous instance
+       unset referral 
+       
+       # set variables
        sample=$(basename $s)
        . /data/results/$seqId/$panel/$sample/*.variables
+
+       # check that referral vraible is defined, if not set as NA
+       if [ -z $referral ];then
+           referral=NA
+       fi
 
        # do not generate report where NTC is the query sample
        if [ $sample != $ntc ]; then
