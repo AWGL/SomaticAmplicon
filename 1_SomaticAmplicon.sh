@@ -363,8 +363,9 @@ grep -v '^##' "$seqId"_"$sampleId"_filtered.vcf >> "$seqId"_"$sampleId"_filtered
 
 ### Reporting ###
 
-#annotate VCF with VEP
-perl /share/apps/vep-distros/ensembl-tools-release-86/scripts/variant_effect_predictor/variant_effect_predictor.pl \
+source ~/miniconda3/bin/activate vep_97.1
+
+vep \
 --verbose \
 --no_progress \
 --everything \
@@ -377,16 +378,19 @@ perl /share/apps/vep-distros/ensembl-tools-release-86/scripts/variant_effect_pre
 --force_overwrite \
 --no_stats \
 --cache \
---dir /share/apps/vep-distros/ensembl-tools-release-86/scripts/variant_effect_predictor/annotations \
---fasta /share/apps/vep-distros/ensembl-tools-release-86/scripts/variant_effect_predictor/annotations \
+--dir /share/data/db/human/vep_cache/refseq37_v97 \
+--fasta /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
 --no_intergenic \
 --offline \
---cache_version 86 \
+--cache_version 97 \
 --allele_number \
 --no_escape \
 --shift_hgvs 1 \
 --vcf \
 --refseq
+
+source ~/miniconda3/bin/deactivate
+
 
 #check VEP has produced annotated VCF
 if [ ! -e "$seqId"_"$sampleId"_filtered_meta_annotated.vcf ]; then
