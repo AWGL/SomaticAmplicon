@@ -583,6 +583,9 @@ if [ $complete -eq $expected ]; then
    source ~/miniconda3/bin/deactivate
 fi
 
+#load sample & pipeline variables
+. *.variables
+. /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
 
 ### Clean up ###
