@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #PBS -l walltime=20:00:00
 #PBS -l ncpus=12
 set -euo pipefail
@@ -8,7 +9,7 @@ cd $PBS_O_WORKDIR
 #Description: Somatic Amplicon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
 #Author: Matt Lyon, All Wales Medical Genetics Lab
 #Mode: BY_SAMPLE
-version="1.7.8"
+version="1.7.9"
 
 # Directory structure required for pipeline
 #
@@ -323,6 +324,16 @@ TARGET_INTERVALS="$panel"_ROI.interval_list
 -nt 12 \
 -dt NONE
 
+
+# generate tabix index for depth of coverage
+sed 's/:/\t/g' /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage \
+    | grep -v "^Locus" \
+    | sort -k1,1 -k2,2n \
+    | /share/apps/htslib-distros/htslib-1.4.1/bgzip > /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz
+
+/share/apps/htslib-distros/htslib-1.4.1/tabix -b 2 -e 2 -s 1 /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz
+
+
 #Calculate gene (clinical) percentage coverage
 /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /data/diagnostics/apps/CoverageCalculator-2.0.2/CoverageCalculator-2.0.2.jar \
 "$seqId"_"$sampleId"_DepthOfCoverage \
@@ -404,63 +415,67 @@ fi
 -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
 -dt NONE
 
+
 #custom coverage reporting
 if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage ]; then
-    mkdir hotspot_coverage
-    echo -e "Target\tSampleId\tAverage\tPercentageAbove$minimumCoverage" > hotspot_coverage/"$seqId"_"$sampleId"_coverage_summary.txt
+    
+    hscoverage_outdir=/data/results/$seqId/$panel/$sampleId/hotspot_coverage/
+    mkdir $hscoverage_outdir
 
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage/*.bed); do
 
         #extract target name
         target=$(basename "$bedFile" | sed 's/\.bed//g')
 
-        #generate per-base coverage
-        /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx12g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
-        -T DepthOfCoverage \
-        -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-        -o "$seqId"_"$sampleId"_"$target" \
-        -I "$seqId"_"$sampleId".bam \
-        -L "$bedFile" \
-        --countType COUNT_FRAGMENTS \
-        --minMappingQuality 20 \
-        --minBaseQuality 20 \
-        --omitIntervalStatistics \
-        --omitLocusTable \
-        -ct "$minimumCoverage" \
-        -nt 12 \
-        -dt NONE
+        echo $target
 
-        #extract low depth bases
-        awk -v minimumCoverage="$minimumCoverage" '{ if(NR > 1 && $2 < minimumCoverage) {split($1,array,":"); print array[1]"\t"array[2]-1"\t"array[2]} }' "$seqId"_"$sampleId"_"$target" | \
-        /share/apps/bedtools-distros/bedtools-2.26.0/bin/bedtools merge > hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed
+        # calcualte coverage
+        source /home/transfer/miniconda3/bin/activate CoverageCalculatorPy
 
-        #annotate the gaps with HGVS nomenclature using bed2hgvs.py
+        python /home/transfer/pipelines/CoverageCalculatorPy/CoverageCalculatorPy.py \
+            -B $bedFile \
+            -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
+            --depth $minimumCoverage \
+            --padding 0 \
+            --groupfile /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$target".groups \
+            --outname "$seqId"_"$sampleId"_"$target" \
+            --outdir $hscoverage_outdir
 
-        source /home/transfer/miniconda3/bin/activate bed2hgvs
+        # remove header from gaps file
+        if [[ $(wc -l < $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps) -eq 1 ]]; then
+            
+            # no gaps
+            touch $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
+        else
+            # gaps
+            grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
+        fi
 
-        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/configs/cluster.yaml \
-        --input hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed \
-        --output hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps_anno.bed \
-        --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
-
-        rm hotspot_coverage/"$seqId"_"$sampleId"_"$target"_gaps.bed
+        rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
 
         source /home/transfer/miniconda3/bin/deactivate
 
-        #calculate average coverage
-        avg=$(awk '{if (NR > 1) n+= $2} END {print n /(NR-1)}' "$seqId"_"$sampleId"_"$target")
+        #annotate the gaps with HGVS nomenclature using bed2hgvs.py
+        source /home/transfer/miniconda3/bin/activate bed2hgvs
 
-        #count bases above minimumCoverage
-        pctAboveThreshold=$(awk -v minimumCoverage="$minimumCoverage" '{if (NR > 1 && $2 >= minimumCoverage) n++} END {print (n /(NR-1)) * 100}' "$seqId"_"$sampleId"_"$target")
+        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/configs/cluster.yaml \
+            --input $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps \
+            --output $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps \
+            --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
 
-        #write summary to file
-        echo -e "$target\t$sampleId\t$avg\t$pctAboveThreshold" >> hotspot_coverage/"$seqId"_"$sampleId"_coverage_summary.txt
+        rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
 
-        rm "$seqId"_"$sampleId"_"$target".sample_statistics
-        rm "$seqId"_"$sampleId"_"$target".sample_summary
-        rm "$seqId"_"$sampleId"_"$target"
+        source /home/transfer/miniconda3/bin/deactivate
 
     done
+fi
+
+# combine all total coverage files
+if [  -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage ]; then
+    if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
+    cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
+    cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
+    rm $hscoverage_outdir/*.totalCoverage
 fi
 
 #custom variant reporting
@@ -519,6 +534,55 @@ source /home/transfer/miniconda3/bin/deactivate
 
 # Merge QC files
 python /data/diagnostics/scripts/merge_qc_files.py ..
+
+
+# Generate Analysis Workseets
+# This block should only be carried out when all samples for the
+# panel have been processed
+
+# number of samples to be processed (i.e. count variables files)
+expected=$(for i in /data/results/$seqId/$panel/*/*.variables; do echo $i; done | wc -l)
+
+# number of samples that have completed
+complete=$(for i in /data/results/$seqId/$panel/*/*VariantReport.txt; do echo $i; done | wc -l)
+
+if [ $complete -eq $expected ]; then
+   
+   source ~/miniconda3/bin/activate VirtualHood
+
+   # identify name of NTC
+   ntc=$(for s in /data/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
+
+   # loop over all samples and generate a report
+   for s in /data/results/$seqId/$panel/*/; do
+       
+       # clear previous instance
+       unset referral 
+       
+       # set variables
+       sample=$(basename $s)
+       . /data/results/$seqId/$panel/$sample/*.variables
+
+       # check that referral vraible is defined, if not set as NA
+       if [ -z $referral ];then
+           referral=NA
+       fi
+
+       # do not generate report where NTC is the query sample
+       if [ $sample != $ntc ]; then
+           
+           if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ];then
+               python /data/diagnostics/apps/VirtualHood/CRM_report.py $seqId $sample $worklistId $referral $ntc
+           elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ];then
+               python /data/diagnostics/apps/VirtualHood/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
+           fi
+
+       fi
+   done
+
+   source ~/miniconda3/bin/deactivate
+fi
+
 
 
 ### Clean up ###

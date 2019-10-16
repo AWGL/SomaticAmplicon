@@ -1,4 +1,4 @@
-Frequency	format
+VF	format	Frequency
 DP	info	Depth
 GT	format	Genotype
 GQ	format	Quality
