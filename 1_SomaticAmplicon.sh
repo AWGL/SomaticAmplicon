@@ -9,7 +9,7 @@ cd $PBS_O_WORKDIR
 #Description: Somatic Amplicon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
 #Author: Matt Lyon, All Wales Medical Genetics Lab
 #Mode: BY_SAMPLE
-version="1.7.9"
+version="1.8.0"
 
 # Directory structure required for pipeline
 #
@@ -416,8 +416,8 @@ fi
 -dt NONE
 
 
-#custom coverage reporting
-if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage ]; then
+# custom coverage reporting
+if [ $custom_coverage == true ]; then
     
     hscoverage_outdir=/data/results/$seqId/$panel/$sampleId/hotspot_coverage/
     mkdir $hscoverage_outdir
@@ -468,18 +468,17 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
         source /home/transfer/miniconda3/bin/deactivate
 
     done
-fi
 
-# combine all total coverage files
-if [  -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage ]; then
+    # combine all total coverage files
     if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
     cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
     cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
     rm $hscoverage_outdir/*.totalCoverage
 fi
 
-#custom variant reporting
-if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants ]; then
+
+# custom variant reporting
+if [ $custom_variants == true ]; then
     mkdir hotspot_variants
 
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants/*.bed); do
@@ -516,8 +515,8 @@ if [ -d /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"
     done
 fi
 
-#write big vcf dataset to table using vcf_parse python utility
 
+# write big vcf dataset to table using vcf_parse python utility
 source /home/transfer/miniconda3/bin/activate vcf_parse
 
 python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
@@ -532,56 +531,93 @@ mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
 
 source /home/transfer/miniconda3/bin/deactivate
 
-# Merge QC files
-python /data/diagnostics/scripts/merge_qc_files.py ..
 
+## This block should only be carried out when all samples for the panel have been processed
 
-# Generate Analysis Workseets
-# This block should only be carried out when all samples for the
-# panel have been processed
-
-# number of samples to be processed (i.e. count variables files)
+# number of samples to be processed (i.e. count variables files)/ number of samples that have completed
 expected=$(for i in /data/results/$seqId/$panel/*/*.variables; do echo $i; done | wc -l)
-
-# number of samples that have completed
 complete=$(for i in /data/results/$seqId/$panel/*/*VariantReport.txt; do echo $i; done | wc -l)
 
 if [ $complete -eq $expected ]; then
-   
-   source ~/miniconda3/bin/activate VirtualHood
 
-   # identify name of NTC
-   ntc=$(for s in /data/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
+    # Merge QC files
+    python /data/diagnostics/scripts/merge_qc_files.py ..
 
-   # loop over all samples and generate a report
-   for s in /data/results/$seqId/$panel/*/; do
-       
-       # clear previous instance
-       unset referral 
-       
-       # set variables
-       sample=$(basename $s)
-       . /data/results/$seqId/$panel/$sample/*.variables
+    # BRCA merge report files
+    if [ $merge_reports == true ]; then
 
-       # check that referral vraible is defined, if not set as NA
-       if [ -z $referral ];then
-           referral=NA
-       fi
+        # get report headers
+        cat $(ls /data/results/$seqId/$panel/*/*VariantReport.txt | head -n1) | head -n1 > /data/results/"$seqId"/"$panel"/"seqId"_merged_variant_report.txt
+        echo -e "Sample\tBRCA1 500X\tBRCA2 500X\tBRCA1 100X\tBRCA2 100X" > /data/results/"$seqId"/"$panel"/"seqId"_merged_coverage_report.txt
 
-       # do not generate report where NTC is the query sample
-       if [ $sample != $ntc ]; then
-           
-           if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ];then
-               python /data/diagnostics/apps/VirtualHood/CRM_report.py $seqId $sample $worklistId $referral $ntc
-           elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ];then
-               python /data/diagnostics/apps/VirtualHood/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
-           fi
+        # loop over all samples and merge reports
+        for s in /data/results/$seqId/$panel/*/; do
+            sample=$(basename $s)
 
-       fi
-   done
+            # merge variant report
+            cat $s/*VariantReport.txt | tail -n+2 >> /data/results/$seqId/$panel/merged_variant_report.txt
 
-   source ~/miniconda3/bin/deactivate
+            # Calculate gene (clinical) percentage coverage at 100x
+            /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /data/diagnostics/apps/CoverageCalculator-2.0.2/CoverageCalculator-2.0.2.jar \
+            $s/"$seqId"_"$sample"_DepthOfCoverage \
+            /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_genes.txt \
+            /state/partition1/db/human/refseq/ref_GRCh37.p13_top_level.gff3 \
+            -p5 \
+            -d100 \
+            > $s/"$seqId"_"$sample"_PercentageCoverage_100x.txt
+
+            # merge 500x and 100x coverage reports into one file
+            brca1_500x=$(grep BRCA1 $s/*_PercentageCoverage.txt | cut -f3)
+            brca2_500x=$(grep BRCA2 $s/*_PercentageCoverage.txt | cut -f3)
+            brca1_100x=$(grep BRCA1 $s/*_PercentageCoverage_100x.txt | cut -f3)
+            brca2_100x=$(grep BRCA2 $s/*_PercentageCoverage_100x.txt | cut -f3)
+            echo -e "$sample\t$brca1_500x\t$brca2_500x\t$brca1_100x\t$brca2_100x"
+
+            # reset variables
+            unset sample brca1_500x brca2_500x brca1_100x brca2_100x
+        done
+    fi
+
+    # virtual hood
+    if [ $generate_worksheets == true ]; then
+    
+        source ~/miniconda3/bin/activate VirtualHood
+
+        # identify name of NTC
+        ntc=$(for s in /data/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
+
+        # loop over all samples and generate a report
+        for s in /data/results/$seqId/$panel/*/; do
+            
+            # clear previous instance
+            unset referral 
+            
+            # set variables
+            sample=$(basename $s)
+            . /data/results/$seqId/$panel/$sample/*.variables
+
+            # check that referral variable is defined, if not set as NA
+            if [ -z $referral ];then
+                referral=NA
+            fi
+
+            # do not generate report where NTC is the query sample
+            if [ $sample != $ntc ]; then
+                
+                if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ]; then
+                    python /data/diagnostics/apps/VirtualHood/CRM_report.py $seqId $sample $worklistId $referral $ntc
+                elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ]; then
+                    python /data/diagnostics/apps/VirtualHood/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
+                fi
+
+            fi
+        done
+
+        source ~/miniconda3/bin/deactivate
+    fi
+
 fi
+
 
 #load sample & pipeline variables
 . *.variables
