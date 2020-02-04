@@ -483,33 +483,32 @@ if [ $custom_variants == true ]; then
 
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants/*.bed); do
 
-        #extract target name
+        # extract target name
         target=$(basename "$bedFile" | sed 's/\.bed//g')
 
-        #select variants
+        # select variants
         /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
-        -T VariantFiltration \
-        -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-        -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
-        -L "$bedFile" \
-        -o hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf \
-        -dt NONE
+          -T VariantFiltration \
+          -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+          -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
+          -L "$bedFile" \
+          -o hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf \
+          -dt NONE
 	
-	#write targeted dataset to table using vcf_parse python utility
+        # write targeted dataset to table using vcf_parse python utility
+        source /home/transfer/miniconda3/bin/activate vcf_parse
+        
+        python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
+          --transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
+          --transcript_strictness low \
+          --known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
+          --config /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ReportConfig.txt \
+          --filter_non_pass \
+          hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf
+        
+        source /home/transfer/miniconda3/bin/deactivate
 
-	source /home/transfer/miniconda3/bin/activate vcf_parse
-	
-	python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
-	--transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
-	--transcript_strictness low \
-	--known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
-	--config /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ReportConfig.txt \
-        --filter_non_pass \
-	hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf
-	
-	source /home/transfer/miniconda3/bin/deactivate
-
-        #move to hotspot_variants
+        # move to hotspot_variants
         mv "$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
 
     done
@@ -603,21 +602,19 @@ if [ $complete -eq $expected ]; then
             # set variables
             sample=$(basename $s)
             . /data/results/$seqId/$panel/$sample/*.variables
+            echo "Generating worksheet for $sample"
 
             # check that referral variable is defined, if not set as NA
-            if [ -z $referral ];then
-                referral=NA
-            fi
+            if [ -z $referral ]; then referral=NA; fi
 
             # do not generate report where NTC is the query sample
             if [ $sample != $ntc ]; then
-                
                 if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ]; then
                     python /data/diagnostics/apps/VirtualHood/CRM_report.py $seqId $sample $worklistId $referral $ntc
+
                 elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ]; then
                     python /data/diagnostics/apps/VirtualHood/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
                 fi
-
             fi
         done
 
