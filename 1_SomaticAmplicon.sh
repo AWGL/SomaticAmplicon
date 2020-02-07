@@ -416,6 +416,25 @@ fi
 -dt NONE
 
 
+# write big vcf dataset to table using vcf_parse python utility
+source /home/transfer/miniconda3/bin/activate vcf_parse
+
+python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
+--transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
+--transcript_strictness low \
+--known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
+--config /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ReportConfig.txt \
+--filter_non_pass \
+"$seqId"_"$sampleId"_filtered_meta_annotated.vcf
+
+mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
+
+source /home/transfer/miniconda3/bin/deactivate
+
+
+### Optional steps ###
+# Each step from here onwards is optional, based on the settings in the pipeline variables file
+
 # custom coverage reporting
 if [ $custom_coverage == true ]; then
     
@@ -515,22 +534,7 @@ if [ $custom_variants == true ]; then
 fi
 
 
-# write big vcf dataset to table using vcf_parse python utility
-source /home/transfer/miniconda3/bin/activate vcf_parse
-
-python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
---transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
---transcript_strictness low \
---known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
---config /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ReportConfig.txt \
---filter_non_pass \
-"$seqId"_"$sampleId"_filtered_meta_annotated.vcf
-
-mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
-
-source /home/transfer/miniconda3/bin/deactivate
-
-
+### Run level steps ###
 ## This block should only be carried out when all samples for the panel have been processed
 
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
