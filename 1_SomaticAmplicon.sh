@@ -554,34 +554,34 @@ if [ $complete -eq $expected ]; then
         echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > /data/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
         # loop over all samples and merge reports
-        for s in /data/results/"$seqId"/"$panel"/*/; do
-            sample=$(basename $s)
+        for sample_path in /data/results/"$seqId"/"$panel"/*/; do
+            sample=$(basename $sample_path)
             echo "Merging coverage and variant reports for $sample"
 
             # merge variant report
-            cat "$s"/*VariantReport.txt | tail -n+2 >> /data/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
+            cat "$sample_path"/*VariantReport.txt | tail -n+2 >> /data/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
 
             # rename percentagecoverage to percebtage coverage 500x and 500x gaps file
-            mv "$s"/"$seqId"_"$sample"_PercentageCoverage.txt "$s"/"$seqId"_"$sample"_PercentageCoverage_500x.txt
-            mv "$s"/"$sample"_gaps.bed "$s"/"$sample"_gaps_500x.bed
+            mv "$sample_path"/"$seqId"_"$sample"_PercentageCoverage.txt "$sample_path"/"$seqId"_"$sample"_PercentageCoverage_500x.txt
+            mv "$sample_path"/"$sample"_gaps.bed "$sample_path"/"$sample"_gaps_500x.bed
 
             # Calculate gene (clinical) percentage coverage at 100x
             /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /data/diagnostics/apps/CoverageCalculator-2.0.2/CoverageCalculator-2.0.2.jar \
-            $s/"$seqId"_"$sample"_DepthOfCoverage \
+            $sample_path/"$seqId"_"$sample"_DepthOfCoverage \
             /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_genes.txt \
             /state/partition1/db/human/refseq/ref_GRCh37.p13_top_level.gff3 \
             -p5 \
             -d100 \
-            > "$s"/"$seqId"_"$sample"_PercentageCoverage_100x.txt
+            > "$sample_path"/"$seqId"_"$sample"_PercentageCoverage_100x.txt
 
             # rename 100x gaps file and move into sample folder
-            mv "$sample"_gaps.bed "$s"/"$sample"_gaps_100x.bed
+            mv "$sample"_gaps.bed "$sample_path"/"$sample"_gaps_100x.bed
 
             # merge 500x and 100x coverage reports into one file
-            brca1_500x=$(grep BRCA1 $s/"$seqId"_"$sample"_PercentageCoverage_500x.txt | cut -f3)
-            brca2_500x=$(grep BRCA2 $s/"$seqId"_"$sample"_PercentageCoverage_500x.txt | cut -f3)
-            brca1_100x=$(grep BRCA1 $s/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
-            brca2_100x=$(grep BRCA2 $s/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
+            brca1_500x=$(grep BRCA1 $sample_path/"$seqId"_"$sample"_PercentageCoverage_500x.txt | cut -f3)
+            brca2_500x=$(grep BRCA2 $sample_path/"$seqId"_"$sample"_PercentageCoverage_500x.txt | cut -f3)
+            brca1_100x=$(grep BRCA1 $sample_path/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
+            brca2_100x=$(grep BRCA2 $sample_path/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
             echo -e "$sample\t$brca1_500x\t$brca2_500x\t$brca1_100x\t$brca2_100x" >> /data/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
             # reset variables
@@ -598,13 +598,13 @@ if [ $complete -eq $expected ]; then
         ntc=$(for s in /data/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
 
         # loop over all samples and generate a report
-        for s in /data/results/$seqId/$panel/*/; do
+        for sample_path in /data/results/$seqId/$panel/*/; do
             
             # clear previous instance
             unset referral 
             
             # set variables
-            sample=$(basename $s)
+            sample=$(basename $sample_path)
             . /data/results/$seqId/$panel/$sample/*.variables
             echo "Generating worksheet for $sample"
 
