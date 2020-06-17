@@ -3,3 +3,8 @@ read2Adapter=AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT #read 2 
 padding=250 #Amount of padding for GATK preprocessing.
 minimumCoverage=500 # for passing regions. Need to determine during clinical validation
 expectedInsertSize=200 #insert size
+
+custom_coverage=true
+custom_variants=true
+generate_worksheets=true
+merge_reports=false

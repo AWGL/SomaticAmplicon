@@ -1,0 +1,6 @@
+name: vep_97.1
+channels:
+- bioconda
+dependencies:
+- python = 3.6
+- ensembl-vep = 97.1
