@@ -614,10 +614,10 @@ if [ $complete -eq $expected ]; then
             # do not generate report where NTC is the query sample
             if [ $sample != $ntc ]; then
                 if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ]; then
-                    python /data/diagnostics/apps/VirtualHood/CRM_report.py $seqId $sample $worklistId $referral $ntc
+                    python /data/diagnostics/apps/VirtualHood/VirtualHood-1.0.0/CRM_report.py $seqId $sample $worklistId $referral $ntc
 
                 elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ]; then
-                    python /data/diagnostics/apps/VirtualHood/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
+                    python /data/diagnostics/apps/VirtualHood/VirtualHood-1.0.0/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
                 fi
             fi
         done
