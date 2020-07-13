@@ -9,7 +9,7 @@ cd $PBS_O_WORKDIR
 #Description: Somatic Amplicon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
 #Author: Matt Lyon, All Wales Medical Genetics Lab
 #Mode: BY_SAMPLE
-version="1.8.0"
+version="1.8.1"
 
 # Directory structure required for pipeline
 #
@@ -614,10 +614,10 @@ if [ $complete -eq $expected ]; then
             # do not generate report where NTC is the query sample
             if [ $sample != $ntc ]; then
                 if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ]; then
-                    python /data/diagnostics/apps/VirtualHood/CRM_report.py $seqId $sample $worklistId $referral $ntc
+                    python /data/diagnostics/apps/VirtualHood/VirtualHood-1.0.0/CRM_report.py $seqId $sample $worklistId $referral $ntc
 
                 elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ]; then
-                    python /data/diagnostics/apps/VirtualHood/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
+                    python /data/diagnostics/apps/VirtualHood/VirtualHood-1.0.0/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
                 fi
             fi
         done
