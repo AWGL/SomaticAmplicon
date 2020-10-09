@@ -9,7 +9,7 @@ cd $PBS_O_WORKDIR
 #Description: Somatic Amplicon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
 #Author: Matt Lyon, All Wales Medical Genetics Lab
 #Mode: BY_SAMPLE
-version="1.7.9"
+version="1.7.10"
 
 # Directory structure required for pipeline
 #
@@ -568,9 +568,9 @@ if [ $complete -eq $expected ]; then
        if [ $sample != $ntc ]; then
            
            if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ] || [ $referral == 'TP53' ];then
-               python /data/diagnostics/apps/VirtualHood/VirtualHood-1.2.0/CRM_report.py $seqId $sample $worklistId $referral $ntc
+               python /data/diagnostics/apps/VirtualHood/VirtualHood-1.2.1/CRM_report.py $seqId $sample $worklistId $referral $ntc
            elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ];then
-               python /data/diagnostics/apps/VirtualHood/VirtualHood-1.2.0/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
+               python /data/diagnostics/apps/VirtualHood/VirtualHood-1.2.1/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
            fi
 
        fi
@@ -579,6 +579,10 @@ if [ $complete -eq $expected ]; then
    source ~/miniconda3/bin/deactivate
 fi
 
+
+#load sample & pipeline variables
+. *.variables
+. /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
 
 ### Clean up ###
