@@ -580,6 +580,10 @@ if [ $complete -eq $expected ]; then
 fi
 
 
+#load sample & pipeline variables
+. *.variables
+. /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
+
 
 ### Clean up ###
 
