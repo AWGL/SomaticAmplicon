@@ -693,10 +693,10 @@ if [ $complete -eq $expected ]; then
             ################# The --path will need to be changed when pipeline goes live to '--path /data/output/results/$seqId/$panel' #################
             if [ $sample != $ntc ]; then
                 if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ]; then
-                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /home/v.ch231829/SomaticAmplicon/data/results/$seqId/$panel/ --artefacts /data/temp/artefacts_lists/
+                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path ../ --artefacts /data/temp/artefacts_lists/
 
                 elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ]; then
-                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /home/v.ch231829/SomaticAmplicon/data/results/$seqId/$panel/ --artefacts /data/temp/artefacts_lists/
+                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path ../ --artefacts /data/temp/artefacts_lists/
                 fi
             fi
         done
