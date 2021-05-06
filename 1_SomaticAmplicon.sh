@@ -20,8 +20,8 @@ set -euo pipefail
 #cd "$SLURM_SUBMIT_DIR"
 
 ################# Is this version wrong and needs to be merged with another version? #################
-#version="1.8.1"
-version="2.0.0"
+#version="2.0.0"
+version="master"
 
 # Directory structure required for pipeline
 #
