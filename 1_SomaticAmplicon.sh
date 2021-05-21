@@ -79,17 +79,17 @@ SIFCOVER="/data/resources/envs/sifs/coverage.sif" # Path to sif
 SIFBED="/data/resources/envs/sifs/bed2hgvs.sif" # Path to sif
 SIFVHOOD="/data/resources/envs/sifs/virtualhood.sif" # Path to sif
 
-PICARD="singularity exec --bind /localscratch,/data:/data $SIF picard -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/localscratch -Xmx32g" # making code look cleaner
-SINGULARITY="singularity exec --bind /localscratch,/data:/data $SIF" # Initiating the singularity exec --bind /data:/data command
-GATK="singularity exec --bind /localscratch,/data:/data $SIFGATK java -Djava.io.tmpdir=/localscratch -Xmx32g -jar /usr/GenomeAnalysisTK.jar -T" # Initiating the GATK singularity container and command
-PISCES="singularity exec --bind /localscratch,/data:/data $SIFPISCES dotnet /app/Pisces_5.2.9.122/Pisces.dll"
-AMPLICON="singularity exec --bind /localscratch,/data:/data $SIF java -jar /opt/conda/bin/AmpliconRealigner-1.1.1.jar"
-SOFTCLIP="singularity exec --bind /localscratch,/data:/data $SIF java -Xmx2g -jar /opt/conda/bin/SoftClipPCRPrimer-1.1.0.jar"
-COVERAGE="singularity exec --bind /localscratch,/data:/data $SIF java -Djava.io.tmpdir=/localscratch -Xmx8g -jar /opt/conda/bin/CoverageCalculator-2.0.2.jar"
-VCFPARSE="singularity exec --bind /localscratch,/data:/data $SIF python /opt/conda/bin/vcf_parse-0.1.2/vcf_parse.py"
-COVERCALC="singularity exec --bind /localscratch,/data:/data $SIFCOVER python /opt/conda/bin/CoverageCalculatorPy/CoverageCalculatorPy.py"
-BED="singularity exec --bind /localscratch,/data:/data $SIFBED Rscript /opt/conda/bin/bed2hgvs-v0.3.0/bed2hgvs.R"
-VHOOD="singularity exec --bind /localscratch,/data:/data $SIFVHOOD python"
+PICARD="singularity exec --bind /Output,/localscratch,/data:/data $SIF picard -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/localscratch -Xmx32g" # making code look cleaner
+SINGULARITY="singularity exec --bind /Output,/localscratch,/data:/data $SIF" # Initiating the singularity exec --bind /data:/data command
+GATK="singularity exec --bind /Output,/localscratch,/data:/data $SIFGATK java -Djava.io.tmpdir=/localscratch -Xmx32g -jar /usr/GenomeAnalysisTK.jar -T" # Initiating the GATK singularity container and command
+PISCES="singularity exec --bind /Output,/localscratch,/data:/data $SIFPISCES dotnet /app/Pisces_5.2.9.122/Pisces.dll"
+AMPLICON="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -jar /opt/conda/bin/AmpliconRealigner-1.1.1.jar"
+SOFTCLIP="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Xmx2g -jar /opt/conda/bin/SoftClipPCRPrimer-1.1.0.jar"
+COVERAGE="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Djava.io.tmpdir=/localscratch -Xmx8g -jar /opt/conda/bin/CoverageCalculator-2.0.2.jar"
+VCFPARSE="singularity exec --bind /Output,/localscratch,/data:/data $SIF python /opt/conda/bin/vcf_parse-0.1.2/vcf_parse.py"
+COVERCALC="singularity exec --bind /Output,/localscratch,/data:/data $SIFCOVER python /opt/conda/bin/CoverageCalculatorPy/CoverageCalculatorPy.py"
+BED="singularity exec --bind /Output,/localscratch,/data:/data $SIFBED Rscript /opt/conda/bin/bed2hgvs-v0.3.0/bed2hgvs.R"
+VHOOD="singularity exec --bind /Output,/localscratch,/data:/data $SIFVHOOD python"
 
 ######################################################################
 #							PIPELINE								 #
