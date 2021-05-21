@@ -629,7 +629,7 @@ if [ $complete -eq $expected ]; then
 
         # loop over all samples and merge reports
         ################# May need to change '~' path #################
-        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
+        for sample_path in /data/output/results/"$seqId"/"$panel"/*; do
             sample=$(basename $sample_path)
             echo "Merging coverage and variant reports for $sample"
 
