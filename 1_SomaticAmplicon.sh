@@ -550,7 +550,7 @@ if [ $custom_coverage == true ]; then
         --bedfile $gapsFile \
         --outname "$name".gaps \
         --outdir "$hscoverage_outdir"/ \
-        --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/NGHS-101X_PreferredTranscripts.txt
+        --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/"$panel"/"$panel"_PreferredTranscripts.txt
 
 
         #annotate the gaps with HGVS nomenclature using bed2hgvs.py
@@ -624,18 +624,18 @@ if [ $complete -eq $expected ]; then
 
         # get report headers
         ################# May need to change '~' path #################
-        cat $(ls "$seqId"/"$panel"/*/*VariantReport.txt | head -n1) | head -n1 > "$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
-        echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > "$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
+        cat $(ls /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt | head -n1) | head -n1 > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
+        echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
         # loop over all samples and merge reports
         ################# May need to change '~' path #################
-        for sample_path in "$seqId"/"$panel"/*/; do
+        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
             sample=$(basename $sample_path)
             echo "Merging coverage and variant reports for $sample"
 
             # merge variant report
             ################# May need to change '~' path #################
-            cat "$sample_path"/*VariantReport.txt | tail -n+2 >> "$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
+            cat "$sample_path"/*VariantReport.txt | tail -n+2 >> /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
 
             # rename percentagecoverage to percebtage coverage 500x and 500x gaps file
             mv "$sample_path"/"$seqId"_"$sample"_PercentageCoverage.txt "$sample_path"/"$seqId"_"$sample"_PercentageCoverage_500x.txt
@@ -658,7 +658,7 @@ if [ $complete -eq $expected ]; then
             brca2_500x=$(grep BRCA2 $sample_path/"$seqId"_"$sample"_PercentageCoverage_500x.txt | cut -f3)
             brca1_100x=$(grep BRCA1 $sample_path/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
             brca2_100x=$(grep BRCA2 $sample_path/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
-            echo -e "$sample\t$brca1_500x\t$brca2_500x\t$brca1_100x\t$brca2_100x" >> "$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
+            echo -e "$sample\t$brca1_500x\t$brca2_500x\t$brca1_100x\t$brca2_100x" >> /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
             # reset variables
             unset sample brca1_500x brca2_500x brca1_100x brca2_100x
