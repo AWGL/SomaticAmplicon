@@ -317,6 +317,7 @@ $SINGULARITY bedtools merge > "$panel"_ROI_b37_thick.bed
 
 #Call somatic variants
 $PISCES \
+--rmxnfilter 5,9,0.05 \
 -b ./"$seqId"_"$sampleId".bam \
 -g /data/resources/human/gatk/2.8/b37/ \
 --minvf 0.01 \
@@ -611,8 +612,8 @@ fi
 
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
 ################# May need to change '~' path #################
-expected=$(for i in *.variables; do echo $i; done | wc -l)
-complete=$(for i in *VariantReport.txt; do echo $i; done | wc -l)
+expected=$(for i in /data/output/results/"$seqId"/"$panel"/*/*.variables; do echo $i; done | wc -l)
+complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt; do echo $i; done | wc -l)
 
 if [ $complete -eq $expected ]; then
 
@@ -629,7 +630,7 @@ if [ $complete -eq $expected ]; then
 
         # loop over all samples and merge reports
         ################# May need to change '~' path #################
-        for sample_path in /data/output/results/"$seqId"/"$panel"/*; do
+        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
             sample=$(basename $sample_path)
             echo "Merging coverage and variant reports for $sample"
 
@@ -670,11 +671,11 @@ if [ $complete -eq $expected ]; then
     
 
         # identify name of NTC
-        ntc=$(for s in */; do echo $(basename $s);done | grep 'NTC')
+        ntc=$(for s in /data/output/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
 
         # loop over all samples and generate a report
         ################# May need to change '~' path #################
-        for sample_path in */; do
+        for sample_path in /data/output/results/$seqId/$panel/*/; do
             
             # clear previous instance
             unset referral 
@@ -683,7 +684,7 @@ if [ $complete -eq $expected ]; then
             sample=$(basename $sample_path)
             # Change this path so not hardcoded 
             ################# May need to change '~' path #################
-            . *.variables
+            . /data/output/results/$seqId/$panel/$sample/*.variables
             echo "Generating worksheet for $sample"
 
             # check that referral variable is defined, if not set as NA
@@ -692,11 +693,9 @@ if [ $complete -eq $expected ]; then
             # do not generate report where NTC is the query sample
             ################# The --path will need to be changed when pipeline goes live to '--path /data/output/results/$seqId/$panel' #################
             if [ $sample != $ntc ]; then
-                if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ]; then
-                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path ../ --artefacts /data/temp/artefacts_lists/
 
-                elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ]; then
-                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path ../ --artefacts /data/temp/artefacts_lists/
+                if [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ] || [ $referral == 'GIST' ]; then
+                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /data/output/results/$seqId/$panel/ --artefacts /data/temp/artefacts_lists/
                 fi
             fi
         done
