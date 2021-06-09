@@ -3,8 +3,8 @@
 #set -euo pipefail
 
 #SBATCH --time=12:00:00
-#SBATCH --cpus-per-task=40
-#SBATCH --mem=64G
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=32G
 #SBATCH --output=SomaticAmplicon-%N-%j.output
 #SBATCH --error=SomaticAmplicon-%N-%j.error
 #SBATCH --partition=high
