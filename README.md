@@ -8,6 +8,8 @@ Supports Illumina paired-end only and must have resonable overlap (>10bp)
 
 Directory structure required for pipeline
 
+
+```
 /data
 └── results
      └── seqId
@@ -19,7 +21,7 @@ Directory structure required for pipeline
              ├── sample1
              ├── sample2
              └── sample3
-
+```
 Script 1 runs in sample folder, requires fastq files split by lane
 
 ```
