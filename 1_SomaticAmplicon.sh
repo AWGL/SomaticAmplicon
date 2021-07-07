@@ -1,15 +1,13 @@
 #!/bin/bash
 
-#set -euo pipefail
+set -euo pipefail
 
-#SBATCH --time=12:00:00
-#SBATCH --cpus-per-task=20
+#SBATCH --time=6:00:00
+#SBATCH --cpus-per-task=10
 #SBATCH --mem=32G
 #SBATCH --output=SomaticAmplicon-%N-%j.output
 #SBATCH --error=SomaticAmplicon-%N-%j.error
 #SBATCH --partition=high
-
-set -euo pipefail
 
 # this is the latest version for WREN
 # Description: Somatic Amplcon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
@@ -17,10 +15,8 @@ set -euo pipefail
 # Mode: BY_SAMPLE
 # Use: sbatch within sample directory
 
-#cd "$SLURM_SUBMIT_DIR"
+# version=2.0.0
 
-################# Is this version wrong and needs to be merged with another version? #################
-#version="2.0.0"
 version="master"
 
 # Directory structure required for pipeline
@@ -45,17 +41,10 @@ version="master"
 ######################################################################
 #                            MODULES                                 #
 ######################################################################
-# Shouldn't have to load any modules other than singularity as everything should be containerised in there
-# Actually no. Singularity should be loaded before I think...
 module load singularity
-#module load raven
-#module load picard/2.7.1
-
-
-
 
 ######################################################################
-#					  FUNCTIONS/VARIABLES							 #
+#                      FUNCTIONS/VARIABLES			     #
 ######################################################################
 
 countQCFlagFails() {
@@ -71,7 +60,7 @@ countQCFlagFails() {
     sed 's/^[[:space:]]*//g'
 }
 
-
+# Define location of Singulaity SIF files
 SIF="/data/resources/envs/sifs/conda.sif" # Path to sif
 SIFGATK="/data/resources/envs/sifs/gatk3_3.7-0.sif" # Path to sif
 SIFPISCES="/data/resources/envs/sifs/pisces.sif" # Path to sif
@@ -79,6 +68,7 @@ SIFCOVER="/data/resources/envs/sifs/coverage.sif" # Path to sif
 SIFBED="/data/resources/envs/sifs/bed2hgvs.sif" # Path to sif
 SIFVHOOD="/data/resources/envs/sifs/virtualhood.sif" # Path to sif
 
+# Define Executables
 PICARD="singularity exec --bind /Output,/localscratch,/data:/data $SIF picard -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/localscratch -Xmx32g" # making code look cleaner
 SINGULARITY="singularity exec --bind /Output,/localscratch,/data:/data $SIF" # Initiating the singularity exec --bind /data:/data command
 GATK="singularity exec --bind /Output,/localscratch,/data:/data $SIFGATK java -Djava.io.tmpdir=/localscratch -Xmx32g -jar /usr/GenomeAnalysisTK.jar -T" # Initiating the GATK singularity container and command
@@ -92,15 +82,11 @@ BED="singularity exec --bind /Output,/localscratch,/data:/data $SIFBED Rscript /
 VHOOD="singularity exec --bind /Output,/localscratch,/data:/data $SIFVHOOD python"
 
 ######################################################################
-#							PIPELINE								 #
+#			PIPELINE				     #
 ######################################################################
 
 ### load sample & pipeline variables ###
-# the . with the space loads the file into the local shell space
-# so the . *.variables will load in the variables file into the local space which contains a list of variables including; sampleId, seqId, platform, worklistId, pipelineName, pipelineVersion, panel, referral
-# the next variables file is then loaded in via the variables just created from loading in the first variables file - these varialbes include; read1Adapter, read2Adapter, padding, minimumCoverage, expectedInsertSize
 . *.variables
-# Need to port this over from viglen??
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
 ### Preprocessing ###
@@ -108,10 +94,7 @@ VHOOD="singularity exec --bind /Output,/localscratch,/data:/data $SIFVHOOD pytho
 #record FASTQC pass/fail
 rawSequenceQuality=PASS
 
-
 #convert FASTQ to uBAM & add RGIDs
-# big for loop that can probably be cut down when writing in nextflow/singularity
-# this line takes the $sampleId and then cuts down the file name to the first 3 "columns" delimited by _, sorts and then does not report lines that are repeated
 for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
 
     #parse fastq filenames
@@ -132,11 +115,6 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
     "$read2Fastq"   
 
     #merge overlapping reads
-    # merging fastq files to create a merged file.
-    # -f forward strand
-    # -r reverse strand
-    # -o output file
-    # -j number of threads
     $SINGULARITY pear \
     -f "$seqId"_"$sampleId"_"$laneId"_R1.fastq \
     -r "$seqId"_"$sampleId"_"$laneId"_R2.fastq \
@@ -144,12 +122,6 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
     -j 12
 
     #convert fastq to ubam
-    # now this is a weird one. try and work out what it is doing and then elimiate this whole process if possible
-    # so after doing some reading (also apparently from GATK best practices, dated to 2018). people convert to uBAM before alignment because some metadata can be discarded in fastq
-    # according to the interwebs, merging unmapped bam and mapped bam restores hardclipped bases back into alignment in the form of softclips which may significantly affect your SNP and INDEL discovery, even structural variant discovery
-    # therefore, generating unmapped bam and merging that to the first alignment from bwa is to restore all the inofmation and add metadata on the alignment file. after that you should just contiune with the aligned file only.
-    # BWA hardclips reads if there is a discordance between the best matchiing kmer and the read. These hardclips may end up costing you a particular structural variant or a true indel call. 
-    # merging unmapped bam and initial alignment restores these hardclips which there is no apparent solution for that in bwa parameters.
     $PICARD FastqToSam \
     F1="$seqId"_"$sampleId"_"$laneId"_merged.fastq.assembled.fastq \
     O="$seqId"_"$sampleId"_"$laneId"_unaligned.bam \
@@ -166,26 +138,20 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
     TMP_DIR=/localscratch 
 
     #fastqc
-    # running fastqc on the fastq files 
     $SINGULARITY fastqc -d /localscratch --threads 12 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
     $SINGULARITY fastqc -d /localscratch --threads 12 --extract "$seqId"_"$sampleId"_"$laneId"_R2.fastq
 
     #check FASTQC output
-    # using the function created above to scan and check the summary.txt file and make sure that there are no picked out lines that have FAIL at the begining
-    # if there is a FAIL found in either file then the rawSequenceQuality variable is then set to = FAIL instead of PASS
     if [ $(countQCFlagFails "$seqId"_"$sampleId"_"$laneId"_R1_fastqc/summary.txt) -gt 0 ] || [ $(countQCFlagFails "$seqId"_"$sampleId"_"$laneId"_R2_fastqc/summary.txt) -gt 0 ]; then
         rawSequenceQuality=FAIL
     fi
 
     #clean up
-    # removing the fastq files created from cutadapt and then removing the fastq file made from the pear command that merges them together
     rm "$seqId"_"$sampleId"_"$laneId"_R1.fastq "$seqId"_"$sampleId"_"$laneId"_R2.fastq "$seqId"_"$sampleId"_"$laneId"_merged.fastq.*
 
 done
 
 #merge lane bams
-# merging unalinged bams together 
-################# May need to change temp dir #################
 $PICARD MergeSamFiles \
 $(ls "$seqId"_"$sampleId"_*_unaligned.bam | sed 's/^/I=/' | tr '\n' ' ') \
 SORT_ORDER=queryname \
@@ -196,9 +162,7 @@ MAX_RECORDS_IN_RAM=2000000 \
 TMP_DIR=/localscratch \
 O="$seqId"_"$sampleId"_unaligned.bam
 
-#uBam2fq, map & MergeBamAlignment
-# taking the merged unaligned bam then piping that into bwa using the unaligned bam as one of the inputs
-################# May need to change temp dir #################
+# uBam2fq, map & MergeBamAlignment -taking the merged unaligned bam then piping that into bwa using the unaligned bam as one of the inputs
 $PICARD SamToFastq \
 I="$seqId"_"$sampleId"_unaligned.bam \
 FASTQ=/dev/stdout \
@@ -235,7 +199,6 @@ TMP_DIR=/localscratch
 
 
 #Realign soft clipped bases
-# realigning the mapped bam using the unaligned bam
 $AMPLICON \
 -I "$seqId"_"$sampleId"_aligned.bam \
 -O "$seqId"_"$sampleId"_amplicon_realigned.bam \
@@ -247,10 +210,6 @@ $SINGULARITY samtools sort -@16 -m32G -o "$seqId"_"$sampleId"_amplicon_realigned
 $SINGULARITY samtools index "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam
 
 #left align indels
-# left aligning a variant means shifting the start position of that variant to the left until it is no longer possible to do so - i.e no longer possible to shift its position to the left while keeping the length of all its alleles constant
-# a variant is only normalised if and only if it is parsimonious and left aligned
-# parsimony in this context means represeting a variant in as few nucelotides as possible without reducing the length of any allele to 0
-# basically performing a left and right trim...
 $GATK LeftAlignIndels \
 -R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -I "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam \
@@ -258,7 +217,6 @@ $GATK LeftAlignIndels \
 -dt NONE
 
 #Identify regions requiring realignment
-# using known sites 'gold standard' etc to identify which regions need realigning  
 $GATK RealignerTargetCreator \
 -R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -known /data/resources/human/gatk/2.8/b37/1000G_phase1.indels.b37.vcf \
@@ -272,7 +230,6 @@ $GATK RealignerTargetCreator \
 -dt NONE
 
 #Realign around indels
-# realigning the realigned left sorted bam around insertions and deletions
 $GATK IndelRealigner \
 -R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -known /data/resources/human/gatk/2.8/b37/1000G_phase1.indels.b37.vcf \
@@ -410,7 +367,6 @@ $GATK DepthOfCoverage \
 -dt NONE
 
 # generate tabix index for depth of coverage
-################# May need to change bit after bgzip and tabix #################
 sed 's/:/\t/g' "$seqId"_"$sampleId"_DepthOfCoverage \
     | grep -v "^Locus" \
     | sort -k1,1 -k2,2n \
@@ -502,7 +458,6 @@ $VCFPARSE \
 mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
 
 ### Optional steps ###
-# Each step from here onwards is optional, based on the settings in the pipeline variables file
 
 # custom coverage reporting
 if [ $custom_coverage == true ]; then
@@ -517,8 +472,7 @@ if [ $custom_coverage == true ]; then
 
         echo $target
 
-        # calcualte coverage
-        ################# Change path of -D flag #################
+        # calculate coverage
         $COVERCALC \
             -B $bedFile \
             -D "$seqId"_"$sampleId"_DepthOfCoverage.gz \
@@ -552,14 +506,6 @@ if [ $custom_coverage == true ]; then
         --outname "$name".gaps \
         --outdir "$hscoverage_outdir"/ \
         --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/"$panel"/"$panel"_PreferredTranscripts.txt
-
-
-        #annotate the gaps with HGVS nomenclature using bed2hgvs.py
-        ####################### UPDATE THIS PART OF THE SCRIPT FROM CHRIS M SEPIPELINE - RSCRIPT #####################
-        #$BED --config /opt/conda/bin/bed2hgvs-0.3.0/configs/cluster.yaml \
-        #    --input $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps \
-        #    --output $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps \
-        #    --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
 
         rm $hscoverage_outdir/"$name".nohead.gaps
 
@@ -611,7 +557,6 @@ fi
 ## This block should only be carried out when all samples for the panel have been processed
 
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
-################# May need to change '~' path #################
 expected=$(for i in /data/output/results/"$seqId"/"$panel"/*/*.variables; do echo $i; done | wc -l)
 complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt; do echo $i; done | wc -l)
 
@@ -624,18 +569,15 @@ if [ $complete -eq $expected ]; then
     if [ $merge_reports == true ]; then
 
         # get report headers
-        ################# May need to change '~' path #################
         cat $(ls /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt | head -n1) | head -n1 > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
         echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
         # loop over all samples and merge reports
-        ################# May need to change '~' path #################
         for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
             sample=$(basename $sample_path)
             echo "Merging coverage and variant reports for $sample"
 
             # merge variant report
-            ################# May need to change '~' path #################
             cat "$sample_path"/*VariantReport.txt | tail -n+2 >> /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
 
             # rename percentagecoverage to percebtage coverage 500x and 500x gaps file
@@ -674,7 +616,6 @@ if [ $complete -eq $expected ]; then
         ntc=$(for s in /data/output/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
 
         # loop over all samples and generate a report
-        ################# May need to change '~' path #################
         for sample_path in /data/output/results/$seqId/$panel/*/; do
             
             # clear previous instance
@@ -683,7 +624,6 @@ if [ $complete -eq $expected ]; then
             # set variables
             sample=$(basename $sample_path)
             # Change this path so not hardcoded 
-            ################# May need to change '~' path #################
             . /data/output/results/$seqId/$panel/$sample/*.variables
             echo "Generating worksheet for $sample"
 
@@ -691,7 +631,6 @@ if [ $complete -eq $expected ]; then
             if [ -z $referral ]; then referral=NA; fi
 
             # do not generate report where NTC is the query sample
-            ################# The --path will need to be changed when pipeline goes live to '--path /data/output/results/$seqId/$panel' #################
             if [ $sample != $ntc ]; then
 
                 if [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ] || [ $referral == 'GIST' ]; then
