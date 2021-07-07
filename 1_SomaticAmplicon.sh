@@ -10,7 +10,7 @@ set -euo pipefail
 #SBATCH --partition=high
 
 # this is the latest version for WREN
-# Description: Somatic Amplcon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
+# Description: Somatic Amplcon Pipeline (Illumina paired-end). Not for use with other library preps.
 # Author: AWMGS
 # Mode: BY_SAMPLE
 # Use: sbatch within sample directory
@@ -119,7 +119,7 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
     -f "$seqId"_"$sampleId"_"$laneId"_R1.fastq \
     -r "$seqId"_"$sampleId"_"$laneId"_R2.fastq \
     -o "$seqId"_"$sampleId"_"$laneId"_merged.fastq \
-    -j 12
+    -j 10
 
     #convert fastq to ubam
     $PICARD FastqToSam \
@@ -138,8 +138,8 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
     TMP_DIR=/localscratch 
 
     #fastqc
-    $SINGULARITY fastqc -d /localscratch --threads 12 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
-    $SINGULARITY fastqc -d /localscratch --threads 12 --extract "$seqId"_"$sampleId"_"$laneId"_R2.fastq
+    $SINGULARITY fastqc -d /localscratch --threads 10 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
+    $SINGULARITY fastqc -d /localscratch --threads 10 --extract "$seqId"_"$sampleId"_"$laneId"_R2.fastq
 
     #check FASTQC output
     if [ $(countQCFlagFails "$seqId"_"$sampleId"_"$laneId"_R1_fastqc/summary.txt) -gt 0 ] || [ $(countQCFlagFails "$seqId"_"$sampleId"_"$laneId"_R2_fastqc/summary.txt) -gt 0 ]; then
@@ -172,7 +172,7 @@ VALIDATION_STRINGENCY=SILENT \
 TMP_DIR=/localscratch | \
 $SINGULARITY bwa mem \
 -M \
--t 12 \
+-t 10 \
 -p \
 /data/resources/human/mappers/b37/bwa/human_g1k_v37.fasta \
 /dev/stdin | \
@@ -206,7 +206,7 @@ $AMPLICON \
 -T /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ROI_b37.bed
 
 #sort and index BAM
-$SINGULARITY samtools sort -@16 -m32G -o "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam "$seqId"_"$sampleId"_amplicon_realigned.bam
+$SINGULARITY samtools sort -@5 -m16G -o "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam "$seqId"_"$sampleId"_amplicon_realigned.bam
 $SINGULARITY samtools index "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam
 
 #left align indels
@@ -226,7 +226,7 @@ $GATK RealignerTargetCreator \
 -o "$seqId"_"$sampleId"_indel_realigned.intervals \
 -L /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ROI_b37.bed \
 -ip "$padding" \
--nt 12 \
+-nt 10
 -dt NONE
 
 #Realign around indels
@@ -252,7 +252,7 @@ $SOFTCLIP \
 -T /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ROI_b37.bed
 
 #sort and index BAM
-$SINGULARITY samtools sort -@8 -m8G -o "$seqId"_"$sampleId"_clipped_sorted.bam "$seqId"_"$sampleId"_clipped.bam
+$SINGULARITY samtools sort -@5 -m16G -o "$seqId"_"$sampleId"_clipped_sorted.bam "$seqId"_"$sampleId"_clipped.bam
 $SINGULARITY samtools index "$seqId"_"$sampleId"_clipped_sorted.bam
 
 #fix bam tags
@@ -363,7 +363,7 @@ $GATK DepthOfCoverage \
 --minBaseQuality 20 \
 --omitIntervalStatistics \
 -ct "$minimumCoverage" \
--nt 12 \
+-nt 10 \
 -dt NONE
 
 # generate tabix index for depth of coverage
@@ -409,14 +409,14 @@ $GATK VariantEval \
 --comp:hapmap3.3 /data/resources/human/gatk/2.8/b37/hapmap_3.3.b37.vcf \
 --comp:cosmic78 /data/resources/human/cosmic/b37/cosmic_78.b37.vcf \
 -L "$panel"_ROI_b37_thick.bed \
--nt 12 \
+-nt 10 \
 -dt NONE
 
 $SINGULARITY vep \
 --verbose \
 --no_progress \
 --everything \
---fork 12 \
+--fork 10 \
 --species homo_sapiens \
 --assembly GRCh37 \
 --input_file "$seqId"_"$sampleId"_filtered_meta.vcf \
