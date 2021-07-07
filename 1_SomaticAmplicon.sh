@@ -1,9 +1,8 @@
 #!/bin/bash
 
-set -euo pipefail
 
 #SBATCH --time=6:00:00
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=20
 #SBATCH --mem=32G
 #SBATCH --output=SomaticAmplicon-%N-%j.output
 #SBATCH --error=SomaticAmplicon-%N-%j.error
@@ -16,6 +15,9 @@ set -euo pipefail
 # Use: sbatch within sample directory
 
 # version=2.0.0
+
+set -euo pipefail
+
 
 version="master"
 
@@ -138,8 +140,8 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
     TMP_DIR=/localscratch 
 
     #fastqc
-    $SINGULARITY fastqc -d /localscratch --threads 10 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
-    $SINGULARITY fastqc -d /localscratch --threads 10 --extract "$seqId"_"$sampleId"_"$laneId"_R2.fastq
+    $SINGULARITY fastqc -d /localscratch --threads 20 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
+    $SINGULARITY fastqc -d /localscratch --threads 20 --extract "$seqId"_"$sampleId"_"$laneId"_R2.fastq
 
     #check FASTQC output
     if [ $(countQCFlagFails "$seqId"_"$sampleId"_"$laneId"_R1_fastqc/summary.txt) -gt 0 ] || [ $(countQCFlagFails "$seqId"_"$sampleId"_"$laneId"_R2_fastqc/summary.txt) -gt 0 ]; then
@@ -172,7 +174,7 @@ VALIDATION_STRINGENCY=SILENT \
 TMP_DIR=/localscratch | \
 $SINGULARITY bwa mem \
 -M \
--t 10 \
+-t 20 \
 -p \
 /data/resources/human/mappers/b37/bwa/human_g1k_v37.fasta \
 /dev/stdin | \
@@ -409,7 +411,7 @@ $GATK VariantEval \
 --comp:hapmap3.3 /data/resources/human/gatk/2.8/b37/hapmap_3.3.b37.vcf \
 --comp:cosmic78 /data/resources/human/cosmic/b37/cosmic_78.b37.vcf \
 -L "$panel"_ROI_b37_thick.bed \
--nt 10 \
+-nt 20 \
 -dt NONE
 
 $SINGULARITY vep \
