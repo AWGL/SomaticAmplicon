@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #SBATCH --time=6:00:00
 #SBATCH --cpus-per-task=20
 #SBATCH --mem=32G
@@ -228,7 +227,7 @@ $GATK RealignerTargetCreator \
 -o "$seqId"_"$sampleId"_indel_realigned.intervals \
 -L /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ROI_b37.bed \
 -ip "$padding" \
--nt 10
+-nt 10 \
 -dt NONE
 
 #Realign around indels
@@ -662,9 +661,8 @@ rm "$seqId"_"$sampleId"_*_fastqc.zip "$seqId"_"$sampleId"_lcr.vcf "$seqId"_"$sam
 rm "$seqId"_"$sampleId".vcf
 rm -r VariantCallingLogs
 
-
-
-
+# create complete marker
+touch 1_SomaticAmplicon.sh.e69420
 
 
 
