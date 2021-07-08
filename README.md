@@ -35,7 +35,7 @@ sbatch 1_SomaticAmplicon.sh
 
 ## Assays
 
-Validated for TruSightMyeloid, NGHS-101X, NGHS-102X
+Validated for TruSightMyeloid, NGHS-101X (CRM), NGHS-102X (BRCA)
 
 ## Configuration
 
