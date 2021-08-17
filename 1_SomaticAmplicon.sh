@@ -559,7 +559,7 @@ fi
 
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
 expected=$(for i in /data/output/results/"$seqId"/"$panel"/*/*.variables; do echo $i; done | wc -l)
-complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/"$seqId"*VariantReport.txt; do echo $i; done | wc -l)
+complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/"$seqId"_"$sampleId"_VariantReport.txt; do echo $i; done | wc -l)
 
 if [ $complete -eq $expected ]; then
 
