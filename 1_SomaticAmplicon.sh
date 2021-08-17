@@ -18,7 +18,7 @@
 set -euo pipefail
 
 
-version="wrenfix"
+version="master"
 
 # Directory structure required for pipeline
 #
