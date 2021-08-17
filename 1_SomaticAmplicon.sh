@@ -550,6 +550,8 @@ if [ $custom_variants == true ]; then
 
         # move to hotspot_variants
         mv "$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
+        # Creating marker file for complete variable
+        touch move_complete.txt
 
     done
 fi
@@ -559,7 +561,7 @@ fi
 
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
 expected=$(for i in /data/output/results/"$seqId"/"$panel"/*/*.variables; do echo $i; done | wc -l)
-complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/"$seqId"_"$sampleId"_VariantReport.txt; do echo $i; done | wc -l)
+complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/move_complete.txt; do echo $i; done | wc -l)
 
 if [ $complete -eq $expected ]; then
 
