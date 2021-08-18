@@ -550,6 +550,8 @@ if [ $custom_variants == true ]; then
 
         # move to hotspot_variants
         mv "$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
+        # Creating marker file for complete variable
+        touch move_complete.txt
 
     done
 fi
@@ -559,7 +561,7 @@ fi
 
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
 expected=$(for i in /data/output/results/"$seqId"/"$panel"/*/*.variables; do echo $i; done | wc -l)
-complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt; do echo $i; done | wc -l)
+complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/move_complete.txt; do echo $i; done | wc -l)
 
 if [ $complete -eq $expected ]; then
 
@@ -659,6 +661,7 @@ rm "$seqId"_"$sampleId"_amplicon_realigned_left_sorted.bai "$seqId"_"$sampleId"_
 rm "$seqId"_"$sampleId"_filtered.vcf.idx "$seqId"_"$sampleId"_fixed.vcf "$seqId"_"$sampleId"_fixed.vcf.idx "$seqId"_"$sampleId"_indel_realigned.bam "$seqId"_"$sampleId"_indel_realigned.bai
 rm "$seqId"_"$sampleId"_*_fastqc.zip "$seqId"_"$sampleId"_lcr.vcf "$seqId"_"$sampleId"_lcr.vcf.idx "$seqId"_"$sampleId"_left_aligned_annotated.vcf "$seqId"_"$sampleId"_left_aligned_annotated.vcf.idx
 rm "$seqId"_"$sampleId".vcf
+rm move_complete.txt
 
 # create complete marker
 touch 1_SomaticAmplicon.sh.e69420
