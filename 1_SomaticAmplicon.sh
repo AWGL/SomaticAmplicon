@@ -1,34 +1,59 @@
 #!/bin/bash
 
-#PBS -l walltime=20:00:00
-#PBS -l ncpus=12
-set -euo pipefail
-PBS_O_WORKDIR=(`echo $PBS_O_WORKDIR | sed "s/^\/state\/partition1//" `)
-cd $PBS_O_WORKDIR
+#SBATCH --time=6:00:00
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=32G
+#SBATCH --output=SomaticAmplicon-%N-%j.output
+#SBATCH --error=SomaticAmplicon-%N-%j.error
+#SBATCH --partition=high
 
-#Description: Somatic Amplicon Pipeline (Illumina paired-end). Not for use with other library preps/ experimental conditions.
-#Author: Matt Lyon, All Wales Medical Genetics Lab
-#Mode: BY_SAMPLE
-version="1.8.1"
+# this is the latest version for WREN
+# Description: Somatic Amplcon Pipeline (Illumina paired-end). Not for use with other library preps.
+# Author: AWMGS
+# Mode: BY_SAMPLE
+# Use: sbatch within sample directory
+
+# version=2.0.0
+
+set -euo pipefail
+
+
+version="master"
 
 # Directory structure required for pipeline
 #
 # /data
-# └── results
-#     └── seqId
-#         ├── panel1
-#         │   ├── sample1
-#         │   ├── sample2
-#         │   └── sample3
-#         └── panel2
-#             ├── sample1
-#             ├── sample2
-#             └── sample3
+# └──
+#	output
+#     └──
+# 		results
+#         └── seqId
+#         	├── panel1
+#         	│   ├── sample1
+#         	│   ├── sample2
+#         	│   └── sample3
+#         	└── panel2
+#             	├── sample1
+#             	├── sample2
+#             	└── sample3
 #
 # Script 1 runs in sample folder, requires fastq files split by lane
 
+######################################################################
+#                            MODULES                                 #
+######################################################################
+module load singularity
+
+######################################################################
+#                      FUNCTIONS/VARIABLES			     #
+######################################################################
+
 countQCFlagFails() {
     #count how many core FASTQC tests failed
+    # grep -E is an extended regular expression
+    # grep -v is an invert match, and selects non-matching lines
+    # this is basically scanning the summary.txt file from fastqc output and pulling out specfic columns and then omitting those that have PASS or WARN and leaving only FAIL if any
+    # it then counts how many lines have failed
     grep -E "Basic Statistics|Per base sequence quality|Per tile sequence quality|Per sequence quality scores|Per base N content" "$1" | \
     grep -v ^PASS | \
     grep -v ^WARN | \
@@ -36,7 +61,32 @@ countQCFlagFails() {
     sed 's/^[[:space:]]*//g'
 }
 
-#load sample & pipeline variables
+# Define location of Singulaity SIF files
+SIF="/data/resources/envs/sifs/conda.sif" # Path to sif
+SIFGATK="/data/resources/envs/sifs/gatk3_3.7-0.sif" # Path to sif
+SIFPISCES="/data/resources/envs/sifs/pisces.sif" # Path to sif
+SIFCOVER="/data/resources/envs/sifs/coverage.sif" # Path to sif
+SIFBED="/data/resources/envs/sifs/bed2hgvs.sif" # Path to sif
+SIFVHOOD="/data/resources/envs/sifs/virtualhood.sif" # Path to sif
+
+# Define Executables
+PICARD="singularity exec --bind /Output,/localscratch,/data:/data $SIF picard -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/localscratch -Xmx32g" # making code look cleaner
+SINGULARITY="singularity exec --bind /Output,/localscratch,/data:/data $SIF" # Initiating the singularity exec --bind /data:/data command
+GATK="singularity exec --bind /Output,/localscratch,/data:/data $SIFGATK java -Djava.io.tmpdir=/localscratch -Xmx32g -jar /usr/GenomeAnalysisTK.jar -T" # Initiating the GATK singularity container and command
+PISCES="singularity exec --bind /Output,/localscratch,/data:/data $SIFPISCES dotnet /app/Pisces_5.2.9.122/Pisces.dll"
+AMPLICON="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -jar /opt/conda/bin/AmpliconRealigner-1.1.1.jar"
+SOFTCLIP="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Xmx2g -jar /opt/conda/bin/SoftClipPCRPrimer-1.1.0.jar"
+COVERAGE="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Djava.io.tmpdir=/localscratch -Xmx8g -jar /opt/conda/bin/CoverageCalculator-2.0.2.jar"
+VCFPARSE="singularity exec --bind /Output,/localscratch,/data:/data $SIF python /opt/conda/bin/vcf_parse-0.1.2/vcf_parse.py"
+COVERCALC="singularity exec --bind /Output,/localscratch,/data:/data $SIFCOVER python /opt/conda/bin/CoverageCalculatorPy/CoverageCalculatorPy.py"
+BED="singularity exec --bind /Output,/localscratch,/data:/data $SIFBED Rscript /opt/conda/bin/bed2hgvs-v0.3.0/bed2hgvs.R"
+VHOOD="singularity exec --bind /Output,/localscratch,/data:/data $SIFVHOOD python"
+
+######################################################################
+#			PIPELINE				     #
+######################################################################
+
+### load sample & pipeline variables ###
 . *.variables
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
@@ -49,29 +99,31 @@ rawSequenceQuality=PASS
 for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
 
     #parse fastq filenames
+    # generating the lane ID e.g. L001
     laneId=$(echo "$fastqPair" | cut -d_ -f3)
+    # generating the name of the R1 file
     read1Fastq=$(ls "$fastqPair"_R1_*fastq.gz)
+    # generating the name of the R2 file
     read2Fastq=$(ls "$fastqPair"_R2_*fastq.gz)
 
-    #trim adapters
-    /share/apps/cutadapt-distros/cutadapt-1.9.1/bin/cutadapt \
+    $SINGULARITY cutadapt \
     -a "$read1Adapter" \
     -A "$read2Adapter" \
     -m 50 \
     -o "$seqId"_"$sampleId"_"$laneId"_R1.fastq \
     -p "$seqId"_"$sampleId"_"$laneId"_R2.fastq \
     "$read1Fastq" \
-    "$read2Fastq"
+    "$read2Fastq"   
 
     #merge overlapping reads
-    /share/apps/pear-distros/pear-0.9.10-bin-64/pear-0.9.10-bin-64 \
+    $SINGULARITY pear \
     -f "$seqId"_"$sampleId"_"$laneId"_R1.fastq \
     -r "$seqId"_"$sampleId"_"$laneId"_R2.fastq \
     -o "$seqId"_"$sampleId"_"$laneId"_merged.fastq \
-    -j 12
+    -j 10
 
     #convert fastq to ubam
-    /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /share/apps/picard-tools-distros/picard-tools-2.8.2/picard.jar FastqToSam \
+    $PICARD FastqToSam \
     F1="$seqId"_"$sampleId"_"$laneId"_merged.fastq.assembled.fastq \
     O="$seqId"_"$sampleId"_"$laneId"_unaligned.bam \
     QUALITY_FORMAT=Standard \
@@ -84,11 +136,11 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
     PREDICTED_INSERT_SIZE="$expectedInsertSize" \
     SORT_ORDER=queryname \
     MAX_RECORDS_IN_RAM=2000000 \
-    TMP_DIR=/state/partition1/tmpdir
+    TMP_DIR=/localscratch 
 
     #fastqc
-    /share/apps/fastqc-distros/fastqc_v0.11.5/fastqc -d /state/partition1/tmpdir --threads 12 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
-    /share/apps/fastqc-distros/fastqc_v0.11.5/fastqc -d /state/partition1/tmpdir --threads 12 --extract "$seqId"_"$sampleId"_"$laneId"_R2.fastq
+    $SINGULARITY fastqc -d /localscratch --threads 20 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
+    $SINGULARITY fastqc -d /localscratch --threads 20 --extract "$seqId"_"$sampleId"_"$laneId"_R2.fastq
 
     #check FASTQC output
     if [ $(countQCFlagFails "$seqId"_"$sampleId"_"$laneId"_R1_fastqc/summary.txt) -gt 0 ] || [ $(countQCFlagFails "$seqId"_"$sampleId"_"$laneId"_R2_fastqc/summary.txt) -gt 0 ]; then
@@ -101,36 +153,36 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
 done
 
 #merge lane bams
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /share/apps/picard-tools-distros/picard-tools-2.8.2/picard.jar MergeSamFiles \
+$PICARD MergeSamFiles \
 $(ls "$seqId"_"$sampleId"_*_unaligned.bam | sed 's/^/I=/' | tr '\n' ' ') \
 SORT_ORDER=queryname \
 ASSUME_SORTED=true \
 VALIDATION_STRINGENCY=SILENT \
 USE_THREADING=true \
 MAX_RECORDS_IN_RAM=2000000 \
-TMP_DIR=/state/partition1/tmpdir \
+TMP_DIR=/localscratch \
 O="$seqId"_"$sampleId"_unaligned.bam
 
-#uBam2fq, map & MergeBamAlignment
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /share/apps/picard-tools-distros/picard-tools-2.8.2/picard.jar SamToFastq \
+# uBam2fq, map & MergeBamAlignment -taking the merged unaligned bam then piping that into bwa using the unaligned bam as one of the inputs
+$PICARD SamToFastq \
 I="$seqId"_"$sampleId"_unaligned.bam \
 FASTQ=/dev/stdout \
 NON_PF=true \
 MAX_RECORDS_IN_RAM=2000000 \
 VALIDATION_STRINGENCY=SILENT \
-TMP_DIR=/state/partition1/tmpdir | \
-/share/apps/bwa-distros/bwa-0.7.15/bwa mem \
+TMP_DIR=/localscratch | \
+$SINGULARITY bwa mem \
 -M \
--t 12 \
+-t 20 \
 -p \
-/state/partition1/db/human/mappers/b37/bwa/human_g1k_v37.fasta \
+/data/resources/human/mappers/b37/bwa/human_g1k_v37.fasta \
 /dev/stdin | \
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /share/apps/picard-tools-distros/picard-tools-2.8.2/picard.jar MergeBamAlignment \
+$PICARD MergeBamAlignment \
 ATTRIBUTES_TO_RETAIN=X0 \
 ALIGNED_BAM=/dev/stdin \
 UNMAPPED_BAM="$seqId"_"$sampleId"_unaligned.bam \
 OUTPUT="$seqId"_"$sampleId"_aligned.bam \
-R=/state/partition1/db/human/mappers/b37/bwa/human_g1k_v37.fasta \
+R=/data/resources/human/mappers/b37/bwa/human_g1k_v37.fasta \
 PAIRED_RUN=false \
 SORT_ORDER="coordinate" \
 IS_BISULFITE_SEQUENCE=false \
@@ -144,48 +196,46 @@ ALIGNER_PROPER_PAIR_FLAGS=false \
 ATTRIBUTES_TO_RETAIN=XS \
 INCLUDE_SECONDARY_ALIGNMENTS=true \
 CREATE_INDEX=true \
-TMP_DIR=/state/partition1/tmpdir
+TMP_DIR=/localscratch
+
 
 #Realign soft clipped bases
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Xmx2g -jar /data/diagnostics/apps/AmpliconRealigner/AmpliconRealigner-1.1.1.jar \
+$AMPLICON \
 -I "$seqId"_"$sampleId"_aligned.bam \
 -O "$seqId"_"$sampleId"_amplicon_realigned.bam \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -T /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ROI_b37.bed
 
 #sort and index BAM
-/share/apps/samtools-distros/samtools-1.3.1/samtools sort -@8 -m8G -o "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam "$seqId"_"$sampleId"_amplicon_realigned.bam
-/share/apps/samtools-distros/samtools-1.3.1/samtools index "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam
+$SINGULARITY samtools sort -@5 -m16G -o "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam "$seqId"_"$sampleId"_amplicon_realigned.bam
+$SINGULARITY samtools index "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam
 
 #left align indels
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T LeftAlignIndels \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+$GATK LeftAlignIndels \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -I "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam \
 -o "$seqId"_"$sampleId"_amplicon_realigned_left_sorted.bam \
 -dt NONE
 
 #Identify regions requiring realignment
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx24g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T RealignerTargetCreator \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
--known /state/partition1/db/human/gatk/2.8/b37/1000G_phase1.indels.b37.vcf \
--known /state/partition1/db/human/gatk/2.8/b37/Mills_and_1000G_gold_standard.indels.b37.vcf \
--known /state/partition1/db/human/cosmic/b37/cosmic_78.indels.b37.vcf \
+$GATK RealignerTargetCreator \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
+-known /data/resources/human/gatk/2.8/b37/1000G_phase1.indels.b37.vcf \
+-known /data/resources/human/gatk/2.8/b37/Mills_and_1000G_gold_standard.indels.b37.vcf \
+-known /data/resources/human/cosmic/b37/cosmic_78.indels.b37.vcf \
 -I "$seqId"_"$sampleId"_amplicon_realigned_left_sorted.bam \
 -o "$seqId"_"$sampleId"_indel_realigned.intervals \
 -L /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ROI_b37.bed \
 -ip "$padding" \
--nt 12 \
+-nt 10 \
 -dt NONE
 
 #Realign around indels
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx24g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T IndelRealigner \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
--known /state/partition1/db/human/gatk/2.8/b37/1000G_phase1.indels.b37.vcf \
--known /state/partition1/db/human/gatk/2.8/b37/Mills_and_1000G_gold_standard.indels.b37.vcf \
--known /state/partition1/db/human/cosmic/b37/cosmic_78.indels.b37.vcf \
+$GATK IndelRealigner \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
+-known /data/resources/human/gatk/2.8/b37/1000G_phase1.indels.b37.vcf \
+-known /data/resources/human/gatk/2.8/b37/Mills_and_1000G_gold_standard.indels.b37.vcf \
+-known /data/resources/human/cosmic/b37/cosmic_78.indels.b37.vcf \
 -targetIntervals "$seqId"_"$sampleId"_indel_realigned.intervals \
 --maxReadsForRealignment 500000 \
 --maxConsensuses 750 \
@@ -197,22 +247,22 @@ TMP_DIR=/state/partition1/tmpdir
 -dt NONE
 
 #soft clip PCR primers
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Xmx2g -jar /data/diagnostics/apps/SoftClipPCRPrimer/SoftClipPCRPrimer-1.1.0.jar \
+$SOFTCLIP \
 -I "$seqId"_"$sampleId"_indel_realigned.bam \
 -O "$seqId"_"$sampleId"_clipped.bam \
 -T /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ROI_b37.bed
 
 #sort and index BAM
-/share/apps/samtools-distros/samtools-1.3.1/samtools sort -@8 -m8G -o "$seqId"_"$sampleId"_clipped_sorted.bam "$seqId"_"$sampleId"_clipped.bam
-/share/apps/samtools-distros/samtools-1.3.1/samtools index "$seqId"_"$sampleId"_clipped_sorted.bam
+$SINGULARITY samtools sort -@5 -m16G -o "$seqId"_"$sampleId"_clipped_sorted.bam "$seqId"_"$sampleId"_clipped.bam
+$SINGULARITY samtools index "$seqId"_"$sampleId"_clipped_sorted.bam
 
 #fix bam tags
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /share/apps/picard-tools-distros/picard-tools-2.8.2/picard.jar SetNmMdAndUqTags \
+$PICARD SetNmMdAndUqTags \
 I="$seqId"_"$sampleId"_clipped_sorted.bam \
 O="$seqId"_"$sampleId".bam \
 CREATE_INDEX=true \
 IS_BISULFITE_SEQUENCE=false \
-R=/state/partition1/db/human/mappers/b37/bwa/human_g1k_v37.fasta
+R=/data/resources/human/mappers/b37/bwa/human_g1k_v37.fasta
 
 ### Variant calling ###
 
@@ -221,50 +271,45 @@ ln -s "$seqId"_"$sampleId".bai "$seqId"_"$sampleId".bam.bai
 
 #extract thick regions
 awk '{print $1"\t"$7"\t"$8}' /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ROI_b37.bed | \
-/share/apps/bedtools-distros/bedtools-2.26.0/bin/bedtools merge > "$panel"_ROI_b37_thick.bed
-
-#load mono
-. /opt/mono/env.sh
+$SINGULARITY bedtools merge > "$panel"_ROI_b37_thick.bed
 
 #Call somatic variants
-mono /share/apps/MiSeqReporter-distros/MiSeqReporter-2.6.3/CallSomaticVariants.exe \
--B ./"$seqId"_"$sampleId".bam \
--g /data/db/human/gatk/2.8/b37 \
--f 0.01 \
--fo False \
--b 20 \
--q 100 \
+$PISCES \
+--rmxnfilter 5,9,0.05 \
+-b ./"$seqId"_"$sampleId".bam \
+-g /data/resources/human/gatk/2.8/b37/ \
+--minvf 0.01 \
+--ssfilter false \
+--minbq 20 \
+--maxvq 100 \
 -c 50 \
--s 0.5 \
--a 20 \
--F 30 \
--gVCF False \
--i false \
--PhaseSNPs true \
--MaxPhaseSNPLength 100 \
--r .
+--sbfilter 0.5 \
+--minvq 20 \
+--vqfilter 30 \
+--gvcf false \
+--callmnvs true \
+--maxmnvlength 100 \
+-o .
 
 #fix VCF name
 echo "$sampleId" > name
-/share/apps/bcftools-distros/bcftools-1.2/bcftools reheader \
+$SINGULARITY /bcftools-1.2/bcftools reheader \
 -s name \
 -o "$seqId"_"$sampleId"_fixed.vcf \
-$(echo "$seqId"_"$sampleId" | sed 's/_/-/g')_S999.vcf
+"$seqId"_"$sampleId".vcf
 rm name
 
 #left align and trim variants
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx2g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T LeftAlignAndTrimVariants \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+$GATK LeftAlignAndTrimVariants \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -o "$seqId"_"$sampleId"_left_aligned.vcf \
 -V "$seqId"_"$sampleId"_fixed.vcf \
 -L "$panel"_ROI_b37_thick.bed \
 -dt NONE
 
 #Annotate with GATK contextual information
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T VariantAnnotator \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+$GATK VariantAnnotator \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -I "$seqId"_"$sampleId".bam \
 -V "$seqId"_"$sampleId"_left_aligned.vcf \
 -L "$panel"_ROI_b37_thick.bed \
@@ -273,17 +318,16 @@ rm name
 -dt NONE
 
 #Annotate with low complexity region length using mdust
-/share/apps/bcftools-distros/bcftools-1.3.1/bcftools annotate \
--a /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.mdust.v34.lpad1.bed.gz \
+$SINGULARITY bcftools annotate \
+-a /data/resources/human/gatk/2.8/b37/human_g1k_v37.mdust.v34.lpad1.bed.gz \
 -c CHROM,FROM,TO,LCRLen \
 -h <(echo '##INFO=<ID=LCRLen,Number=1,Type=Integer,Description="Overlapping mdust low complexity region length (mask cutoff: 34)">') \
 -o "$seqId"_"$sampleId"_lcr.vcf \
 "$seqId"_"$sampleId"_left_aligned_annotated.vcf
 
 #Filter variants
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T VariantFiltration \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+$GATK VariantFiltration \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -V "$seqId"_"$sampleId"_lcr.vcf \
 --filterExpression "LCRLen > 8" \
 --filterName "LowComplexity" \
@@ -296,23 +340,22 @@ rm name
 ### QC ###
 
 #Convert BED to interval_list for later
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /share/apps/picard-tools-distros/picard-tools-2.8.2/picard.jar BedToIntervalList \
+$PICARD BedToIntervalList \
 I="$panel"_ROI_b37_thick.bed \
 O="$panel"_ROI.interval_list \
-SD=/state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.dict
+SD=/data/resources/human/gatk/2.8/b37/human_g1k_v37.dict
 
 #HsMetrics: capture & pooling performance
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /share/apps/picard-tools-distros/picard-tools-2.8.2/picard.jar CollectHsMetrics \
+$PICARD CollectHsMetrics \
 I="$seqId"_"$sampleId".bam \
 O="$seqId"_"$sampleId"_hs_metrics.txt \
-R=/state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+R=/data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 BAIT_INTERVALS="$panel"_ROI.interval_list \
 TARGET_INTERVALS="$panel"_ROI.interval_list
 
 #Generate per-base coverage: variant detection sensitivity
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx12g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T DepthOfCoverage \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+$GATK DepthOfCoverage \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -o "$seqId"_"$sampleId"_DepthOfCoverage \
 -I "$seqId"_"$sampleId".bam \
 -L "$panel"_ROI_b37_thick.bed \
@@ -321,24 +364,23 @@ TARGET_INTERVALS="$panel"_ROI.interval_list
 --minBaseQuality 20 \
 --omitIntervalStatistics \
 -ct "$minimumCoverage" \
--nt 12 \
+-nt 10 \
 -dt NONE
 
-
 # generate tabix index for depth of coverage
-sed 's/:/\t/g' /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage \
+sed 's/:/\t/g' "$seqId"_"$sampleId"_DepthOfCoverage \
     | grep -v "^Locus" \
     | sort -k1,1 -k2,2n \
-    | /share/apps/htslib-distros/htslib-1.4.1/bgzip > /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz
+    | $SINGULARITY bgzip > "$seqId"_"$sampleId"_DepthOfCoverage.gz
 
-/share/apps/htslib-distros/htslib-1.4.1/tabix -b 2 -e 2 -s 1 /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz
+$SINGULARITY tabix -b 2 -e 2 -s 1 "$seqId"_"$sampleId"_DepthOfCoverage.gz
 
 
 #Calculate gene (clinical) percentage coverage
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /data/diagnostics/apps/CoverageCalculator-2.0.2/CoverageCalculator-2.0.2.jar \
+$COVERAGE \
 "$seqId"_"$sampleId"_DepthOfCoverage \
 /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_genes.txt \
-/state/partition1/db/human/refseq/ref_GRCh37.p13_top_level.gff3 \
+/data/resources/human/refseq/ref_GRCh37.p13_top_level.gff3 \
 -p5 \
 -d"$minimumCoverage" \
 > "$seqId"_"$sampleId"_PercentageCoverage.txt
@@ -360,27 +402,22 @@ echo \#\#SAMPLE\=\<ID\="$sampleId",Tissue\=Somatic,WorklistId\="$worklistId",Seq
 grep -v '^##' "$seqId"_"$sampleId"_filtered.vcf >> "$seqId"_"$sampleId"_filtered_meta.vcf
 
 #Variant Evaluation
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T VariantEval \
--R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+$GATK VariantEval \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -o "$seqId"_"$sampleId"_variant_evaluation.txt \
 --eval:"$seqId"_"$sampleId" "$seqId"_"$sampleId"_filtered_meta.vcf \
---comp:omni2.5 /state/partition1/db/human/gatk/2.8/b37/1000G_omni2.5.b37.vcf \
---comp:hapmap3.3 /state/partition1/db/human/gatk/2.8/b37/hapmap_3.3.b37.vcf \
---comp:cosmic78 /state/partition1/db/human/cosmic/b37/cosmic_78.b37.vcf \
+--comp:omni2.5 /data/resources/human/gatk/2.8/b37/1000G_omni2.5.b37.vcf \
+--comp:hapmap3.3 /data/resources/human/gatk/2.8/b37/hapmap_3.3.b37.vcf \
+--comp:cosmic78 /data/resources/human/cosmic/b37/cosmic_78.b37.vcf \
 -L "$panel"_ROI_b37_thick.bed \
--nt 12 \
+-nt 20 \
 -dt NONE
 
-### Reporting ###
-
-source ~/miniconda3/bin/activate vep_97.1
-
-vep \
+$SINGULARITY vep \
 --verbose \
 --no_progress \
 --everything \
---fork 12 \
+--fork 10 \
 --species homo_sapiens \
 --assembly GRCh37 \
 --input_file "$seqId"_"$sampleId"_filtered_meta.vcf \
@@ -389,8 +426,8 @@ vep \
 --force_overwrite \
 --no_stats \
 --cache \
---dir /share/data/db/human/vep_cache/refseq37_v97 \
---fasta /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+--dir /data/resources/human/vep-cache/refseq37_v97 \
+--fasta /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 --no_intergenic \
 --offline \
 --cache_version 97 \
@@ -400,26 +437,18 @@ vep \
 --vcf \
 --refseq
 
-source ~/miniconda3/bin/deactivate
-
-
 #check VEP has produced annotated VCF
 if [ ! -e "$seqId"_"$sampleId"_filtered_meta_annotated.vcf ]; then
     cp "$seqId"_"$sampleId"_filtered_meta.vcf "$seqId"_"$sampleId"_filtered_meta_annotated.vcf
 fi
 
 #index & validate final VCF
-/share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx2g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
--T ValidateVariants \
--R /data/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+$GATK ValidateVariants \
+-R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
 -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
 -dt NONE
 
-
-# write big vcf dataset to table using vcf_parse python utility
-source /home/transfer/miniconda3/bin/activate vcf_parse
-
-python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
+$VCFPARSE \
 --transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
 --transcript_strictness low \
 --known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
@@ -429,16 +458,12 @@ python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
 
 mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
 
-source /home/transfer/miniconda3/bin/deactivate
-
-
 ### Optional steps ###
-# Each step from here onwards is optional, based on the settings in the pipeline variables file
 
 # custom coverage reporting
 if [ $custom_coverage == true ]; then
-    
-    hscoverage_outdir=/data/results/$seqId/$panel/$sampleId/hotspot_coverage/
+    ################# Path change to hscoverage_outdir #################
+    hscoverage_outdir=hotspot_coverage
     mkdir $hscoverage_outdir
 
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage/*.bed); do
@@ -448,17 +473,15 @@ if [ $custom_coverage == true ]; then
 
         echo $target
 
-        # calcualte coverage
-        source /home/transfer/miniconda3/bin/activate CoverageCalculatorPy
-
-        python /home/transfer/pipelines/CoverageCalculatorPy/CoverageCalculatorPy.py \
+        # calculate coverage
+        $COVERCALC \
             -B $bedFile \
-            -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
-            --depth $minimumCoverage \
-            --padding 0 \
-            --groupfile /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$target".groups \
-            --outname "$seqId"_"$sampleId"_"$target" \
-            --outdir $hscoverage_outdir
+            -D "$seqId"_"$sampleId"_DepthOfCoverage.gz \
+            -d $minimumCoverage \
+            -p 0 \
+            -g /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$target".groups \
+            -o "$seqId"_"$sampleId"_"$target" \
+            -O "$hscoverage_outdir"/
 
         # remove header from gaps file
         if [[ $(wc -l < $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps) -eq 1 ]]; then
@@ -470,21 +493,23 @@ if [ $custom_coverage == true ]; then
             grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         fi
 
+        
         rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
+    done
 
-        source /home/transfer/miniconda3/bin/deactivate
+    for gapsFile in $hscoverage_outdir/*nohead.gaps; do
 
-        #annotate the gaps with HGVS nomenclature using bed2hgvs.py
-        source /home/transfer/miniconda3/bin/activate bed2hgvs
+        name=$(echo $(basename $gapsFile) | cut -d"." -f1)
+        echo $name
 
-        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/configs/cluster.yaml \
-            --input $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps \
-            --output $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps \
-            --transcript_map /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
+        $BED \
+        --bedfile $gapsFile \
+        --outname "$name".gaps \
+        --outdir "$hscoverage_outdir"/ \
+        --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/"$panel"/"$panel"_PreferredTranscripts.txt
 
-        rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
+        rm $hscoverage_outdir/"$name".nohead.gaps
 
-        source /home/transfer/miniconda3/bin/deactivate
 
     done
 
@@ -494,7 +519,6 @@ if [ $custom_coverage == true ]; then
     cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
     rm $hscoverage_outdir/*.totalCoverage
 fi
-
 
 # custom variant reporting
 if [ $custom_variants == true ]; then
@@ -506,18 +530,16 @@ if [ $custom_variants == true ]; then
         target=$(basename "$bedFile" | sed 's/\.bed//g')
 
         # select variants
-        /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g -jar /share/apps/GATK-distros/GATK_3.7.0/GenomeAnalysisTK.jar \
-          -T VariantFiltration \
-          -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+        $GATK VariantFiltration \
+          -R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
           -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
           -L "$bedFile" \
           -o hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf \
           -dt NONE
-	
+    
         # write targeted dataset to table using vcf_parse python utility
-        source /home/transfer/miniconda3/bin/activate vcf_parse
         
-        python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
+        $VCFPARSE \
           --transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
           --transcript_strictness low \
           --known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
@@ -525,21 +547,21 @@ if [ $custom_variants == true ]; then
           --filter_non_pass \
           hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf
         
-        source /home/transfer/miniconda3/bin/deactivate
 
         # move to hotspot_variants
         mv "$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
+        # Creating marker file for complete variable
+        touch move_complete.txt
 
     done
 fi
-
 
 ### Run level steps ###
 ## This block should only be carried out when all samples for the panel have been processed
 
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
-expected=$(for i in /data/results/$seqId/$panel/*/*.variables; do echo $i; done | wc -l)
-complete=$(for i in /data/results/$seqId/$panel/*/*VariantReport.txt; do echo $i; done | wc -l)
+expected=$(for i in /data/output/results/"$seqId"/"$panel"/*/*.variables; do echo $i; done | wc -l)
+complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/move_complete.txt; do echo $i; done | wc -l)
 
 if [ $complete -eq $expected ]; then
 
@@ -550,26 +572,26 @@ if [ $complete -eq $expected ]; then
     if [ $merge_reports == true ]; then
 
         # get report headers
-        cat $(ls /data/results/"$seqId"/"$panel"/*/*VariantReport.txt | head -n1) | head -n1 > /data/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
-        echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > /data/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
+        cat $(ls /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt | head -n1) | head -n1 > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
+        echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
         # loop over all samples and merge reports
-        for sample_path in /data/results/"$seqId"/"$panel"/*/; do
+        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
             sample=$(basename $sample_path)
             echo "Merging coverage and variant reports for $sample"
 
             # merge variant report
-            cat "$sample_path"/*VariantReport.txt | tail -n+2 >> /data/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
+            cat "$sample_path"/*VariantReport.txt | tail -n+2 >> /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
 
             # rename percentagecoverage to percebtage coverage 500x and 500x gaps file
             mv "$sample_path"/"$seqId"_"$sample"_PercentageCoverage.txt "$sample_path"/"$seqId"_"$sample"_PercentageCoverage_500x.txt
             mv "$sample_path"/"$sample"_gaps.bed "$sample_path"/"$sample"_gaps_500x.bed
 
             # Calculate gene (clinical) percentage coverage at 100x
-            /share/apps/jre-distros/jre1.8.0_101/bin/java -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx8g -jar /data/diagnostics/apps/CoverageCalculator-2.0.2/CoverageCalculator-2.0.2.jar \
+            $COVERAGE \
             $sample_path/"$seqId"_"$sample"_DepthOfCoverage \
             /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_genes.txt \
-            /state/partition1/db/human/refseq/ref_GRCh37.p13_top_level.gff3 \
+            /data/resources/human/refseq/ref_GRCh37.p13_top_level.gff3 \
             -p5 \
             -d100 \
             > "$sample_path"/"$seqId"_"$sample"_PercentageCoverage_100x.txt
@@ -582,7 +604,7 @@ if [ $complete -eq $expected ]; then
             brca2_500x=$(grep BRCA2 $sample_path/"$seqId"_"$sample"_PercentageCoverage_500x.txt | cut -f3)
             brca1_100x=$(grep BRCA1 $sample_path/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
             brca2_100x=$(grep BRCA2 $sample_path/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
-            echo -e "$sample\t$brca1_500x\t$brca2_500x\t$brca1_100x\t$brca2_100x" >> /data/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
+            echo -e "$sample\t$brca1_500x\t$brca2_500x\t$brca1_100x\t$brca2_100x" >> /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
             # reset variables
             unset sample brca1_500x brca2_500x brca1_100x brca2_100x
@@ -592,20 +614,20 @@ if [ $complete -eq $expected ]; then
     # virtual hood
     if [ $generate_worksheets == true ]; then
     
-        source ~/miniconda3/bin/activate VirtualHood
 
         # identify name of NTC
-        ntc=$(for s in /data/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
+        ntc=$(for s in /data/output/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
 
         # loop over all samples and generate a report
-        for sample_path in /data/results/$seqId/$panel/*/; do
+        for sample_path in /data/output/results/$seqId/$panel/*/; do
             
             # clear previous instance
             unset referral 
             
             # set variables
             sample=$(basename $sample_path)
-            . /data/results/$seqId/$panel/$sample/*.variables
+            # Change this path so not hardcoded 
+            . /data/output/results/$seqId/$panel/$sample/*.variables
             echo "Generating worksheet for $sample"
 
             # check that referral variable is defined, if not set as NA
@@ -613,25 +635,20 @@ if [ $complete -eq $expected ]; then
 
             # do not generate report where NTC is the query sample
             if [ $sample != $ntc ]; then
-                if [ $referral == 'FOCUS4' ] || [ $referral == 'GIST' ] || [ $referral == 'iNATT' ]; then
-                    python /data/diagnostics/apps/VirtualHood/VirtualHood-1.0.0/CRM_report.py $seqId $sample $worklistId $referral $ntc
 
-                elif [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ]; then
-                    python /data/diagnostics/apps/VirtualHood/VirtualHood-1.0.0/CRM_report_new_referrals.py $seqId $sample $worklistId $referral $ntc
+                if [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ] || [ $referral == 'GIST' ]; then
+                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /data/output/results/$seqId/$panel/ --artefacts /data/temp/artefacts_lists/
                 fi
             fi
         done
 
-        source ~/miniconda3/bin/deactivate
     fi
 
 fi
 
-
 #load sample & pipeline variables
 . *.variables
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
-
 
 ### Clean up ###
 
@@ -643,5 +660,20 @@ rm "$seqId"_"$sampleId"_left_aligned.vcf "$seqId"_"$sampleId"_left_aligned.vcf.i
 rm "$seqId"_"$sampleId"_amplicon_realigned_left_sorted.bai "$seqId"_"$sampleId"_filtered_meta.vcf "$seqId"_"$sampleId"_filtered_meta.vcf.idx "$seqId"_"$sampleId"_filtered.vcf
 rm "$seqId"_"$sampleId"_filtered.vcf.idx "$seqId"_"$sampleId"_fixed.vcf "$seqId"_"$sampleId"_fixed.vcf.idx "$seqId"_"$sampleId"_indel_realigned.bam "$seqId"_"$sampleId"_indel_realigned.bai
 rm "$seqId"_"$sampleId"_*_fastqc.zip "$seqId"_"$sampleId"_lcr.vcf "$seqId"_"$sampleId"_lcr.vcf.idx "$seqId"_"$sampleId"_left_aligned_annotated.vcf "$seqId"_"$sampleId"_left_aligned_annotated.vcf.idx
-rm $(echo "$seqId"_"$sampleId" | sed 's/_/-/g')_S999.vcf
-rm -r VariantCallingLogs
+rm "$seqId"_"$sampleId".vcf
+rm move_complete.txt
+
+# create complete marker
+touch 1_SomaticAmplicon.sh.e69420
+
+
+
+
+
+
+
+
+
+
+
+
