@@ -623,8 +623,6 @@ if [ $complete -eq $expected ]; then
     # virtual hood
     if [ $generate_worksheets == true ]; then
     
-        # Remove this line once checked to see if run
-        echo -e "This is to see if the generate worksheets is actually being entered" > /data/output/results/"$seqId"/"$panel"/"$seqId"_test.txt
         # identify name of NTC
         ntc=$(for s in /data/output/results/"$seqId"/"$panel"/*/; do echo $(basename $s);done | grep 'NTC')
 
