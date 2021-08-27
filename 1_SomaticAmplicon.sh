@@ -524,6 +524,9 @@ fi
 if [ $custom_variants == true ]; then
     mkdir hotspot_variants
 
+    # Making marker file for 101X and Myeloid
+    # touch move_complete.txt
+
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants/*.bed); do
 
         # extract target name
@@ -552,14 +555,22 @@ if [ $custom_variants == true ]; then
         mv "$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
 
     done
+
+# Making a marker file for 102X
+# else
+    # touch move_complete.txt
+
 fi
 
 ### Run level steps ###
 ## This block should only be carried out when all samples for the panel have been processed
 
+# Creating a marker file to then decide whether block below should be executed or not
+touch move_complete.txt
+
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
 expected=$(for i in /data/output/results/"$seqId"/"$panel"/*/*.variables; do echo $i; done | wc -l)
-complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt; do echo $i; done | wc -l)
+complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/move_complete.txt; do echo $i; done | wc -l)
 
 if [ $complete -eq $expected ]; then
 
