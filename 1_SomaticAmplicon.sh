@@ -625,10 +625,10 @@ if [ $complete -eq $expected ]; then
     
 
         # identify name of NTC
-        ntc=$(for s in /data/output/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
+        ntc=$(for s in /data/output/results/"$seqId"/"$panel"/*/; do echo $(basename $s);done | grep 'NTC')
 
         # loop over all samples and generate a report
-        for sample_path in /data/output/results/$seqId/$panel/*/; do
+        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
             
             # clear previous instance
             unset referral 
@@ -636,7 +636,7 @@ if [ $complete -eq $expected ]; then
             # set variables
             sample=$(basename $sample_path)
             # Change this path so not hardcoded 
-            . /data/output/results/$seqId/$panel/$sample/*.variables
+            . /data/output/results/"$seqId"/"$panel"/"$sample"/*.variables
             echo "Generating worksheet for $sample"
 
             # check that referral variable is defined, if not set as NA
