@@ -524,8 +524,7 @@ fi
 if [ $custom_variants == true ]; then
     mkdir hotspot_variants
 
-    # Making marker file for 101X and Myeloid
-    # touch move_complete.txt
+
 
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants/*.bed); do
 
@@ -556,9 +555,7 @@ if [ $custom_variants == true ]; then
 
     done
 
-# Making a marker file for 102X
-# else
-    # touch move_complete.txt
+
 
 fi
 
