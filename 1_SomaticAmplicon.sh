@@ -524,6 +524,8 @@ fi
 if [ $custom_variants == true ]; then
     mkdir hotspot_variants
 
+
+
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants/*.bed); do
 
         # extract target name
@@ -552,14 +554,20 @@ if [ $custom_variants == true ]; then
         mv "$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
 
     done
+
+
+
 fi
 
 ### Run level steps ###
 ## This block should only be carried out when all samples for the panel have been processed
 
+# Creating a marker file to then decide whether block below should be executed or not
+touch move_complete.txt
+
 # number of samples to be processed (i.e. count variables files)/ number of samples that have completed
 expected=$(for i in /data/output/results/"$seqId"/"$panel"/*/*.variables; do echo $i; done | wc -l)
-complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt; do echo $i; done | wc -l)
+complete=$(for i in /data/output/results/"$seqId"/"$panel"/*/move_complete.txt; do echo $i; done | wc -l)
 
 if [ $complete -eq $expected ]; then
 
@@ -612,12 +620,11 @@ if [ $complete -eq $expected ]; then
     # virtual hood
     if [ $generate_worksheets == true ]; then
     
-
         # identify name of NTC
-        ntc=$(for s in /data/output/results/$seqId/$panel/*/; do echo $(basename $s);done | grep 'NTC')
+        ntc=$(for s in /data/output/results/"$seqId"/"$panel"/*/; do echo $(basename $s);done | grep 'NTC')
 
         # loop over all samples and generate a report
-        for sample_path in /data/output/results/$seqId/$panel/*/; do
+        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
             
             # clear previous instance
             unset referral 
@@ -625,7 +632,7 @@ if [ $complete -eq $expected ]; then
             # set variables
             sample=$(basename $sample_path)
             # Change this path so not hardcoded 
-            . /data/output/results/$seqId/$panel/$sample/*.variables
+            . /data/output/results/"$seqId"/"$panel"/"$sample"/*.variables
             echo "Generating worksheet for $sample"
 
             # check that referral variable is defined, if not set as NA
@@ -635,7 +642,7 @@ if [ $complete -eq $expected ]; then
             if [ $sample != $ntc ]; then
 
                 if [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ] || [ $referral == 'GIST' ]; then
-                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /data/output/results/$seqId/$panel/ --artefacts /data/temp/artefacts_lists/
+                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /data/output/results/"$seqId"/"$panel"/ --artefacts /data/temp/artefacts_lists/
                 fi
             fi
         done
