@@ -13,7 +13,7 @@
 # Mode: BY_SAMPLE
 # Use: sbatch within sample directory
 
-# version=2.0.0
+# version=2.0.2
 
 set -euo pipefail
 
