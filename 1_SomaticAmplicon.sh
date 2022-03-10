@@ -641,7 +641,7 @@ if [ $complete -eq $expected ]; then
             # do not generate report where NTC is the query sample
             if [ $sample != $ntc ]; then
 
-                if [ $referral == 'Melanoma' ] || [ $referral == 'Lung' ] || [ $referral == 'Colorectal' ] || [ $referral == 'Glioma' ] || [ $referral == 'Tumour' ] || [ $referral == 'GIST' ] || [ $referral == 'Thyroid' ]; then
+                if [ $referral == 'melanoma' ] || [ $referral == 'lung' ] || [ $referral == 'colorectal' ] || [ $referral == 'glioma' ] || [ $referral == 'tumour' ] || [ $referral == 'gist' ] || [ $referral == 'thyroid' ]; then
                     $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /data/output/results/"$seqId"/"$panel"/ --artefacts /data/temp/artefacts_lists/
                 fi
             fi
