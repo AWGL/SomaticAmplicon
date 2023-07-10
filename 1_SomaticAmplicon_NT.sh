@@ -42,6 +42,7 @@ version="master"
 #                            MODULES                                 #
 ######################################################################
 module load singularity
+module load anaconda 
 
 ######################################################################
 #                      FUNCTIONS/VARIABLES			     #
