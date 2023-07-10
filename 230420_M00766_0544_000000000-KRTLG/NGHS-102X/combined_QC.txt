@@ -1,4 +1,0 @@
-Sample	RawSequenceQuality	TotalReads	EstimatedContamination	Gender	SamplesheetSex
-23M07372	PASS	1157787			
-NTC-23-1733	FAIL	965			
-23M05386	PASS	103992			
