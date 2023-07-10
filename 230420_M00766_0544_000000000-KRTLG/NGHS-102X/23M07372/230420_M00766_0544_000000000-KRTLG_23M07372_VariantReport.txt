@@ -1,0 +1,319 @@
+SampleID	Variant	Frequency	Depth	Genotype	Quality	Classification	Preferred	dbSNP	Cosmic	HGMD	ExAC_African	ExAC_American	ExAC_EuropeanNonFinnish	ExAC_Finnish	ExAC_EastAsian	ExAC_SouthAsian	ExAC_Other	1KG_African	1KG_American	1KG_European	1KG_EastAsian	1KG_SouthAsian	Gene	Transcript	HGVSc	HGVSp	Consequence	INTRON	EXON	SIFT	PolyPhen
+23M07372	3:47061343GA>TG	0.273	216	HET	99		False																SETD2	NM_014159.6	c.7351-14_7351-13delinsCA		intron_variant	18|20			
+23M07372	3:47061348A>T	0.273	216	HET	99		False																SETD2	NM_014159.6	c.7351-18T>A		intron_variant	18|20			
+23M07372	4:46329655A>T	0.998	2677	HOM_VAR	65		False	rs279844															GABRA2	NM_000807.2	c.255+4977T>A		intron_variant	4|9			
+23M07372	4:46329655A>T	0.998	2677	HOM_VAR	65		False	rs279844															GABRA2	NM_000807.3	c.255+4977T>A		intron_variant	4|9			
+23M07372	4:46329655A>T	0.998	2677	HOM_VAR	65		False	rs279844															GABRA2	NM_001114175.1	c.255+4977T>A		intron_variant	3|8			
+23M07372	4:46329655A>T	0.998	2677	HOM_VAR	65		False	rs279844															GABRA2	NM_001114175.2	c.255+4977T>A		intron_variant	3|8			
+23M07372	4:46329655A>T	0.998	2677	HOM_VAR	65		False	rs279844															GABRA2	NM_001286827.2	c.91-14922T>A		intron_variant	3|9			
+23M07372	4:46329655A>T	0.998	2677	HOM_VAR	65		False	rs279844															GABRA2	NM_001330690.1	c.255+4977T>A		intron_variant	4|10			
+23M07372	4:46329717C>T	0.019	2677	HET	44		False																GABRA2	NM_000807.2	c.255+4915G>A		intron_variant	4|9			
+23M07372	4:46329717C>T	0.019	2677	HET	44		False																GABRA2	NM_000807.3	c.255+4915G>A		intron_variant	4|9			
+23M07372	4:46329717C>T	0.019	2677	HET	44		False																GABRA2	NM_001114175.1	c.255+4915G>A		intron_variant	3|8			
+23M07372	4:46329717C>T	0.019	2677	HET	44		False																GABRA2	NM_001114175.2	c.255+4915G>A		intron_variant	3|8			
+23M07372	4:46329717C>T	0.019	2677	HET	44		False																GABRA2	NM_001286827.2	c.91-14984G>A		intron_variant	3|9			
+23M07372	4:46329717C>T	0.019	2677	HET	44		False																GABRA2	NM_001330690.1	c.255+4915G>A		intron_variant	4|10			
+23M07372	4:46329723T>A	0.997	2677	HOM_VAR	42		False	rs279845															GABRA2	NM_000807.2	c.255+4909A>T		intron_variant	4|9			
+23M07372	4:46329723T>A	0.997	2677	HOM_VAR	42		False	rs279845															GABRA2	NM_000807.3	c.255+4909A>T		intron_variant	4|9			
+23M07372	4:46329723T>A	0.997	2677	HOM_VAR	42		False	rs279845															GABRA2	NM_001114175.1	c.255+4909A>T		intron_variant	3|8			
+23M07372	4:46329723T>A	0.997	2677	HOM_VAR	42		False	rs279845															GABRA2	NM_001114175.2	c.255+4909A>T		intron_variant	3|8			
+23M07372	4:46329723T>A	0.997	2677	HOM_VAR	42		False	rs279845															GABRA2	NM_001286827.2	c.91-14990A>T		intron_variant	3|9			
+23M07372	4:46329723T>A	0.997	2677	HOM_VAR	42		False	rs279845															GABRA2	NM_001330690.1	c.255+4909A>T		intron_variant	4|10			
+23M07372	5:180055999T>C	0.054	166	HET	42		False		COSM5576223,COSM5576224,COSM5576225														FLT4	NM_002020.4	c.986A>G	p.Glu329Gly	missense_variant&splice_region_variant		8|30	deleterious(0.01)	benign(0.127)
+23M07372	5:180055999T>C	0.054	166	HET	42		False		COSM5576223,COSM5576224,COSM5576225														FLT4	NM_182925.4	c.986A>G	p.Glu329Gly	missense_variant&splice_region_variant		8|30	deleterious(0.01)	benign(0.082)
+23M07372	11:115207198A>G	0.017	2702	HET	35		False																CADM1	NM_001098517.1	c.125-96058T>C		intron_variant	1|8			
+23M07372	11:115207198A>G	0.017	2702	HET	35		False																CADM1	NM_001301043.1	c.125-96058T>C		intron_variant	1|11			
+23M07372	11:115207198A>G	0.017	2702	HET	35		False																CADM1	NM_001301044.1	c.125-96058T>C		intron_variant	1|10			
+23M07372	11:115207198A>G	0.017	2702	HET	35		False																CADM1	NM_001301045.1	c.125-96058T>C		intron_variant	1|10			
+23M07372	11:115207198A>G	0.017	2702	HET	35		False																CADM1	NM_014333.3	c.125-96058T>C		intron_variant	1|9			
+23M07372	13:32893197AT>A	0.136	2628	HET	99		True	rs1484707583															BRCA2	NM_000059.3	c.68-7del		intron_variant	2|26			
+23M07372	13:32900239C>T	0.015	9102	HET	57		True		COSM946757,COSM946758														BRCA2	NM_000059.3	c.427C>T	p.Pro143Ser	missense_variant&splice_region_variant		5|27	deleterious(0)	probably_damaging(0.991)
+23M07372	13:32905265G>A	0.994	1373	HOM_VAR	14		True	rs206073															BRCA2	NM_000059.3	c.793+98G>A		intron_variant	9|26			
+23M07372	13:32906729A>C	0.565	1481	HET	99	1	True	rs144848	COSM3753646	CM002750													BRCA2	NM_000059.3	c.1114A>C	p.Asn372His	missense_variant		10|27	tolerated(0.06)	benign(0.017)
+23M07372	13:32906807C>T	0.016	3008	HET	30		True																BRCA2	NM_000059.3	c.1192C>T	p.Leu398=	synonymous_variant		10|27		
+23M07372	13:32911365G>A	0.015	16829	HET	81		True																BRCA2	NM_000059.3	c.2873G>A	p.Ser958Asn	missense_variant		11|27	tolerated(0.24)	probably_damaging(0.993)
+23M07372	13:32911411G>A	0.016	4450	HET	36		True	rs45525041															BRCA2	NM_000059.3	c.2919G>A	p.Ser973=	synonymous_variant		11|27		
+23M07372	13:32911909G>A	0.012	59861	HET	63		True	rs145625991	COSM946789,COSM946790														BRCA2	NM_000059.3	c.3417G>A	p.Lys1139=	synonymous_variant		11|27		
+23M07372	13:32912018G>A	0.013	11839	HET	34		True	rs80358602															BRCA2	NM_000059.3	c.3526G>A	p.Val1176Ile	missense_variant		11|27	tolerated(0.33)	probably_damaging(0.994)
+23M07372	13:32912025G>A	0.015	13097	HET	85		True																BRCA2	NM_000059.3	c.3533G>A	p.Ser1178Asn	missense_variant		11|27	tolerated(0.43)	benign(0.013)
+23M07372	13:32912693G>A	0.013	14706	HET	37		True																BRCA2	NM_000059.3	c.4201G>A	p.Gly1401Ser	missense_variant		11|27	tolerated(0.15)	benign(0.281)
+23M07372	13:32913055A>G	0.988	1581	HET	99	1	True	rs206075															BRCA2	NM_000059.3	c.4563A>G	p.Leu1521=	synonymous_variant		11|27		
+23M07372	13:32913131G>A	0.018	5532	HET	74		True																BRCA2	NM_000059.3	c.4639G>A	p.Asp1547Asn	missense_variant		11|27	deleterious(0.03)	possibly_damaging(0.48)
+23M07372	13:32913558CA>C	0.02	4641	HET	86		True	rs1376347173	COSM6048456,COSM6048457														BRCA2	NM_000059.3	c.5073del	p.Lys1691AsnfsTer15	frameshift_variant		11|27		
+23M07372	13:32913872G>A	0.016	9637	HET	78		True																BRCA2	NM_000059.3	c.5380G>A	p.Val1794Ile	missense_variant		11|27	tolerated(0.61)	probably_damaging(0.994)
+23M07372	13:32913908G>A	0.014	9636	HET	42		True																BRCA2	NM_000059.3	c.5416G>A	p.Glu1806Lys	missense_variant		11|27	tolerated(0.13)	benign(0.013)
+23M07372	13:32914828A>G	0.023	15708	HET	99		True																BRCA2	NM_000059.3	c.6336A>G	p.Arg2112=	synonymous_variant		11|27		
+23M07372	13:32915005G>C	0.996	4124	HOM_VAR	52	1	True	rs206076	COSM4147690														BRCA2	NM_000059.3	c.6513G>C	p.Val2171=	synonymous_variant		11|27		
+23M07372	13:32921003C>T	0.013	14478	HET	41		True		COSM5415235,COSM5431069														BRCA2	NM_000059.3	c.6977C>T	p.Ser2326Phe	missense_variant		13|27	deleterious(0.01)	benign(0.113)
+23M07372	13:32929053G>A	0.014	12125	HET	43		True	rs200078639															BRCA2	NM_000059.3	c.7063G>A	p.Glu2355Lys	missense_variant		14|27	tolerated(0.13)	benign(0.33)
+23M07372	13:32929387T>C	0.995	2113	HOM_VAR	22	1	True	rs169547		CM960194													BRCA2	NM_000059.3	c.7397T>C	p.Ala2466=	synonymous_variant		14|27		
+23M07372	13:32936646T>C	0.383	995	HET	99	1	True	rs9534262															BRCA2	NM_000059.3	c.7806-14T>C		intron_variant	16|26			
+23M07372	13:32945135G>A	0.017	11476	HET	99		True	rs755783122															BRCA2	NM_000059.3	c.8530G>A	p.Glu2844Lys	missense_variant		20|27	deleterious(0.01)	probably_damaging(0.958)
+23M07372	13:32953388T>C	0.462	1606	HET	99		True	rs4942486															BRCA2	NM_000059.3	c.8755-66T>C		intron_variant	21|26			
+23M07372	13:32954022CA>C	0.063	1139	HET	99		True		COSM1366491,COSM1366492														BRCA2	NM_000059.3	c.9097del	p.Thr3033LeufsTer29	frameshift_variant		23|27		
+23M07372	13:32954302AT>A	0.021	3972	HET	89		True	rs751714705															BRCA2	NM_000059.3	c.9256+28del		intron_variant	24|26			
+23M07372	13:32968808CT>C	0.037	5012	HET	99		True	rs1305102851															BRCA2	NM_000059.3	c.9257-10del		intron_variant	24|26			
+23M07372	13:32968895T>A	0.035	2980	HET	99		True																BRCA2	NM_000059.3	c.9326T>A	p.Leu3109His	missense_variant		25|27	deleterious(0)	probably_damaging(0.968)
+23M07372	13:32971161G>A	0.014	10184	HET	48		True	rs1064794491															BRCA2	NM_000059.3	c.9628G>A	p.Gly3210Ser	missense_variant		26|27	tolerated(0.15)	benign(0.007)
+23M07372	13:32971161G>A	0.014	10184	HET	48		False	rs1064794491															N4BP2L1	NM_001079691.1			downstream_gene_variant				
+23M07372	13:32971161G>A	0.014	10184	HET	48		False	rs1064794491															N4BP2L1	NM_001286459.1			downstream_gene_variant				
+23M07372	13:32971161G>A	0.014	10184	HET	48		False	rs1064794491															N4BP2L1	NM_001286460.1			downstream_gene_variant				
+23M07372	13:32971161G>A	0.014	10184	HET	48		False	rs1064794491															N4BP2L1	NM_001286461.1			downstream_gene_variant				
+23M07372	13:32971161G>A	0.014	10184	HET	48		False	rs1064794491															N4BP2L1	NM_052818.2			downstream_gene_variant				
+23M07372	13:32972857G>A	0.013	52465	HET	99		True		COSM6138766,COSM6138767														BRCA2	NM_000059.3	c.10207G>A	p.Glu3403Lys	missense_variant		27|27	tolerated(0.1)	benign(0.019)
+23M07372	13:32972857G>A	0.013	52465	HET	99		False		COSM6138766,COSM6138767														N4BP2L1	NM_001079691.1			downstream_gene_variant				
+23M07372	13:32972857G>A	0.013	52465	HET	99		False		COSM6138766,COSM6138767														N4BP2L1	NM_001286459.1			downstream_gene_variant				
+23M07372	13:32972857G>A	0.013	52465	HET	99		False		COSM6138766,COSM6138767														N4BP2L1	NM_001286460.1			downstream_gene_variant				
+23M07372	13:32972857G>A	0.013	52465	HET	99		False		COSM6138766,COSM6138767														N4BP2L1	NM_001286461.1			downstream_gene_variant				
+23M07372	13:32972857G>A	0.013	52465	HET	99		False		COSM6138766,COSM6138767														N4BP2L1	NM_052818.2			downstream_gene_variant				
+23M07372	13:32972861G>A	0.013	52465	HET	99		True	rs587782614	COSM7325167,COSM7325168														BRCA2	NM_000059.3	c.10211G>A	p.Cys3404Tyr	missense_variant		27|27	tolerated(0.25)	benign(0.055)
+23M07372	13:32972861G>A	0.013	52465	HET	99		False	rs587782614	COSM7325167,COSM7325168														N4BP2L1	NM_001079691.1			downstream_gene_variant				
+23M07372	13:32972861G>A	0.013	52465	HET	99		False	rs587782614	COSM7325167,COSM7325168														N4BP2L1	NM_001286459.1			downstream_gene_variant				
+23M07372	13:32972861G>A	0.013	52465	HET	99		False	rs587782614	COSM7325167,COSM7325168														N4BP2L1	NM_001286460.1			downstream_gene_variant				
+23M07372	13:32972861G>A	0.013	52465	HET	99		False	rs587782614	COSM7325167,COSM7325168														N4BP2L1	NM_001286461.1			downstream_gene_variant				
+23M07372	13:32972861G>A	0.013	52465	HET	99		False	rs587782614	COSM7325167,COSM7325168														N4BP2L1	NM_052818.2			downstream_gene_variant				
+23M07372	13:32972865G>A	0.011	52460	HET	34		True																BRCA2	NM_000059.3	c.10215G>A	p.Glu3405=	synonymous_variant		27|27		
+23M07372	13:32972865G>A	0.011	52460	HET	34		False																N4BP2L1	NM_001079691.1			downstream_gene_variant				
+23M07372	13:32972865G>A	0.011	52460	HET	34		False																N4BP2L1	NM_001286459.1			downstream_gene_variant				
+23M07372	13:32972865G>A	0.011	52460	HET	34		False																N4BP2L1	NM_001286460.1			downstream_gene_variant				
+23M07372	13:32972865G>A	0.011	52460	HET	34		False																N4BP2L1	NM_001286461.1			downstream_gene_variant				
+23M07372	13:32972865G>A	0.011	52460	HET	34		False																N4BP2L1	NM_052818.2			downstream_gene_variant				
+23M07372	13:32972874G>A	0.012	52464	HET	34		True																BRCA2	NM_000059.3	c.10224G>A	p.Lys3408=	synonymous_variant		27|27		
+23M07372	13:32972874G>A	0.012	52464	HET	34		False																N4BP2L1	NM_001079691.1			downstream_gene_variant				
+23M07372	13:32972874G>A	0.012	52464	HET	34		False																N4BP2L1	NM_001286459.1			downstream_gene_variant				
+23M07372	13:32972874G>A	0.012	52464	HET	34		False																N4BP2L1	NM_001286460.1			downstream_gene_variant				
+23M07372	13:32972874G>A	0.012	52464	HET	34		False																N4BP2L1	NM_001286461.1			downstream_gene_variant				
+23M07372	13:32972874G>A	0.012	52464	HET	34		False																N4BP2L1	NM_052818.2			downstream_gene_variant				
+23M07372	15:39313410G>A	0.023	2836	HET	82		Unknown	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output
+23M07372	15:39313435C>T	0.019	2836	HET	46		Unknown	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output	No VEP output
+23M07372	17:41197757G>A	0.015	8341	HET	49		True																BRCA1	NM_007294.3	c.5530C>T	p.Leu1844Phe	missense_variant		23|23	deleterious(0.01)	probably_damaging(0.914)
+23M07372	17:41197757G>A	0.015	8341	HET	49		False																BRCA1	NM_007297.3	c.5389C>T	p.Leu1797Phe	missense_variant		22|22	deleterious(0.01)	probably_damaging(0.914)
+23M07372	17:41197757G>A	0.015	8341	HET	49		False																BRCA1	NM_007298.3	c.2218C>T	p.Leu740Phe	missense_variant		22|22	deleterious(0.02)	probably_damaging(0.959)
+23M07372	17:41197757G>A	0.015	8341	HET	49		False																BRCA1	NM_007299.3	c.*44C>T		3_prime_UTR_variant		22|22		
+23M07372	17:41197757G>A	0.015	8341	HET	49		False																BRCA1	NM_007300.3	c.5593C>T	p.Leu1865Phe	missense_variant		24|24	deleterious(0.01)	probably_damaging(0.971)
+23M07372	17:41199703C>T	0.028	1298	HET	69		True																BRCA1	NM_007294.3	c.5424G>A	p.Val1808=	synonymous_variant		22|23		
+23M07372	17:41199703C>T	0.028	1298	HET	69		False																BRCA1	NM_007297.3	c.5283G>A	p.Val1761=	synonymous_variant		21|22		
+23M07372	17:41199703C>T	0.028	1298	HET	69		False																BRCA1	NM_007298.3	c.2112G>A	p.Val704=	synonymous_variant		21|22		
+23M07372	17:41199703C>T	0.028	1298	HET	69		False																BRCA1	NM_007299.3	c.2038G>A	p.Gly680Ser	missense_variant		21|22	deleterious_low_confidence(0)	benign(0.033)
+23M07372	17:41199703C>T	0.028	1298	HET	69		False																BRCA1	NM_007300.3	c.5487G>A	p.Val1829=	synonymous_variant		23|24		
+23M07372	17:41201139G>A	0.018	3376	HET	51		True																BRCA1	NM_007294.3	c.5405C>T	p.Thr1802Ile	missense_variant&splice_region_variant		21|23	deleterious(0.01)	benign(0.057)
+23M07372	17:41201139G>A	0.018	3376	HET	51		False																BRCA1	NM_007297.3	c.5264C>T	p.Thr1755Ile	missense_variant&splice_region_variant		20|22	deleterious(0.01)	benign(0.057)
+23M07372	17:41201139G>A	0.018	3376	HET	51		False																BRCA1	NM_007298.3	c.2093C>T	p.Thr698Ile	missense_variant&splice_region_variant		20|22	tolerated(0.13)	benign(0.01)
+23M07372	17:41201139G>A	0.018	3376	HET	51		False																BRCA1	NM_007299.3	c.2021-1419C>T		intron_variant	20|21			
+23M07372	17:41201139G>A	0.018	3376	HET	51		False																BRCA1	NM_007300.3	c.5468C>T	p.Thr1823Ile	missense_variant&splice_region_variant		22|24	deleterious(0.01)	benign(0.435)
+23M07372	17:41209136C>T	0.014	8969	HET	41		True																BRCA1	NM_007294.3	c.5210G>A	p.Arg1737Lys	missense_variant		19|23	tolerated(0.1)	benign(0.026)
+23M07372	17:41209136C>T	0.014	8969	HET	41		False																BRCA1	NM_007297.3	c.5069G>A	p.Arg1690Lys	missense_variant		18|22	tolerated(0.1)	benign(0.026)
+23M07372	17:41209136C>T	0.014	8969	HET	41		False																BRCA1	NM_007298.3	c.1898G>A	p.Arg633Lys	missense_variant		18|22	tolerated(0.28)	benign(0.019)
+23M07372	17:41209136C>T	0.014	8969	HET	41		False																BRCA1	NM_007299.3	c.1898G>A	p.Arg633Lys	missense_variant		19|22	tolerated(0.23)	benign(0.007)
+23M07372	17:41209136C>T	0.014	8969	HET	41		False																BRCA1	NM_007300.3	c.5273G>A	p.Arg1758Lys	missense_variant		20|24	tolerated(0.1)	benign(0.348)
+23M07372	17:41219780T>C	0.087	4608	HET	99		True	rs8176234															BRCA1	NM_007294.3	c.4987-68A>G		intron_variant	15|22			
+23M07372	17:41219780T>C	0.087	4608	HET	99		False	rs8176234															BRCA1	NM_007297.3	c.4846-68A>G		intron_variant	14|21			
+23M07372	17:41219780T>C	0.087	4608	HET	99		False	rs8176234															BRCA1	NM_007298.3	c.1675-68A>G		intron_variant	14|21			
+23M07372	17:41219780T>C	0.087	4608	HET	99		False	rs8176234															BRCA1	NM_007299.3	c.1675-68A>G		intron_variant	15|21			
+23M07372	17:41219780T>C	0.087	4608	HET	99		False	rs8176234															BRCA1	NM_007300.3	c.5050-68A>G		intron_variant	16|23			
+23M07372	17:41219800C>T	0.017	4609	HET	52		True																BRCA1	NM_007294.3	c.4987-88G>A		intron_variant	15|22			
+23M07372	17:41219800C>T	0.017	4609	HET	52		False																BRCA1	NM_007297.3	c.4846-88G>A		intron_variant	14|21			
+23M07372	17:41219800C>T	0.017	4609	HET	52		False																BRCA1	NM_007298.3	c.1675-88G>A		intron_variant	14|21			
+23M07372	17:41219800C>T	0.017	4609	HET	52		False																BRCA1	NM_007299.3	c.1675-88G>A		intron_variant	15|21			
+23M07372	17:41219800C>T	0.017	4609	HET	52		False																BRCA1	NM_007300.3	c.5050-88G>A		intron_variant	16|23			
+23M07372	17:41219804T>C	0.087	4608	HET	99		True	rs8176233															BRCA1	NM_007294.3	c.4987-92A>G		intron_variant	15|22			
+23M07372	17:41219804T>C	0.087	4608	HET	99		False	rs8176233															BRCA1	NM_007297.3	c.4846-92A>G		intron_variant	14|21			
+23M07372	17:41219804T>C	0.087	4608	HET	99		False	rs8176233															BRCA1	NM_007298.3	c.1675-92A>G		intron_variant	14|21			
+23M07372	17:41219804T>C	0.087	4608	HET	99		False	rs8176233															BRCA1	NM_007299.3	c.1675-92A>G		intron_variant	15|21			
+23M07372	17:41219804T>C	0.087	4608	HET	99		False	rs8176233															BRCA1	NM_007300.3	c.5050-92A>G		intron_variant	16|23			
+23M07372	17:41223094T>C	0.095	14867	HET	99	1	True	rs1799966	COSM3755560	CM053798													BRCA1	NM_007294.3	c.4837A>G	p.Ser1613Gly	missense_variant		15|23	tolerated(0.11)	benign(0.038)
+23M07372	17:41223094T>C	0.095	14867	HET	99	1	False	rs1799966	COSM3755560	CM053798													BRCA1	NM_007297.3	c.4696A>G	p.Ser1566Gly	missense_variant		14|22	tolerated(0.11)	benign(0.038)
+23M07372	17:41223094T>C	0.095	14867	HET	99	1	False	rs1799966	COSM3755560	CM053798													BRCA1	NM_007298.3	c.1525A>G	p.Ser509Gly	missense_variant		14|22	tolerated(0.1)	benign(0.024)
+23M07372	17:41223094T>C	0.095	14867	HET	99	1	False	rs1799966	COSM3755560	CM053798													BRCA1	NM_007299.3	c.1525A>G	p.Ser509Gly	missense_variant		15|22	tolerated(0.12)	benign(0.003)
+23M07372	17:41223094T>C	0.095	14867	HET	99	1	False	rs1799966	COSM3755560	CM053798													BRCA1	NM_007300.3	c.4900A>G	p.Ser1634Gly	missense_variant		16|24	tolerated(0.12)	benign(0.065)
+23M07372	17:41226444C>T	0.013	21251	HET	36		True	rs80357237															BRCA1	NM_007294.3	c.4579G>A	p.Glu1527Lys	missense_variant		14|23	deleterious(0.03)	benign(0.006)
+23M07372	17:41226444C>T	0.013	21251	HET	36		False	rs80357237															BRCA1	NM_007297.3	c.4438G>A	p.Glu1480Lys	missense_variant		13|22	deleterious(0.03)	benign(0.006)
+23M07372	17:41226444C>T	0.013	21251	HET	36		False	rs80357237															BRCA1	NM_007298.3	c.1267G>A	p.Glu423Lys	missense_variant		13|22	tolerated(0.19)	benign(0.029)
+23M07372	17:41226444C>T	0.013	21251	HET	36		False	rs80357237															BRCA1	NM_007299.3	c.1267G>A	p.Glu423Lys	missense_variant		14|22	tolerated(0.1)	benign(0.196)
+23M07372	17:41226444C>T	0.013	21251	HET	36		False	rs80357237															BRCA1	NM_007300.3	c.4642G>A	p.Glu1548Lys	missense_variant		15|24	deleterious(0.02)	benign(0.003)
+23M07372	17:41231516C>T	0.075	4026	HET	99		True	rs8176193															BRCA1	NM_007294.3	c.4358-2885G>A		intron_variant	12|22			
+23M07372	17:41231516C>T	0.075	4026	HET	99		False	rs8176193															BRCA1	NM_007297.3	c.4217-2885G>A		intron_variant	11|21			
+23M07372	17:41231516C>T	0.075	4026	HET	99		False	rs8176193															BRCA1	NM_007298.3	c.1049-2888G>A		intron_variant	11|21			
+23M07372	17:41231516C>T	0.075	4026	HET	99		False	rs8176193															BRCA1	NM_007299.3	c.1049-2888G>A		intron_variant	12|21			
+23M07372	17:41231516C>T	0.075	4026	HET	99		False	rs8176193															BRCA1	NM_007300.3	c.4358-100G>A		intron_variant	12|23			
+23M07372	17:41234470A>G	0.071	29255	HET	99	1	True	rs1060915	COSM4416375														BRCA1	NM_007294.3	c.4308T>C	p.Ser1436=	synonymous_variant		12|23		
+23M07372	17:41234470A>G	0.071	29255	HET	99	1	False	rs1060915	COSM4416375														BRCA1	NM_007297.3	c.4167T>C	p.Ser1389=	synonymous_variant		11|22		
+23M07372	17:41234470A>G	0.071	29255	HET	99	1	False	rs1060915	COSM4416375														BRCA1	NM_007298.3	c.999T>C	p.Ser333=	synonymous_variant		11|22		
+23M07372	17:41234470A>G	0.071	29255	HET	99	1	False	rs1060915	COSM4416375														BRCA1	NM_007299.3	c.999T>C	p.Ser333=	synonymous_variant		12|22		
+23M07372	17:41234470A>G	0.071	29255	HET	99	1	False	rs1060915	COSM4416375														BRCA1	NM_007300.3	c.4308T>C	p.Ser1436=	synonymous_variant		12|24		
+23M07372	17:41242938GCA>G	0.054	1177	HET	99		True	rs1359324936															BRCA1	NM_007294.3	c.4185+21_4185+22del		intron_variant	11|22			
+23M07372	17:41242938GCA>G	0.054	1177	HET	99		False	rs1359324936															BRCA1	NM_007297.3	c.4044+21_4044+22del		intron_variant	10|21			
+23M07372	17:41242938GCA>G	0.054	1177	HET	99		False	rs1359324936															BRCA1	NM_007298.3	c.876+21_876+22del		intron_variant	10|21			
+23M07372	17:41242938GCA>G	0.054	1177	HET	99		False	rs1359324936															BRCA1	NM_007299.3	c.876+21_876+22del		intron_variant	11|21			
+23M07372	17:41242938GCA>G	0.054	1177	HET	99		False	rs1359324936															BRCA1	NM_007300.3	c.4185+21_4185+22del		intron_variant	11|23			
+23M07372	17:41243059C>T	0.016	6174	HET	49		True	rs80358057															BRCA1	NM_007294.3	c.4097-10G>A		intron_variant	10|22			
+23M07372	17:41243059C>T	0.016	6174	HET	49		False	rs80358057															BRCA1	NM_007297.3	c.3956-10G>A		intron_variant	9|21			
+23M07372	17:41243059C>T	0.016	6174	HET	49		False	rs80358057															BRCA1	NM_007298.3	c.788-10G>A		intron_variant	9|21			
+23M07372	17:41243059C>T	0.016	6174	HET	49		False	rs80358057															BRCA1	NM_007299.3	c.788-10G>A		intron_variant	10|21			
+23M07372	17:41243059C>T	0.016	6174	HET	49		False	rs80358057															BRCA1	NM_007300.3	c.4097-10G>A		intron_variant	10|23			
+23M07372	17:41244000T>C	0.102	2607	HET	99	1	True	rs16942	COSM148277	CM058359													BRCA1	NM_007294.3	c.3548A>G	p.Lys1183Arg	missense_variant		10|23	tolerated(1)	benign(0)
+23M07372	17:41244000T>C	0.102	2607	HET	99	1	False	rs16942	COSM148277	CM058359													BRCA1	NM_007297.3	c.3407A>G	p.Lys1136Arg	missense_variant		9|22	tolerated(1)	benign(0)
+23M07372	17:41244000T>C	0.102	2607	HET	99	1	False	rs16942	COSM148277	CM058359													BRCA1	NM_007298.3	c.788-951A>G		intron_variant	9|21			
+23M07372	17:41244000T>C	0.102	2607	HET	99	1	False	rs16942	COSM148277	CM058359													BRCA1	NM_007299.3	c.788-951A>G		intron_variant	10|21			
+23M07372	17:41244000T>C	0.102	2607	HET	99	1	False	rs16942	COSM148277	CM058359													BRCA1	NM_007300.3	c.3548A>G	p.Lys1183Arg	missense_variant		10|24	tolerated(1)	benign(0)
+23M07372	17:41244246C>T	0.021	1685	HET	45		True	rs41293447															BRCA1	NM_007294.3	c.3302G>A	p.Ser1101Asn	missense_variant		10|23	tolerated(0.2)	benign(0.263)
+23M07372	17:41244246C>T	0.021	1685	HET	45		False	rs41293447															BRCA1	NM_007297.3	c.3161G>A	p.Ser1054Asn	missense_variant		9|22	tolerated(0.2)	benign(0.263)
+23M07372	17:41244246C>T	0.021	1685	HET	45		False	rs41293447															BRCA1	NM_007298.3	c.788-1197G>A		intron_variant	9|21			
+23M07372	17:41244246C>T	0.021	1685	HET	45		False	rs41293447															BRCA1	NM_007299.3	c.788-1197G>A		intron_variant	10|21			
+23M07372	17:41244246C>T	0.021	1685	HET	45		False	rs41293447															BRCA1	NM_007300.3	c.3302G>A	p.Ser1101Asn	missense_variant		10|24	tolerated(0.14)	benign(0.062)
+23M07372	17:41244435T>C	0.09	6653	HET	99	1	True	rs16941	COSM3755563	CM032861													BRCA1	NM_007294.3	c.3113A>G	p.Glu1038Gly	missense_variant		10|23	tolerated(0.16)	possibly_damaging(0.606)
+23M07372	17:41244435T>C	0.09	6653	HET	99	1	False	rs16941	COSM3755563	CM032861													BRCA1	NM_007297.3	c.2972A>G	p.Glu991Gly	missense_variant		9|22	tolerated(0.15)	possibly_damaging(0.606)
+23M07372	17:41244435T>C	0.09	6653	HET	99	1	False	rs16941	COSM3755563	CM032861													BRCA1	NM_007298.3	c.788-1386A>G		intron_variant	9|21			
+23M07372	17:41244435T>C	0.09	6653	HET	99	1	False	rs16941	COSM3755563	CM032861													BRCA1	NM_007299.3	c.788-1386A>G		intron_variant	10|21			
+23M07372	17:41244435T>C	0.09	6653	HET	99	1	False	rs16941	COSM3755563	CM032861													BRCA1	NM_007300.3	c.3113A>G	p.Glu1038Gly	missense_variant		10|24	tolerated(0.17)	benign(0.003)
+23M07372	17:41244936G>A	0.098	397	HET	99	1	True	rs799917	COSM148278	CM096315													BRCA1	NM_007294.3	c.2612C>T	p.Pro871Leu	missense_variant		10|23	tolerated(1)	benign(0)
+23M07372	17:41244936G>A	0.098	397	HET	99	1	False	rs799917	COSM148278	CM096315													BRCA1	NM_007297.3	c.2471C>T	p.Pro824Leu	missense_variant		9|22	tolerated(1)	benign(0)
+23M07372	17:41244936G>A	0.098	397	HET	99	1	False	rs799917	COSM148278	CM096315													BRCA1	NM_007298.3	c.787+1825C>T		intron_variant	9|21			
+23M07372	17:41244936G>A	0.098	397	HET	99	1	False	rs799917	COSM148278	CM096315													BRCA1	NM_007299.3	c.787+1825C>T		intron_variant	10|21			
+23M07372	17:41244936G>A	0.098	397	HET	99	1	False	rs799917	COSM148278	CM096315													BRCA1	NM_007300.3	c.2612C>T	p.Pro871Leu	missense_variant		10|24	tolerated(1)	benign(0)
+23M07372	17:41245048C>T	0.02	1435	HET	30		True																BRCA1	NM_007294.3	c.2500G>A	p.Gly834Arg	missense_variant		10|23	tolerated(1)	benign(0.001)
+23M07372	17:41245048C>T	0.02	1435	HET	30		False																BRCA1	NM_007297.3	c.2359G>A	p.Gly787Arg	missense_variant		9|22	tolerated(1)	benign(0.001)
+23M07372	17:41245048C>T	0.02	1435	HET	30		False																BRCA1	NM_007298.3	c.787+1713G>A		intron_variant	9|21			
+23M07372	17:41245048C>T	0.02	1435	HET	30		False																BRCA1	NM_007299.3	c.787+1713G>A		intron_variant	10|21			
+23M07372	17:41245048C>T	0.02	1435	HET	30		False																BRCA1	NM_007300.3	c.2500G>A	p.Gly834Arg	missense_variant		10|24	tolerated(1)	benign(0.005)
+23M07372	17:41245080C>T	0.015	8810	HET	46		True	rs876659731	COSM4666018,COSM4666019														BRCA1	NM_007294.3	c.2468G>A	p.Arg823Lys	missense_variant		10|23	tolerated(0.44)	benign(0.074)
+23M07372	17:41245080C>T	0.015	8810	HET	46		False	rs876659731	COSM4666018,COSM4666019														BRCA1	NM_007297.3	c.2327G>A	p.Arg776Lys	missense_variant		9|22	tolerated(0.45)	benign(0.074)
+23M07372	17:41245080C>T	0.015	8810	HET	46		False	rs876659731	COSM4666018,COSM4666019														BRCA1	NM_007298.3	c.787+1681G>A		intron_variant	9|21			
+23M07372	17:41245080C>T	0.015	8810	HET	46		False	rs876659731	COSM4666018,COSM4666019														BRCA1	NM_007299.3	c.787+1681G>A		intron_variant	10|21			
+23M07372	17:41245080C>T	0.015	8810	HET	46		False	rs876659731	COSM4666018,COSM4666019														BRCA1	NM_007300.3	c.2468G>A	p.Arg823Lys	missense_variant		10|24	tolerated(0.36)	benign(0.043)
+23M07372	17:41245237A>G	0.09	608	HET	99	1	True	rs16940	COSM3755566														BRCA1	NM_007294.3	c.2311T>C	p.Leu771=	synonymous_variant		10|23		
+23M07372	17:41245237A>G	0.09	608	HET	99	1	False	rs16940	COSM3755566														BRCA1	NM_007297.3	c.2170T>C	p.Leu724=	synonymous_variant		9|22		
+23M07372	17:41245237A>G	0.09	608	HET	99	1	False	rs16940	COSM3755566														BRCA1	NM_007298.3	c.787+1524T>C		intron_variant	9|21			
+23M07372	17:41245237A>G	0.09	608	HET	99	1	False	rs16940	COSM3755566														BRCA1	NM_007299.3	c.787+1524T>C		intron_variant	10|21			
+23M07372	17:41245237A>G	0.09	608	HET	99	1	False	rs16940	COSM3755566														BRCA1	NM_007300.3	c.2311T>C	p.Leu771=	synonymous_variant		10|24		
+23M07372	17:41245285C>T	0.02	1227	HET	30		True	rs41286296		CM970169													BRCA1	NM_007294.3	c.2263G>A	p.Glu755Lys	missense_variant		10|23	tolerated(0.69)	possibly_damaging(0.686)
+23M07372	17:41245285C>T	0.02	1227	HET	30		False	rs41286296		CM970169													BRCA1	NM_007297.3	c.2122G>A	p.Glu708Lys	missense_variant		9|22	tolerated(0.68)	possibly_damaging(0.686)
+23M07372	17:41245285C>T	0.02	1227	HET	30		False	rs41286296		CM970169													BRCA1	NM_007298.3	c.787+1476G>A		intron_variant	9|21			
+23M07372	17:41245285C>T	0.02	1227	HET	30		False	rs41286296		CM970169													BRCA1	NM_007299.3	c.787+1476G>A		intron_variant	10|21			
+23M07372	17:41245285C>T	0.02	1227	HET	30		False	rs41286296		CM970169													BRCA1	NM_007300.3	c.2263G>A	p.Glu755Lys	missense_variant		10|24	tolerated(0.57)	possibly_damaging(0.452)
+23M07372	17:41245466G>A	0.082	487	HET	99	1	True	rs1799949	COSM148280														BRCA1	NM_007294.3	c.2082C>T	p.Ser694=	synonymous_variant		10|23		
+23M07372	17:41245466G>A	0.082	487	HET	99	1	False	rs1799949	COSM148280														BRCA1	NM_007297.3	c.1941C>T	p.Ser647=	synonymous_variant		9|22		
+23M07372	17:41245466G>A	0.082	487	HET	99	1	False	rs1799949	COSM148280														BRCA1	NM_007298.3	c.787+1295C>T		intron_variant	9|21			
+23M07372	17:41245466G>A	0.082	487	HET	99	1	False	rs1799949	COSM148280														BRCA1	NM_007299.3	c.787+1295C>T		intron_variant	10|21			
+23M07372	17:41245466G>A	0.082	487	HET	99	1	False	rs1799949	COSM148280														BRCA1	NM_007300.3	c.2082C>T	p.Ser694=	synonymous_variant		10|24		
+23M07372	17:41245516CTCCAGTTGCAGGTTCTTTACCT>C	0.047	912	HET	99		True																BRCA1	NM_007294.3	c.2010_2031del	p.Gly671ProfsTer23	frameshift_variant		10|23		
+23M07372	17:41245516CTCCAGTTGCAGGTTCTTTACCT>C	0.047	912	HET	99		False																BRCA1	NM_007297.3	c.1869_1890del	p.Gly624ProfsTer23	frameshift_variant		9|22		
+23M07372	17:41245516CTCCAGTTGCAGGTTCTTTACCT>C	0.047	912	HET	99		False																BRCA1	NM_007298.3	c.787+1223_787+1244del		intron_variant	9|21			
+23M07372	17:41245516CTCCAGTTGCAGGTTCTTTACCT>C	0.047	912	HET	99		False																BRCA1	NM_007299.3	c.787+1223_787+1244del		intron_variant	10|21			
+23M07372	17:41245516CTCCAGTTGCAGGTTCTTTACCT>C	0.047	912	HET	99		False																BRCA1	NM_007300.3	c.2010_2031del	p.Gly671ProfsTer23	frameshift_variant		10|24		
+23M07372	17:41245519CAGTTGCAGGTTCTTTACCTTCCATG>C	0.045	911	HET	99		True																BRCA1	NM_007294.3	c.2004_2028del	p.Met669GlufsTer24	frameshift_variant		10|23		
+23M07372	17:41245519CAGTTGCAGGTTCTTTACCTTCCATG>C	0.045	911	HET	99		False																BRCA1	NM_007297.3	c.1863_1887del	p.Met622GlufsTer24	frameshift_variant		9|22		
+23M07372	17:41245519CAGTTGCAGGTTCTTTACCTTCCATG>C	0.045	911	HET	99		False																BRCA1	NM_007298.3	c.787+1217_787+1241del		intron_variant	9|21			
+23M07372	17:41245519CAGTTGCAGGTTCTTTACCTTCCATG>C	0.045	911	HET	99		False																BRCA1	NM_007299.3	c.787+1217_787+1241del		intron_variant	10|21			
+23M07372	17:41245519CAGTTGCAGGTTCTTTACCTTCCATG>C	0.045	911	HET	99		False																BRCA1	NM_007300.3	c.2004_2028del	p.Met669GlufsTer24	frameshift_variant		10|24		
+23M07372	17:41245525CAGGTTCTTTACCTTCCATGAGTTGT>C	0.023	913	HET	33		True																BRCA1	NM_007294.3	c.1998_2022del	p.Met669GlufsTer24	frameshift_variant		10|23		
+23M07372	17:41245525CAGGTTCTTTACCTTCCATGAGTTGT>C	0.023	913	HET	33		False																BRCA1	NM_007297.3	c.1857_1881del	p.Met622GlufsTer24	frameshift_variant		9|22		
+23M07372	17:41245525CAGGTTCTTTACCTTCCATGAGTTGT>C	0.023	913	HET	33		False																BRCA1	NM_007298.3	c.787+1211_787+1235del		intron_variant	9|21			
+23M07372	17:41245525CAGGTTCTTTACCTTCCATGAGTTGT>C	0.023	913	HET	33		False																BRCA1	NM_007299.3	c.787+1211_787+1235del		intron_variant	10|21			
+23M07372	17:41245525CAGGTTCTTTACCTTCCATGAGTTGT>C	0.023	913	HET	33		False																BRCA1	NM_007300.3	c.1998_2022del	p.Met669GlufsTer24	frameshift_variant		10|24		
+23M07372	17:41245586C>CT	0.766	4186	HET	99		True	rs80357853															BRCA1	NM_007294.3	c.1961dup	p.Tyr655ValfsTer18	frameshift_variant		10|23		
+23M07372	17:41245586C>CT	0.766	4186	HET	99		False	rs80357853															BRCA1	NM_007297.3	c.1820dup	p.Tyr608ValfsTer18	frameshift_variant		9|22		
+23M07372	17:41245586C>CT	0.766	4186	HET	99		False	rs80357853															BRCA1	NM_007298.3	c.787+1174dup		intron_variant	9|21			
+23M07372	17:41245586C>CT	0.766	4186	HET	99		False	rs80357853															BRCA1	NM_007299.3	c.787+1174dup		intron_variant	10|21			
+23M07372	17:41245586C>CT	0.766	4186	HET	99		False	rs80357853															BRCA1	NM_007300.3	c.1961dup	p.Tyr655ValfsTer18	frameshift_variant		10|24		
+23M07372	17:41246223C>T	0.017	5617	HET	54		True	rs1285425507															BRCA1	NM_007294.3	c.1325G>A	p.Cys442Tyr	missense_variant		10|23	tolerated(0.16)	benign(0.3)
+23M07372	17:41246223C>T	0.017	5617	HET	54		False	rs1285425507															BRCA1	NM_007297.3	c.1184G>A	p.Cys395Tyr	missense_variant		9|22	tolerated(0.18)	benign(0.3)
+23M07372	17:41246223C>T	0.017	5617	HET	54		False	rs1285425507															BRCA1	NM_007298.3	c.787+538G>A		intron_variant	9|21			
+23M07372	17:41246223C>T	0.017	5617	HET	54		False	rs1285425507															BRCA1	NM_007299.3	c.787+538G>A		intron_variant	10|21			
+23M07372	17:41246223C>T	0.017	5617	HET	54		False	rs1285425507															BRCA1	NM_007300.3	c.1325G>A	p.Cys442Tyr	missense_variant		10|24	tolerated(0.21)	benign(0.132)
+23M07372	17:41246396C>T	0.015	5115	HET	33		True	rs1057523704															BRCA1	NM_007294.3	c.1152G>A	p.Glu384=	synonymous_variant		10|23		
+23M07372	17:41246396C>T	0.015	5115	HET	33		False	rs1057523704															BRCA1	NM_007297.3	c.1011G>A	p.Glu337=	synonymous_variant		9|22		
+23M07372	17:41246396C>T	0.015	5115	HET	33		False	rs1057523704															BRCA1	NM_007298.3	c.787+365G>A		intron_variant	9|21			
+23M07372	17:41246396C>T	0.015	5115	HET	33		False	rs1057523704															BRCA1	NM_007299.3	c.787+365G>A		intron_variant	10|21			
+23M07372	17:41246396C>T	0.015	5115	HET	33		False	rs1057523704															BRCA1	NM_007300.3	c.1152G>A	p.Glu384=	synonymous_variant		10|24		
+23M07372	17:41246539C>T	0.017	6969	HET	64		True																BRCA1	NM_007294.3	c.1009G>A	p.Glu337Lys	missense_variant		10|23	deleterious(0.01)	possibly_damaging(0.742)
+23M07372	17:41246539C>T	0.017	6969	HET	64		False																BRCA1	NM_007297.3	c.868G>A	p.Glu290Lys	missense_variant		9|22	deleterious(0.02)	possibly_damaging(0.742)
+23M07372	17:41246539C>T	0.017	6969	HET	64		False																BRCA1	NM_007298.3	c.787+222G>A		intron_variant	9|21			
+23M07372	17:41246539C>T	0.017	6969	HET	64		False																BRCA1	NM_007299.3	c.787+222G>A		intron_variant	10|21			
+23M07372	17:41246539C>T	0.017	6969	HET	64		False																BRCA1	NM_007300.3	c.1009G>A	p.Glu337Lys	missense_variant		10|24	deleterious(0.02)	benign(0.426)
+23M07372	17:41246544C>T	0.015	6969	HET	39		True		COSM5009556,COSM5009557,COSM5913851,COSM5913852														BRCA1	NM_007294.3	c.1004G>A	p.Ser335Asn	missense_variant		10|23	tolerated(0.07)	benign(0.071)
+23M07372	17:41246544C>T	0.015	6969	HET	39		False		COSM5009556,COSM5009557,COSM5913851,COSM5913852														BRCA1	NM_007297.3	c.863G>A	p.Ser288Asn	missense_variant		9|22	tolerated(0.07)	benign(0.071)
+23M07372	17:41246544C>T	0.015	6969	HET	39		False		COSM5009556,COSM5009557,COSM5913851,COSM5913852														BRCA1	NM_007298.3	c.787+217G>A		intron_variant	9|21			
+23M07372	17:41246544C>T	0.015	6969	HET	39		False		COSM5009556,COSM5009557,COSM5913851,COSM5913852														BRCA1	NM_007299.3	c.787+217G>A		intron_variant	10|21			
+23M07372	17:41246544C>T	0.015	6969	HET	39		False		COSM5009556,COSM5009557,COSM5913851,COSM5913852														BRCA1	NM_007300.3	c.1004G>A	p.Ser335Asn	missense_variant		10|24	deleterious(0.05)	benign(0.11)
+23M07372	17:41246548G>A	0.021	4617	HET	99		True		COSM6927489,COSM6927490														BRCA1	NM_007294.3	c.1000C>T	p.Pro334Ser	missense_variant		10|23	tolerated(0.08)	possibly_damaging(0.474)
+23M07372	17:41246548G>A	0.021	4617	HET	99		False		COSM6927489,COSM6927490														BRCA1	NM_007297.3	c.859C>T	p.Pro287Ser	missense_variant		9|22	tolerated(0.08)	possibly_damaging(0.474)
+23M07372	17:41246548G>A	0.021	4617	HET	99		False		COSM6927489,COSM6927490														BRCA1	NM_007298.3	c.787+213C>T		intron_variant	9|21			
+23M07372	17:41246548G>A	0.021	4617	HET	99		False		COSM6927489,COSM6927490														BRCA1	NM_007299.3	c.787+213C>T		intron_variant	10|21			
+23M07372	17:41246548G>A	0.021	4617	HET	99		False		COSM6927489,COSM6927490														BRCA1	NM_007300.3	c.1000C>T	p.Pro334Ser	missense_variant		10|24	tolerated(0.08)	benign(0.275)
+23M07372	17:41246549A>G	0.018	4619	HET	56		True																BRCA1	NM_007294.3	c.999T>C	p.Thr333=	synonymous_variant		10|23		
+23M07372	17:41246549A>G	0.018	4619	HET	56		False																BRCA1	NM_007297.3	c.858T>C	p.Thr286=	synonymous_variant		9|22		
+23M07372	17:41246549A>G	0.018	4619	HET	56		False																BRCA1	NM_007298.3	c.787+212T>C		intron_variant	9|21			
+23M07372	17:41246549A>G	0.018	4619	HET	56		False																BRCA1	NM_007299.3	c.787+212T>C		intron_variant	10|21			
+23M07372	17:41246549A>G	0.018	4619	HET	56		False																BRCA1	NM_007300.3	c.999T>C	p.Thr333=	synonymous_variant		10|24		
+23M07372	17:41246551T>C	0.018	4617	HET	67		True	rs786201634															BRCA1	NM_007294.3	c.997A>G	p.Thr333Ala	missense_variant		10|23	tolerated(0.22)	benign(0.019)
+23M07372	17:41246551T>C	0.018	4617	HET	67		False	rs786201634															BRCA1	NM_007297.3	c.856A>G	p.Thr286Ala	missense_variant		9|22	tolerated(0.22)	benign(0.019)
+23M07372	17:41246551T>C	0.018	4617	HET	67		False	rs786201634															BRCA1	NM_007298.3	c.787+210A>G		intron_variant	9|21			
+23M07372	17:41246551T>C	0.018	4617	HET	67		False	rs786201634															BRCA1	NM_007299.3	c.787+210A>G		intron_variant	10|21			
+23M07372	17:41246551T>C	0.018	4617	HET	67		False	rs786201634															BRCA1	NM_007300.3	c.997A>G	p.Thr333Ala	missense_variant		10|24	tolerated(0.19)	benign(0.023)
+23M07372	17:41246556C>T	0.017	4619	HET	54		True																BRCA1	NM_007294.3	c.992G>A	p.Arg331Lys	missense_variant		10|23	tolerated(0.45)	possibly_damaging(0.78)
+23M07372	17:41246556C>T	0.017	4619	HET	54		False																BRCA1	NM_007297.3	c.851G>A	p.Arg284Lys	missense_variant		9|22	tolerated(0.43)	possibly_damaging(0.78)
+23M07372	17:41246556C>T	0.017	4619	HET	54		False																BRCA1	NM_007298.3	c.787+205G>A		intron_variant	9|21			
+23M07372	17:41246556C>T	0.017	4619	HET	54		False																BRCA1	NM_007299.3	c.787+205G>A		intron_variant	10|21			
+23M07372	17:41246556C>T	0.017	4619	HET	54		False																BRCA1	NM_007300.3	c.992G>A	p.Arg331Lys	missense_variant		10|24	tolerated(0.38)	possibly_damaging(0.805)
+23M07372	17:41246573C>T	0.018	4620	HET	59		True	rs786201624															BRCA1	NM_007294.3	c.975G>A	p.Lys325=	synonymous_variant		10|23		
+23M07372	17:41246573C>T	0.018	4620	HET	59		False	rs786201624															BRCA1	NM_007297.3	c.834G>A	p.Lys278=	synonymous_variant		9|22		
+23M07372	17:41246573C>T	0.018	4620	HET	59		False	rs786201624															BRCA1	NM_007298.3	c.787+188G>A		intron_variant	9|21			
+23M07372	17:41246573C>T	0.018	4620	HET	59		False	rs786201624															BRCA1	NM_007299.3	c.787+188G>A		intron_variant	10|21			
+23M07372	17:41246573C>T	0.018	4620	HET	59		False	rs786201624															BRCA1	NM_007300.3	c.975G>A	p.Lys325=	synonymous_variant		10|24		
+23M07372	17:41246577C>T	0.02	4619	HET	84		True	rs1462728426															BRCA1	NM_007294.3	c.971G>A	p.Ser324Asn	missense_variant		10|23	tolerated(0.2)	possibly_damaging(0.677)
+23M07372	17:41246577C>T	0.02	4619	HET	84		False	rs1462728426															BRCA1	NM_007297.3	c.830G>A	p.Ser277Asn	missense_variant		9|22	tolerated(0.18)	possibly_damaging(0.677)
+23M07372	17:41246577C>T	0.02	4619	HET	84		False	rs1462728426															BRCA1	NM_007298.3	c.787+184G>A		intron_variant	9|21			
+23M07372	17:41246577C>T	0.02	4619	HET	84		False	rs1462728426															BRCA1	NM_007299.3	c.787+184G>A		intron_variant	10|21			
+23M07372	17:41246577C>T	0.02	4619	HET	84		False	rs1462728426															BRCA1	NM_007300.3	c.971G>A	p.Ser324Asn	missense_variant		10|24	tolerated(0.2)	benign(0.359)
+23M07372	17:41246579T>C	0.016	4620	HET	42		True																BRCA1	NM_007294.3	c.969A>G	p.Gly323=	synonymous_variant		10|23		
+23M07372	17:41246579T>C	0.016	4620	HET	42		False																BRCA1	NM_007297.3	c.828A>G	p.Gly276=	synonymous_variant		9|22		
+23M07372	17:41246579T>C	0.016	4620	HET	42		False																BRCA1	NM_007298.3	c.787+182A>G		intron_variant	9|21			
+23M07372	17:41246579T>C	0.016	4620	HET	42		False																BRCA1	NM_007299.3	c.787+182A>G		intron_variant	10|21			
+23M07372	17:41246579T>C	0.016	4620	HET	42		False																BRCA1	NM_007300.3	c.969A>G	p.Gly323=	synonymous_variant		10|24		
+23M07372	17:41246582A>G	0.016	4617	HET	36		True																BRCA1	NM_007294.3	c.966T>C	p.Ala322=	synonymous_variant		10|23		
+23M07372	17:41246582A>G	0.016	4617	HET	36		False																BRCA1	NM_007297.3	c.825T>C	p.Ala275=	synonymous_variant		9|22		
+23M07372	17:41246582A>G	0.016	4617	HET	36		False																BRCA1	NM_007298.3	c.787+179T>C		intron_variant	9|21			
+23M07372	17:41246582A>G	0.016	4617	HET	36		False																BRCA1	NM_007299.3	c.787+179T>C		intron_variant	10|21			
+23M07372	17:41246582A>G	0.016	4617	HET	36		False																BRCA1	NM_007300.3	c.966T>C	p.Ala322=	synonymous_variant		10|24		
+23M07372	17:41246588T>C	0.017	4618	HET	49		True																BRCA1	NM_007294.3	c.960A>G	p.Arg320=	synonymous_variant		10|23		
+23M07372	17:41246588T>C	0.017	4618	HET	49		False																BRCA1	NM_007297.3	c.819A>G	p.Arg273=	synonymous_variant		9|22		
+23M07372	17:41246588T>C	0.017	4618	HET	49		False																BRCA1	NM_007298.3	c.787+173A>G		intron_variant	9|21			
+23M07372	17:41246588T>C	0.017	4618	HET	49		False																BRCA1	NM_007299.3	c.787+173A>G		intron_variant	10|21			
+23M07372	17:41246588T>C	0.017	4618	HET	49		False																BRCA1	NM_007300.3	c.960A>G	p.Arg320=	synonymous_variant		10|24		
+23M07372	17:41246589C>T	0.023	4619	HET	99		True		COSM4858471,COSM706219														BRCA1	NM_007294.3	c.959G>A	p.Arg320Lys	missense_variant		10|23	deleterious(0.02)	probably_damaging(0.991)
+23M07372	17:41246589C>T	0.023	4619	HET	99		False		COSM4858471,COSM706219														BRCA1	NM_007297.3	c.818G>A	p.Arg273Lys	missense_variant		9|22	deleterious(0.02)	probably_damaging(0.991)
+23M07372	17:41246589C>T	0.023	4619	HET	99		False		COSM4858471,COSM706219														BRCA1	NM_007298.3	c.787+172G>A		intron_variant	9|21			
+23M07372	17:41246589C>T	0.023	4619	HET	99		False		COSM4858471,COSM706219														BRCA1	NM_007299.3	c.787+172G>A		intron_variant	10|21			
+23M07372	17:41246589C>T	0.023	4619	HET	99		False		COSM4858471,COSM706219														BRCA1	NM_007300.3	c.959G>A	p.Arg320Lys	missense_variant		10|24	deleterious(0.02)	probably_damaging(0.964)
+23M07372	17:41246604C>T	0.013	24131	HET	50		True																BRCA1	NM_007294.3	c.944G>A	p.Arg315Lys	missense_variant		10|23	tolerated(0.13)	benign(0.049)
+23M07372	17:41246604C>T	0.013	24131	HET	50		False																BRCA1	NM_007297.3	c.803G>A	p.Arg268Lys	missense_variant		9|22	tolerated(0.14)	benign(0.049)
+23M07372	17:41246604C>T	0.013	24131	HET	50		False																BRCA1	NM_007298.3	c.787+157G>A		intron_variant	9|21			
+23M07372	17:41246604C>T	0.013	24131	HET	50		False																BRCA1	NM_007299.3	c.787+157G>A		intron_variant	10|21			
+23M07372	17:41246604C>T	0.013	24131	HET	50		False																BRCA1	NM_007300.3	c.944G>A	p.Arg315Lys	missense_variant		10|24	tolerated(0.13)	benign(0.017)
+23M07372	17:41249286T>G	0.015	35356	HET	99		True																BRCA1	NM_007294.3	c.568A>C	p.Thr190Pro	missense_variant		8|23	tolerated(0.1)	possibly_damaging(0.806)
+23M07372	17:41249286T>G	0.015	35356	HET	99		False																BRCA1	NM_007297.3	c.427A>C	p.Thr143Pro	missense_variant		7|22	tolerated(0.07)	possibly_damaging(0.806)
+23M07372	17:41249286T>G	0.015	35356	HET	99		False																BRCA1	NM_007298.3	c.568A>C	p.Thr190Pro	missense_variant		7|22	tolerated(0.13)	possibly_damaging(0.791)
+23M07372	17:41249286T>G	0.015	35356	HET	99		False																BRCA1	NM_007299.3	c.568A>C	p.Thr190Pro	missense_variant		8|22	tolerated(0.21)	possibly_damaging(0.548)
+23M07372	17:41249286T>G	0.015	35356	HET	99		False																BRCA1	NM_007300.3	c.568A>C	p.Thr190Pro	missense_variant		8|24	deleterious(0.05)	possibly_damaging(0.899)
+23M07372	17:41249363TA>T	0.106	3862	HET	99		True	rs8176144															BRCA1	NM_007294.3	c.548-58del		intron_variant	7|22			
+23M07372	17:41249363TA>T	0.106	3862	HET	99		False	rs8176144															BRCA1	NM_007297.3	c.407-58del		intron_variant	6|21			
+23M07372	17:41249363TA>T	0.106	3862	HET	99		False	rs8176144															BRCA1	NM_007298.3	c.548-58del		intron_variant	6|21			
+23M07372	17:41249363TA>T	0.106	3862	HET	99		False	rs8176144															BRCA1	NM_007299.3	c.548-58del		intron_variant	7|21			
+23M07372	17:41249363TA>T	0.106	3862	HET	99		False	rs8176144															BRCA1	NM_007300.3	c.548-58del		intron_variant	7|23			
+23M07372	17:41256987G>A	0.015	6601	HET	42		True																BRCA1	NM_007294.3	c.213-14C>T		intron_variant	4|22			
+23M07372	17:41256987G>A	0.015	6601	HET	42		False																BRCA1	NM_007297.3	c.72-14C>T		intron_variant	3|21			
+23M07372	17:41256987G>A	0.015	6601	HET	42		False																BRCA1	NM_007298.3	c.213-14C>T		intron_variant	3|21			
+23M07372	17:41256987G>A	0.015	6601	HET	42		False																BRCA1	NM_007299.3	c.213-14C>T		intron_variant	4|21			
+23M07372	17:41256987G>A	0.015	6601	HET	42		False																BRCA1	NM_007300.3	c.213-14C>T		intron_variant	4|23			
+23M07372	17:41276152CAT>C	0.054	166	HET	42		True	rs564961882															BRCA1	NM_007294.3	c.-19-22_-19-21del		intron_variant	1|22			
+23M07372	17:41276152CAT>C	0.054	166	HET	42		False	rs564961882															BRCA1	NM_007297.3	c.-106-22_-106-21del		intron_variant	1|21			
+23M07372	17:41276152CAT>C	0.054	166	HET	42		False	rs564961882															BRCA1	NM_007298.3			upstream_gene_variant				
+23M07372	17:41276152CAT>C	0.054	166	HET	42		False	rs564961882															BRCA1	NM_007299.3	c.-19-22_-19-21del		intron_variant	1|21			
+23M07372	17:41276152CAT>C	0.054	166	HET	42		False	rs564961882															BRCA1	NM_007300.3	c.-19-22_-19-21del		intron_variant	1|23			
+23M07372	X:11315053C>T	0.014	7207	HET	31		False																AMELX	NM_001142.2	c.102+107C>T		intron_variant	3|5			
+23M07372	X:11315053C>T	0.014	7207	HET	31		False																ARHGAP6	NM_001287242.1	c.49-42226G>A		intron_variant	1|12			
+23M07372	X:11315053C>T	0.014	7207	HET	31		False																ARHGAP6	NM_006125.2	c.589-42226G>A		intron_variant	1|10			
+23M07372	X:11315053C>T	0.014	7207	HET	31		False																ARHGAP6	NM_013427.2	c.589-42226G>A		intron_variant	1|12			
+23M07372	X:11315053C>T	0.014	7207	HET	31		False																AMELX	NM_182680.1	c.102+107C>T		intron_variant	3|6			
+23M07372	X:11315053C>T	0.014	7207	HET	31		False																AMELX	NM_182681.1	c.55-1303C>T		intron_variant	2|4			

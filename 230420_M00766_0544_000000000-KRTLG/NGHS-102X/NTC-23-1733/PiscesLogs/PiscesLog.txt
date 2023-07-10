@@ -1,0 +1,512 @@
+4/21/23 4:07 PM 1  ************* Starting **************
+4/21/23 4:07 PM 1  Version:  5.2.9.122.
+4/21/23 4:07 PM 1  Command-line arguments: .
+4/21/23 4:07 PM 1  "--rmxnfilter 5,9,0.05 -b ./230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam -g /data/resources/human/gatk/2.8/b37/ --minvf 0.01 --ssfilter false --minbq 20 --maxvq 100 -c 50 --sbfilter 0.5 --minvq 20 --vqfilter 30 --gvcf false --callmnvs true --maxmnvlength 100 -o .".
+4/21/23 4:07 PM 1  Processing genome '/data/resources/human/gatk/2.8/b37/' with 20 threads.
+4/21/23 4:07 PM 1  Loaded chromosome '1' in 2.0244549 secs.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '1'.
+4/21/23 4:07 PM 1  Totals: 17 reads processed, 0 reads skipped.
+4/21/23 4:07 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '1' in 0.1591284s.
+4/21/23 4:07 PM 1  Unloaded chromosome '1', all jobs complete.
+4/21/23 4:07 PM 1  Loaded chromosome '2' in 1.8205482 secs.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '2'.
+4/21/23 4:07 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:07 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '2' in 0.0393564s.
+4/21/23 4:07 PM 1  Unloaded chromosome '2', all jobs complete.
+4/21/23 4:07 PM 1  Loaded chromosome '3' in 1.4946794 secs.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '3'.
+4/21/23 4:07 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:07 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '3' in 0.0414637s.
+4/21/23 4:07 PM 1  Unloaded chromosome '3', all jobs complete.
+4/21/23 4:07 PM 1  Loaded chromosome '4' in 1.520617 secs.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '4'.
+4/21/23 4:07 PM 1  Totals: 2 reads processed, 0 reads skipped.
+4/21/23 4:07 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '4' in 0.1134466s.
+4/21/23 4:07 PM 1  Unloaded chromosome '4', all jobs complete.
+4/21/23 4:07 PM 1  Loaded chromosome '5' in 1.4007028 secs.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '5'.
+4/21/23 4:07 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:07 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '5' in 0.0399356s.
+4/21/23 4:07 PM 1  Unloaded chromosome '5', all jobs complete.
+4/21/23 4:07 PM 1  Loaded chromosome '6' in 1.2982947 secs.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '6'.
+4/21/23 4:07 PM 1  Totals: 27 reads processed, 0 reads skipped.
+4/21/23 4:07 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '6' in 0.0420499s.
+4/21/23 4:07 PM 1  Unloaded chromosome '6', all jobs complete.
+4/21/23 4:07 PM 1  Loaded chromosome '7' in 1.2088794 secs.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '7'.
+4/21/23 4:07 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:07 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:07 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '7' in 0.036924s.
+4/21/23 4:07 PM 1  Unloaded chromosome '7', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '8' in 1.1301743 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '8'.
+4/21/23 4:08 PM 1  Totals: 3 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '8' in 0.0466811s.
+4/21/23 4:08 PM 1  Unloaded chromosome '8', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '9' in 1.041974 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '9'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '9' in 0.0362466s.
+4/21/23 4:08 PM 1  Unloaded chromosome '9', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '10' in 1.0664592 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '10'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '10' in 0.0319754s.
+4/21/23 4:08 PM 1  Unloaded chromosome '10', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '11' in 1.0574548 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '11'.
+4/21/23 4:08 PM 1  Totals: 4 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '11' in 0.0347554s.
+4/21/23 4:08 PM 1  Unloaded chromosome '11', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '12' in 1.019601 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '12'.
+4/21/23 4:08 PM 1  Totals: 2 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '12' in 0.0342112s.
+4/21/23 4:08 PM 1  Unloaded chromosome '12', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '13' in 0.8636978 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '13'.
+4/21/23 4:08 PM 1  Totals: 504 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '13' in 0.0667115s.
+4/21/23 4:08 PM 1  Unloaded chromosome '13', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '14' in 0.827356 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '14'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '14' in 0.0330327s.
+4/21/23 4:08 PM 1  Unloaded chromosome '14', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '15' in 0.7679183 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '15'.
+4/21/23 4:08 PM 1  Totals: 2 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '15' in 0.0315288s.
+4/21/23 4:08 PM 1  Unloaded chromosome '15', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '16' in 0.7269532 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '16'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '16' in 0.0283405s.
+4/21/23 4:08 PM 1  Unloaded chromosome '16', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '17' in 0.6261356 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '17'.
+4/21/23 4:08 PM 1  Totals: 389 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '17' in 0.0449858s.
+4/21/23 4:08 PM 1  Unloaded chromosome '17', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '18' in 0.6440637 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '18'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '18' in 0.0267885s.
+4/21/23 4:08 PM 1  Unloaded chromosome '18', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '19' in 0.4954999 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '19'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '19' in 0.0243331s.
+4/21/23 4:08 PM 1  Unloaded chromosome '19', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '20' in 0.5626768 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '20'.
+4/21/23 4:08 PM 1  Totals: 2 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '20' in 0.0275507s.
+4/21/23 4:08 PM 1  Unloaded chromosome '20', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '21' in 0.4286438 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '21'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '21' in 0.0221089s.
+4/21/23 4:08 PM 1  Unloaded chromosome '21', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome '22' in 0.4077532 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr '22'.
+4/21/23 4:08 PM 1  Totals: 4 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr '22' in 0.0250247s.
+4/21/23 4:08 PM 1  Unloaded chromosome '22', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'X' in 1.1711329 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'X'.
+4/21/23 4:08 PM 1  Totals: 9 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'X' in 0.0301424s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'X', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'Y' in 0.4758954 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'Y'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'Y' in 0.0200652s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'Y', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'MT' in 0.0273579 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'MT'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'MT' in 0.0126094s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'MT', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000207.1' in 0.0182062 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000207.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000207.1' in 0.0136657s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000207.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000226.1' in 0.0172248 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000226.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000226.1' in 0.0145091s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000226.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000229.1' in 0.0168212 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000229.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000229.1' in 0.0130332s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000229.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000231.1' in 0.0149013 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000231.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000231.1' in 0.0129385s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000231.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000210.1' in 0.0161297 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000210.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000210.1' in 0.0131762s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000210.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000239.1' in 0.0136003 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000239.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000239.1' in 0.0124293s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000239.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000235.1' in 0.0162803 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000235.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000235.1' in 0.0127577s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000235.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000201.1' in 0.0183233 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000201.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000201.1' in 0.0135186s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000201.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000247.1' in 0.018228 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000247.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000247.1' in 0.0126275s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000247.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000245.1' in 0.0157381 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000245.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000245.1' in 0.0130368s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000245.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000197.1' in 0.0145726 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000197.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000197.1' in 0.0125618s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000197.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000203.1' in 0.0130798 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000203.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000203.1' in 0.0133976s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000203.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000246.1' in 0.0199477 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000246.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000246.1' in 0.0127542s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000246.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000249.1' in 0.0170689 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000249.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000249.1' in 0.0122354s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000249.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000196.1' in 0.0190267 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000196.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000196.1' in 0.0126378s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000196.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000248.1' in 0.0185268 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000248.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000248.1' in 0.0120646s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000248.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000244.1' in 0.0188825 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000244.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000244.1' in 0.0125013s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000244.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000238.1' in 0.0204198 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000238.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000238.1' in 0.0126713s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000238.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000202.1' in 0.0176729 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000202.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000202.1' in 0.012421s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000202.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000234.1' in 0.0172779 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000234.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000234.1' in 0.0134053s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000234.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000232.1' in 0.0150968 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000232.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000232.1' in 0.0122725s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000232.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000206.1' in 0.0137754 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000206.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000206.1' in 0.0123293s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000206.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000240.1' in 0.0133303 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000240.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000240.1' in 0.0128802s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000240.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000236.1' in 0.0164624 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000236.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000236.1' in 0.0118908s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000236.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000241.1' in 0.015502 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000241.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000241.1' in 0.0140138s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000241.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000243.1' in 0.0180401 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000243.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000243.1' in 0.0123464s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000243.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000242.1' in 0.0220008 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000242.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000242.1' in 0.0123709s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000242.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000230.1' in 0.0172206 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000230.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000230.1' in 0.0129221s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000230.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000237.1' in 0.0189169 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000237.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000237.1' in 0.0126377s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000237.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000233.1' in 0.0193516 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000233.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000233.1' in 0.0121278s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000233.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000204.1' in 0.018496 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000204.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000204.1' in 0.0121869s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000204.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000198.1' in 0.0212696 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000198.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000198.1' in 0.0121516s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000198.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000208.1' in 0.0169093 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000208.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000208.1' in 0.0180558s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000208.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000191.1' in 0.0188027 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000191.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000191.1' in 0.0129163s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000191.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000227.1' in 0.0198122 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000227.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000227.1' in 0.0111491s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000227.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000228.1' in 0.0219125 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000228.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000228.1' in 0.0106993s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000228.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000214.1' in 0.0173713 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000214.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000214.1' in 0.0144683s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000214.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000221.1' in 0.0184162 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000221.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000221.1' in 0.0192679s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000221.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000209.1' in 0.0222737 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000209.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000209.1' in 0.017992s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000209.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000218.1' in 0.0162311 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000218.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000218.1' in 0.0192797s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000218.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000220.1' in 0.0165291 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000220.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000220.1' in 0.0170613s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000220.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000213.1' in 0.0161777 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000213.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000213.1' in 0.0112731s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000213.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000211.1' in 0.0141842 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000211.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000211.1' in 0.01085s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000211.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000199.1' in 0.0141331 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000199.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000199.1' in 0.0118117s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000199.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000217.1' in 0.0138417 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000217.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000217.1' in 0.0110948s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000217.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000216.1' in 0.013597 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000216.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000216.1' in 0.0112427s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000216.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000215.1' in 0.0143649 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000215.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000215.1' in 0.0247129s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000215.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000205.1' in 0.0135351 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000205.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000205.1' in 0.015965s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000205.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000219.1' in 0.0138536 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000219.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000219.1' in 0.0158777s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000219.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000224.1' in 0.0118694 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000224.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000224.1' in 0.011763s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000224.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000223.1' in 0.0137571 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000223.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000223.1' in 0.0119956s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000223.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000195.1' in 0.0129179 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000195.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000195.1' in 0.0111843s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000195.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000212.1' in 0.0099241 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000212.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000212.1' in 0.0117698s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000212.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000222.1' in 0.0110793 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000222.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000222.1' in 0.0113378s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000222.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000200.1' in 0.0078446 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000200.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000200.1' in 0.0108057s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000200.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000193.1' in 0.007402 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000193.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000193.1' in 0.011037s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000193.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000194.1' in 0.0087184 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000194.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000194.1' in 0.0108527s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000194.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000225.1' in 0.0066779 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000225.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000225.1' in 0.0113662s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000225.1', all jobs complete.
+4/21/23 4:08 PM 1  Loaded chromosome 'GL000192.1' in 0.0095764 secs.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Start processing chr 'GL000192.1'.
+4/21/23 4:08 PM 1  Totals: 0 reads processed, 0 reads skipped.
+4/21/23 4:08 PM 1  Totals: 0 alleles called.  0 variants collapsed.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Completed processing chr 'GL000192.1' in 0.011021s.
+4/21/23 4:08 PM 1  Unloaded chromosome 'GL000192.1', all jobs complete.
+4/21/23 4:08 PM 1  230420_M00766_0544_000000000-KRTLG_NTC-23-1733.bam: Total processing time is 1.8247201s.
+4/21/23 4:08 PM 1  Total execution time is 27.826421s.
+4/21/23 4:08 PM 1  ******************** Ending *********************

@@ -1,0 +1,1 @@
+SampleID	Variant	Frequency	Depth	Genotype	Quality	Classification	Preferred	dbSNP	Cosmic	HGMD	ExAC_African	ExAC_American	ExAC_EuropeanNonFinnish	ExAC_Finnish	ExAC_EastAsian	ExAC_SouthAsian	ExAC_Other	1KG_African	1KG_American	1KG_European	1KG_EastAsian	1KG_SouthAsian	Gene	Transcript	HGVSc	HGVSp	Consequence	INTRON	EXON	SIFT	PolyPhen

@@ -1,0 +1,15 @@
+#Illumina Variables File
+
+#Demographics
+sampleId=23M07372
+
+#Run Details
+seqId=230420_M00766_0544_000000000-KRTLG
+platform=ILLUMINA
+worklistId="23-1733"
+
+#Sample Descriptors
+pipelineName=SomaticAmplicon
+pipelineVersion=master
+panel=NGHS-102X
+referral=sec:familialcancer

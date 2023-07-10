@@ -1,0 +1,2 @@
+TotalReads	RawSequenceQuality	TotalTargetUsableBases	PctSelectedBases	PctTargetBasesCt	MeanOnTargetCoverage
+965	FAIL	95029	1	0.0	4.06

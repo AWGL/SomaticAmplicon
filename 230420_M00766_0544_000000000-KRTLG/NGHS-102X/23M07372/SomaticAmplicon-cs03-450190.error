@@ -1,0 +1,42 @@
+Apr 21, 2023 3:50:01 PM nhs.genetics.cardiff.Main main
+INFO: Padding: 5
+Apr 21, 2023 3:50:01 PM nhs.genetics.cardiff.Main main
+INFO: Minimum Depth: 100
+Apr 21, 2023 3:50:01 PM nhs.genetics.cardiff.Main main
+INFO: Determined transcript file as GFF3
+Apr 21, 2023 3:50:01 PM nhs.genetics.cardiff.framework.ListReader parseListReader
+INFO: Parsing list
+Apr 21, 2023 3:50:01 PM nhs.genetics.cardiff.Main main
+INFO: Extracting target regions of interest
+Apr 21, 2023 3:50:10 PM nhs.genetics.cardiff.framework.GatkDepthOfCoverageParser parseGatkDepthOfCoverageFile
+INFO: Parsing GATK depth of coverage file
+Apr 21, 2023 3:50:10 PM nhs.genetics.cardiff.Main main
+INFO: Generating coverage metrics for sample: 23M05386
+Apr 21, 2023 3:50:10 PM nhs.genetics.cardiff.Main main
+INFO: Padding: 5
+Apr 21, 2023 3:50:10 PM nhs.genetics.cardiff.Main main
+INFO: Minimum Depth: 100
+Apr 21, 2023 3:50:10 PM nhs.genetics.cardiff.Main main
+INFO: Determined transcript file as GFF3
+Apr 21, 2023 3:50:10 PM nhs.genetics.cardiff.framework.ListReader parseListReader
+INFO: Parsing list
+Apr 21, 2023 3:50:10 PM nhs.genetics.cardiff.Main main
+INFO: Extracting target regions of interest
+Apr 21, 2023 3:50:19 PM nhs.genetics.cardiff.framework.GatkDepthOfCoverageParser parseGatkDepthOfCoverageFile
+INFO: Parsing GATK depth of coverage file
+Apr 21, 2023 3:50:19 PM nhs.genetics.cardiff.Main main
+INFO: Generating coverage metrics for sample: 23M07372
+Apr 21, 2023 3:50:19 PM nhs.genetics.cardiff.Main main
+INFO: Padding: 5
+Apr 21, 2023 3:50:19 PM nhs.genetics.cardiff.Main main
+INFO: Minimum Depth: 100
+Apr 21, 2023 3:50:19 PM nhs.genetics.cardiff.Main main
+INFO: Determined transcript file as GFF3
+Apr 21, 2023 3:50:19 PM nhs.genetics.cardiff.framework.ListReader parseListReader
+INFO: Parsing list
+Apr 21, 2023 3:50:19 PM nhs.genetics.cardiff.Main main
+INFO: Extracting target regions of interest
+Apr 21, 2023 3:50:28 PM nhs.genetics.cardiff.framework.GatkDepthOfCoverageParser parseGatkDepthOfCoverageFile
+INFO: Parsing GATK depth of coverage file
+Apr 21, 2023 3:50:28 PM nhs.genetics.cardiff.Main main
+INFO: Generating coverage metrics for sample: NTC-23-1733

@@ -1,0 +1,2 @@
+TotalReads	RawSequenceQuality	TotalTargetUsableBases	PctSelectedBases	PctTargetBasesCt	MeanOnTargetCoverage
+1157787	PASS	112779174	1	81.3	4815.71
