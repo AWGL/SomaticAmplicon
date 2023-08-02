@@ -1,9 +1,11 @@
+#!/usr/bin/env python
+
 import json
 import os
 import argparse
 import decimal
 from decimal import Decimal
-
+import logger
 import pandas as pd
 import numpy as np
 
@@ -58,6 +60,10 @@ import numpy as np
 #####         Functions         #####
 #####################################
 
+# Adding logging info to detect errors and workflow progress
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 def np_encoder(object):
 	"""
 	- function needed to allow json.dump to parse np values correctly
@@ -100,9 +106,10 @@ def parse_referral_type_files(referral_type, groups_folder):
 	## set variable as not all referral types have bed/groups
 	if counter > 0:
 		present = True
-
+		logger.info('bed/groups file available for {referral_type}')
 	else:
 		present = False
+		logger.info('No bed/groups file for {referral_type}, creating blank dataframe')
 
 		## create blank dataframe to return when no <referral>.bed file present
 		df = pd.DataFrame()
@@ -133,9 +140,10 @@ def parse_NTC_data(NTC_coverage_folder, referral_type, present):
 		if (referral_type in file) and ("NTC-" in file) and (".totalCoverage" in file):
 			ntc_gene_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 
+			logger.info('NTC coverage file identified')
+
 			## drop final row in df as this is the total average across total panel
 			ntc_gene_df.drop(ntc_gene_df.tail(1).index, inplace = True)
-
 
 			## get gene name positioning in 'feature' column (can change dependent on referral type)
 			feature_line = ntc_gene_df['FEATURE'][0].split('_')
@@ -201,6 +209,7 @@ def parse_sample_data(sample_coverage_folder, referral_type, sample_id, present)
 		if (sampleid in file) and (referral_type in file) and (".totalCoverage" in file):
 			sample_500_gene_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 
+
 			## drop final row in df as this is the total average across total panel
 			sample_500_gene_df.drop(sample_500_gene_df.tail(1).index, inplace = True)
 
@@ -227,7 +236,7 @@ def parse_sample_data(sample_coverage_folder, referral_type, sample_id, present)
 		## parse .coverage
 		elif (sampleid in file) and (referral_type in file) and (".coverage" in file):
 			sample_500_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
-
+		
 	## rip sampleid from filename
 	sampleid = sample_id
 
@@ -244,16 +253,21 @@ def parse_cosmic_data(sample_id, referral_type, cosmic_file_loc):
 
 		filepath = os.path.join(cosmic_file_loc, file)
 
-
 		## parse cosmic file - at 500X
-		if (sampleid in file) and (referral_type in file) and ("cosmic.csv" in file):
+		if (sampleid in file) and (referral_type in file) and ("cosmic.csv" in file) and (os.path.getsize(filepath) > 0):
 
 			cosmic_500_df = pd.read_csv(filepath, sep = ',', index_col = False)
+
+			logger.info('cosmic info read in')
+		else:
+			cosmic_500_df = pd.DataFrame()    
+
+			logger.info('no cosmic info available')    
 
 	return cosmic_500_df
 
 
-def create_output_dict(gene_list, main_gene_df,region_df, present, cosmic_500_df):
+def create_output_dict(gene_list, main_gene_df, region_df, present, cosmic_500_df):
 	'''
 	- function to collate all dataframes into one nested dictionary to export to JSON format
 	- input: gene list, gene level df, region df, 500 gaps df, cosmic 500 df
@@ -275,6 +289,7 @@ def create_output_dict(gene_list, main_gene_df,region_df, present, cosmic_500_df
 		if present:
 			filtered_region_list = []
 			region_list = region_df.to_dict(orient='records')
+
 			for item in region_list:
 				#Renaming the dictionary keys
 				item['chr'] = item.pop('CHR')
@@ -285,41 +300,48 @@ def create_output_dict(gene_list, main_gene_df,region_df, present, cosmic_500_df
 				item['percent_500'] = item.pop('PERC_COVERAGE@500')
 				item['ntc_coverage'] = item.pop('NTC_AVG_DEPTH')
 				item['percent_ntc'] = item.pop('PERC_NTC_DEPTH')
+
 				# check if gene is the gene in the 4th column then add
 				if key == item['hgvs_c'].split('(')[0]:
 					filtered_region_list.append(item)
-			output_dict[key]['regions'] = filtered_region_list
 
+			output_dict[key]['hotspot_regions'] = filtered_region_list
+												
 		else:
-			output_dict[key]['regions'] = []
+			output_dict[key]['hotspot_regions'] = []
 
 		## gaps and cosmic - converting into a dictionary instead of a list
 		#cosmic_500_df.columns = ['chr', 'pos_start', 'pos_end', 'info', 'gene', 'count_cosmic','percent_cosmic']
-		cosmic_500_list = cosmic_500_df.to_dict(orient='records')
-		cosmic_500_final_list = []
+		if cosmic_500_df.shape[0]!=0:
 
-		for item in cosmic_500_list:
+			cosmic_500_list = cosmic_500_df.to_dict(orient='records')
+			cosmic_500_final_list = []
+
+			for item in cosmic_500_list:
 		
-			#Renaming the dictionary keys
-			item['chr'] = item.pop('Chr')
-			item['pos_start'] = item.pop('Start')
-			item['pos_end'] = item.pop('End')
-			item['hgvs_c'] = item.pop('Info')
-			item['gene'] = item.pop('Gene') #THERES NO GENE??#
-			item['counts_cosmic'] = item.pop('Counts')
-			item['percent_cosmic'] = item.pop('Percentage')
+				#Renaming the dictionary keys
+				item['chr'] = item.pop('Chr')
+				item['pos_start'] = item.pop('Start')
+				item['pos_end'] = item.pop('End')
+				item['hgvs_c'] = item.pop('Info')
+				item['gene'] = item.pop('Gene')
+				item['counts_cosmic'] = item.pop('Counts')
+				item['percent_cosmic'] = item.pop('Percentage')
 
-			if key == item['gene']:
-				cosmic_500_final_list.append(item)
-		#For referrals with hotspot that don't have cosmic annotation, gene is not in fourth column so get that info
-			elif isinstance(item['gene'],float):
-				if np.isnan(item['gene']):
-					gene = item['hgvs_c'].split("(")[0]
-					item['gene'] = gene
-					if key == gene:
-						cosmic_500_final_list.append(item)
+				if key == item['gene']:
+					cosmic_500_final_list.append(item)
+			#For referrals with hotspot that don't have cosmic annotation, gene is not in fourth column so get that info
+				elif isinstance(item['gene'],float):
+					if np.isnan(item['gene']):
+						gene = item['hgvs_c'].split("(")[0]
+						item['gene'] = gene
+						if key == gene:
+							cosmic_500_final_list.append(item)
 
-		output_dict[key]['gaps_500'] = cosmic_500_final_list 
+			output_dict[key]['gaps_500'] = cosmic_500_final_list 
+
+		else:
+			output_dict[key]['gaps_500'] = []
 
 	return output_dict
 
@@ -351,7 +373,7 @@ if __name__ == '__main__':
 
 	### parse referral_type group/bed files
 	gene_list, df, present = parse_referral_type_files(args.referral, args.groups_folder)
-
+	
 	### parse NTC sample 500x for average depth per gene (.totalCoverage) and per region (.coverage)
 	ntc_gene_df, ntc_region_df = parse_NTC_data(args.ntc_coverage, args.referral, present)
 
@@ -364,6 +386,8 @@ if __name__ == '__main__':
 	### create json pieces
 	## join NTC data to df if present, else create blank df
 	if present:
+
+		logger.info('applying NTC data to json')
 		main_region_df = pd.merge(sample_500_region_df, ntc_region_df, how = 'outer', on = ['CHR', 'START', 'END', 'META'])
 		#Need to catch instances where AVG DEPTH = 0, and therefore PERC NTC DEPTH would calculate to be inf
 		#First work out perc ntc depth
@@ -378,6 +402,7 @@ if __name__ == '__main__':
 
 	else:
 		main_region_df = pd.DataFrame()
+		logger.info('no NTC data to append')
 
 	## join ntc information to gene level df
 	main_gene_df = pd.merge(sample_500_gene_df, ntc_gene_df, how = 'outer', on = ['GENE'])
@@ -391,12 +416,13 @@ if __name__ == '__main__':
 	main_gene_df.loc[main_gene_df['AVG_DEPTH'] > 0, 'PERC_NTC_DEPTH'] = (main_gene_df['NTC_AVG_DEPTH'] / main_gene_df['AVG_DEPTH']) * 100
 	main_gene_df.loc[main_gene_df['AVG_DEPTH'] == 0, 'PERC_NTC_DEPTH'] = 0
 	main_gene_df['PERC_NTC_DEPTH'] = main_gene_df['PERC_NTC_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
-
+		
 
 	### create output dict
 	output_dict = create_output_dict(gene_list, main_gene_df, main_region_df, present, cosmic_500_df)
 
-
 	## export dict to JSON
 	with open(args.outfile,'w') as f:
 		json.dump(output_dict, f, indent = 4, default = np_encoder)
+
+		logger.info('json file complete')

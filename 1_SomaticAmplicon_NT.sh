@@ -17,7 +17,8 @@
 
 set -euo pipefail
 
-version="master"
+#version="master"
+version="svd"
 
 # Directory structure required for pipeline
 #
@@ -75,16 +76,19 @@ GATK="singularity exec --bind /Output,/localscratch,/data:/data $SIFGATK java -D
 PISCES="singularity exec --bind /Output,/localscratch,/data:/data $SIFPISCES dotnet /app/Pisces_5.2.9.122/Pisces.dll"
 AMPLICON="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -jar /opt/conda/bin/AmpliconRealigner-1.1.1.jar"
 SOFTCLIP="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Xmx2g -jar /opt/conda/bin/SoftClipPCRPrimer-1.1.0.jar"
-COVERAGE="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Djava.io.tmpdir=/localscratch -Xmx8g -xfjfdlfddsddjar /opt/conda/bin/CoverageCalculator-2.0.2.jar"
-VCFPARSE="singularity exec --bind /Output,/localscratch,/data:/data $SIF python /opt/conda/bin/vcf_parse-0.1.2/vcf_parse.py"
+COVERAGE="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Djava.io.tmpdir=/localscratch -Xmx8g -jar /opt/conda/bin/CoverageCalculator-2.0.2.jar"
+#VCFPARSE="singularity exec --bind /Output,/localscratch,/data:/data $SIF python /opt/conda/bin/vcf_parse-0.1.3/vcf_parse.py"
 COVERCALC="singularity exec --bind /Output,/localscratch,/data:/data $SIFCOVER python /opt/conda/bin/CoverageCalculatorPy/CoverageCalculatorPy.py"
 BED="singularity exec --bind /Output,/localscratch,/data:/data $SIFBED Rscript /opt/conda/bin/bed2hgvs-v0.3.0/bed2hgvs.R"
 
 # Not running singularity for cosmic and cov2json
-conda activate SomaticAmplicon-v1.8.1
+set +u
+source activate vcf_parse_somamp
+set -u
 
-COSMIC=/data/diagnostics/scripts/SomaticAmplicon/cosmic_filter_table.py
-COV2JSON=data/diagnostics/scripts/SomaticAmplicon/cov2json_somamp.py
+COSMIC=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/cosmic_filter_table.py
+COV2JSON=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/coverage2json_somamp.py
+VCFPARSE=/data/diagnostics/apps/vcf_parse/vcf_parse-0.1.3/vcf_parse.py
 
 ######################################################################
 #			PIPELINE				     #
@@ -143,7 +147,7 @@ for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
     TMP_DIR=/localscratch 
 
     #fastqc
-    $SINGspa treatment and lunch for 2 walesULARITY fastqc -d /localscratch --threads 20 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
+    $SINGULARITY fastqc -d /localscratch --threads 20 --extract "$seqId"_"$sampleId"_"$laneId"_R1.fastq
     $SINGULARITY fastqc -d /localscratch --threads 20 --extract "$seqId"_"$sampleId"_"$laneId"_R2.fastq
 
     #check FASTQC output
@@ -343,8 +347,7 @@ $GATK VariantFiltration \
 
 ### QC ###
 
-#Convert 
-BED to interval_list for later
+#Convert BED to interval_list for later
 $PICARD BedToIntervalList \
 I="$panel"_ROI_b37_thick.bed \
 O="$panel"_ROI.interval_list \
@@ -453,17 +456,13 @@ $GATK ValidateVariants \
 -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
 -dt NONE
 
-#Make Gathered_Results/Databse folder for variant report to go into
-mkdir Gathered_Results
-mkdir Gathered_Results/Database
-
 $VCFPARSE \
 --inp "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
 --outfile "$seqId"_"$sampleId"_VariantReport.txt \
 --pref_trans /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
---ntc_vcf "$seqId"_NTC*_filtered_meta_annotated.vcf
+--ntc_vcf ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf
 
-mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
+#mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
 
 # custom coverage reporting
 if [ $custom_coverage == true ]; then
@@ -494,13 +493,19 @@ if [ $custom_coverage == true ]; then
             # no gaps
             touch $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         else
+
             # gaps
             grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         fi
-
-
-        rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
+            #rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
     done
+
+    # activate somatic enrichment nextflow env, overarching env needs to be made
+    conda deactivate
+    
+    set +u
+    source activate somatic_enrichment_nextflow
+    set -u
 
     for gapsFile in $hscoverage_outdir/*nohead.gaps; do
 
@@ -513,49 +518,46 @@ if [ $custom_coverage == true ]; then
         --outdir "$hscoverage_outdir"/ \
         --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/"$panel"/"$panel"_PreferredTranscripts.txt
 
-        rm $hscoverage_outdir/"$name".nohead.gaps
+        #rm $hscoverage_outdir/"$name".nohead.gaps
 
         # Need bedtools intersect to add cosmic annotations only NGHS-101X
+        cosmic_referrals=("melanoma" "lung" "colorectal" "gist" "breast" "glioma" "thyroid" "tumour")
+
         for i in $gapsFile
         do
 
-            if ([["${cosmic_referrals}" == *"${referral}"* ]])
+            if [[ "${cosmic_referrals[*]}" =~ "${referral}" ]];
             then
 
                 bedtools intersect \
                     -loj \
                     -F 1 \
-                    -a \$i \
-                    -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/cosmic_bedfiles/"$referral".bed \
+                    -a $i \
+                    -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed \
                     -wao \
-                > $sampleId_$referral_intersect.txt \
+                > ${sampleId}_${referral}_intersect.txt
 
-                $COSMIC
-                --sampleID "$sampleId" \
+                $COSMIC \
+                --sampleId "$sampleId" \
                 --referral "$referral" \
-                --gaps_file $gapsFile \
-                --intersect_file $sampleId_$referral_intersect.txt \
-                --bedfile_path /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/NGHS-101X/hotspot_coverage
+                --gaps_file $i \
+                --intersect_file "$sampleId"_"$referral"_intersect.txt \
+                --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/
+		> ${sampleId}_${referral}_cosmic.csv
 
             # If referral not in list then make empty file
             else
-            then
-                echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sample_id}_${referral}_cosmic.csv
-        fi
-    done
+          
+                echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
 
-    # combine all total coverage files
-    if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
-    cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
-    cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
-    rm $hscoverage_outdir/*.totalCoverage
+            fi
+        done
+    done 
 fi
 
 # custom variant reporting
 if [ $custom_variants == true ]; then
     mkdir hotspot_variants
-
-
 
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants/*.bed); do
 
@@ -576,14 +578,19 @@ if [ $custom_variants == true ]; then
           --inp "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
           --outfile "$seqId"_"$sampleId"_VariantReport.txt \
           --pref_trans /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
-          --ntc_vcf "$seqId"_NTC*_filtered_meta_annotated.vcf \
+          --ntc_vcf ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf \
 
-        # move to hotspot_variants
-        mv "$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
-
+        # move to hotspot variant directory
+        cp "$seqId"_"$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
+    
     done
-
 fi
+  
+# Make Database folder to move variant report and sample list upload into
+mkdir -p ../Gathered_Results/Database
+
+# move variant report and json file to database folder
+mv "$seqId"_"$sampleId"_VariantReport.txt ../Gathered_Results/Database/"$sampleId"_variants.tsv
 
 ### Run level steps ###
 ## This block should only be carried out when all samples for the panel have been processed
@@ -640,37 +647,69 @@ if [ $complete -eq $expected ]; then
 
             # reset variables
             unset sample brca1_500x brca2_500x brca1_100x brca2_100x
-
-    # Get variables needed (sampleId, worklistId, panel, referral)
-    mkdir Gathered_Results
-    mkdir Gathered_Results/Database
-
-    for variable in $(cat *.variables); do
-    #echo $variable
-
-        sample="$(echo "$variable" | sed -n 's/sampleId=//p')"
-        worksheet="$(echo "$variable" | sed -n 's/worklistId=//p')"
-        panel="$(echo "$variable" | sed -n 's/panel=//p')"
-        referral="$(echo "$variable" | sed -n 's/referral=//p')"
-    #rm -r Gathered_Results
-
-    # Make database upload sample list
-        if [[ "$sample" != NTC* ]]; then
-            echo "$sample","$worksheet","$panel","$referral" >> Gathered_Results/Database/samples_database_"$worksheet"_"$panel".csv
-        fi
-            done
-done
+        done
+    fi
 
     # Convert coverage files to json
-    $COV2JSON
-    --referral "$referral" \
-    --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage \
-    --ntc_coverage . \
-    --sample_id "$sample" \
-    --sample_coverage . \
-    -cosmic_files . \
-    --outfile "$sample"_"$referral"_coverage.json
+    if [[ "$referral" != null ]]; then
 
+        $COV2JSON \
+        --referral "$referral" \
+        --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage \
+        --ntc_coverage ../NTC*/hotspot_coverage \
+        --sample_id "$sampleId" \
+        --sample_coverage ./hotspot_coverage \
+        --cosmic_file . \
+        --outfile "$sampleId"_"$referral"_coverage.json
+
+    fi
+
+    if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
+    cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
+    cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
+    #rm $hscoverage_outdir/*.totalCoverage
+
+    if [ -f "$sampleId"_"$referral"_coverage.json ]; then
+        mv "$sampleId"_"$referral"_coverage.json ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
+    fi
+
+fi    
+
+# Get variables needed (sampleId, worklistId, panel, referral)
+for variable in *.variables; do
+
+    sample="$(grep sampleId "$variable" | cut -d"=" -f2)"
+    worksheet="$(grep worklistId "$variable" | cut -d"=" -f2 | cut -d'"' -f2)"
+    panel="$(grep panel "$variable" | cut -d"=" -f2)"
+    referral="$(grep referral "$variable" | cut -d"=" -f2)"
+
+    # Change panel from NGHS* to CRM/BRCA
+    if [[ "$panel" == NGHS-101X ]]; then
+        panel="CRM"
+    else
+        panel="BRCA"
+    fi
+
+    # Make database upload sample list
+    if [[ "$sample" != NTC* ]]; then
+        echo "$sample,$worksheet,$panel,$referral" >> samples_database_"$worksheet"_"$panel".csv
     fi
 done
 
+#load sample & pipeline variables
+. *.variables
+. /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
+
+# create complete marker
+touch 1_SomaticAmplicon.sh.e69420
+
+#delete unused files
+
+rm "$seqId"_"$sampleId"_*unaligned.bam "$seqId"_"$sampleId"_aligned.bam "$seqId"_"$sampleId"_aligned.bai "$seqId"_"$sampleId"_amplicon_realigned.bam
+rm "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam.bai "$seqId"_"$sampleId"_indel_realigned.intervals
+rm "$seqId"_"$sampleId"_clipped.bam "$seqId"_"$sampleId"_clipped_sorted.bam "$seqId"_"$sampleId"_clipped_sorted.bam.bai "$panel"_ROI.interval_list "$panel"_ROI_b37_thick.bed
+rm "$seqId"_"$sampleId"_left_aligned.vcf "$seqId"_"$sampleId"_left_aligned.vcf.idx "$seqId"_"$sampleId".bam.bai "$seqId"_"$sampleId"_amplicon_realigned_left_sorted.bam
+rm "$seqId"_"$sampleId"_amplicon_realigned_left_sorted.bai "$seqId"_"$sampleId"_filtered_meta.vcf "$seqId"_"$sampleId"_filtered_meta.vcf.idx "$seqId"_"$sampleId"_filtered.vcf
+rm "$seqId"_"$sampleId"_filtered.vcf.idx "$seqId"_"$sampleId"_fixed.vcf "$seqId"_"$sampleId"_fixed.vcf.idx "$seqId"_"$sampleId"_indel_realigned.bam "$seqId"_"$sampleId"_indel_realigned.bai
+rm "$seqId"_"$sampleId"_*_fastqc.zip "$seqId"_"$sampleId"_lcr.vcf "$seqId"_"$sampleId"_lcr.vcf.idx "$seqId"_"$sampleId"_left_aligned_annotated.vcf "$seqId"_"$sampleId"_left_aligned_annotated.vcf.idx
+rm "$seqId"_"$sampleId".vcf

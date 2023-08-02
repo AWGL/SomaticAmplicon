@@ -1,8 +1,15 @@
+#!/usr/bin/env python
+
 import pandas
 import argparse
 import decimal
 from decimal import Decimal
 import numpy
+import logging
+
+# Get logging info to detect errors and workflow progress
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 def calculate_percentage(x):
 
@@ -15,6 +22,11 @@ def calculate_percentage(x):
         percentage = 0
     else:
         percentage = (x['Counts']/x['Total_counts'])*100
+
+    if percentage == 0:
+	logger.info('percentage of cosmic variants in the gap is 0%')
+    else:
+        logger.info('percentage of cosmic variants in the gap is {percentage}')
 
     return percentage
     
@@ -31,8 +43,8 @@ def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, re
     original_gaps_file = pandas.read_csv(gaps_file, sep='\t', names=['Chr','Start', 'End', 'Info'])
     #get output file prefix
     file_name_list = str(gaps_file).split("_")
-    #out_prefix = str(file_name_list[4]+"_"+file_name_list[5]+"_"+file_name_list[6])
-    out_prefix = str("23M05630"+"_"+"Colorectal")
+    #out_prefix = str(file_name_list[5]+"_"+file_name_list[6])
+    out_prefix = f'{sampleId}_{referral}'
     # only run loop when referral is in the referral list and the length of the gaps file is greater than 0
     if ((referral in referral_list) and (original_gaps_file.shape[0]!=0)):
 
@@ -80,6 +92,8 @@ def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, re
         grouped_file['Percentage'] = 'N/A'
         grouped_file.to_csv(out_prefix+"_cosmic.csv", sep=',', index=False)
 
+        logger.info('There are no gaps or no cosmic variants within the gaps')
+
     return grouped_file
 
 
@@ -100,7 +114,7 @@ if __name__ == '__main__':
     gaps_file=args.gaps_file
     intersect_file=args.intersect_file
     bedfile_path=args.bedfile_path
-    referral_list=['melanoma', 'lung', 'colorectal', 'gist', 'breast']
+    referral_list=['Melanoma', 'Lung', 'Colorectal', 'GIST', 'Breast']
 
 
     if (referral!= "null"):
