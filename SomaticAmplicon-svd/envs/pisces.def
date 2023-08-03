@@ -1,4 +1,0 @@
-bootstrap: docker
-from: astewart/pisces
-
-

@@ -1,4 +1,0 @@
-bootstrap: docker
-from: broadinstitute/gatk3:3.7-0
-
-
