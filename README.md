@@ -20,11 +20,17 @@ Directory structure required for pipeline
          ├── panel1
          │   ├── sample1
          │   ├── sample2
-         │   └── sample3
+         │   ├── sample3
+         |   └── Gathered_Results
+         |       └── Database
+         |           └── upload_files
          └── panel2
              ├── sample1
              ├── sample2
-             └── sample3
+             ├── sample3
+         |   └── Gathered_Results
+         |       └── Database
+         |           └── upload_files
 ```
 Script 1 runs in sample folder, requires fastq files split by lane
 
