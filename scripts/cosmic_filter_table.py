@@ -11,6 +11,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+pandas.set_option('display.max_columns', 20)
+
 def calculate_percentage(x):
 
     '''
@@ -24,7 +26,7 @@ def calculate_percentage(x):
         percentage = (x['Counts']/x['Total_counts'])*100
 
     if percentage == 0:
-	logger.info('percentage of cosmic variants in the gap is 0%')
+        logger.info('percentage of cosmic variants in the gap is 0%')
     else:
         logger.info('percentage of cosmic variants in the gap is {percentage}')
 
@@ -41,26 +43,29 @@ def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, re
 
     #load file
     original_gaps_file = pandas.read_csv(gaps_file, sep='\t', names=['Chr','Start', 'End', 'Info'])
+
     #get output file prefix
     file_name_list = str(gaps_file).split("_")
-    #out_prefix = str(file_name_list[5]+"_"+file_name_list[6])
+
     out_prefix = f'{sampleId}_{referral}'
+
     # only run loop when referral is in the referral list and the length of the gaps file is greater than 0
     if ((referral in referral_list) and (original_gaps_file.shape[0]!=0)):
 
-        file = pandas.read_csv(intersect_file, sep = '\t', names = ['Chr','Start', 'End', 'Info', 'Exon', 'Chr_cosmic','Start_cosmic', 'End_cosmic', '7', '8','9', '10', 'Counts', 'Overlap'])
-
+        # Giving intersect file headers
+        file = pandas.read_csv(intersect_file, sep = '\t', names = ['Chr','Start', 'End', 'Info', 'Chr_cosmic','Start_cosmic', 'End_cosmic', '7', '8','9', '10', 'Counts', 'Overlap'])
+                       
         #For regions where there is no overlap make Counts value 0
         file['Counts'] = numpy.where(file['Overlap'] == 0, 0, file['Counts'])
-        print(file)
+        
         #only keep certain columns
         file[['Gene','Ignore']] = file.Info.str.split("(",expand=True,)
-      
-        file=file.filter(items = ['Chr', 'Start', 'End','Info','Exon', 'Gene', 'Counts'])
-     
+               
+        file=file.filter(items = ['Chr', 'Start', 'End','Info', 'Gene', 'Counts'])
+        
         #combine the rows for the same region and add the counts column for these rows
         file['Counts'] = file['Counts'].apply(lambda x: int(x))
-        grouped_file = file.groupby(['Chr', 'Start', 'End', 'Info', 'Exon', 'Gene'], as_index = False).aggregate({'Counts': 'sum'})
+        grouped_file = file.groupby(['Chr', 'Start', 'End', 'Info', 'Gene'], as_index = False).aggregate({'Counts': 'sum'})
 
         #Create a dictionary of the number of variants in the cosmic file for each of the genes 
         file = pandas.read_csv(bedfile_path+referral+".bed", sep='\t', names = ['Chr','Start', 'End', 'Gene', 'ENST','ENSP','Info', 'Counts'])
@@ -92,8 +97,6 @@ def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, re
         grouped_file['Percentage'] = 'N/A'
         grouped_file.to_csv(out_prefix+"_cosmic.csv", sep=',', index=False)
 
-        logger.info('There are no gaps or no cosmic variants within the gaps')
-
     return grouped_file
 
 
@@ -114,7 +117,7 @@ if __name__ == '__main__':
     gaps_file=args.gaps_file
     intersect_file=args.intersect_file
     bedfile_path=args.bedfile_path
-    referral_list=['Melanoma', 'Lung', 'Colorectal', 'GIST', 'Breast']
+    referral_list=['melanoma', 'lung', 'colorectal', 'GIST', 'breast']
 
 
     if (referral!= "null"):

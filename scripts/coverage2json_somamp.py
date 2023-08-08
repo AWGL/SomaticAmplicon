@@ -5,7 +5,7 @@ import os
 import argparse
 import decimal
 from decimal import Decimal
-import logger
+import logging
 import pandas as pd
 import numpy as np
 
@@ -24,7 +24,7 @@ import numpy as np
 	- for gaps (hotspot only):
 		- NGHS-101X/sample_coverage_results_500/<sample_id>_<referral_type>.gaps
 - usage: python coverage2json.py -r <referral type> -g <hotspots_coverage folder path> -s <sample Coverage_results folder> -n <ntc Coverage_results folder> -o <output file name>
-- output: {sampleid}_{referral}_db_coverage.json file
+- output: {sample_id}_{referral}_db_coverage.json file
 { 
 	"gene1"	:	{
 		"average_depth"		:	<integer>,
@@ -130,8 +130,8 @@ def parse_NTC_data(NTC_coverage_folder, referral_type, present):
 	cov_filepath = NTC_coverage_folder
 	dir_list = os.listdir(cov_filepath)
 
-	## rip sampleid from filename
-	sampleid = dir_list[0].split('_')[1]
+	## rip sample_id from filename
+	sample_id = dir_list[0].split('_')[4]
 
 	for file in dir_list:
 		filepath = os.path.join(cov_filepath, file)
@@ -189,24 +189,20 @@ def parse_sample_data(sample_coverage_folder, referral_type, sample_id, present)
 	- function to parse sample data from .totalCoverage and .coverage files from CoverageCalculatorPy
 	- input: path to sample Coverage_results folder and referral type
 	- output:
-	1) sampleid
+	1) sample_id
 	2) df of .totalcoverage gene level (gene id, avg depth, % cov 500)
 	3) df of .coverag region level (chr, start, end, meta, avg depth, % cov 500) or blank df
 	4) df of 500 .gaps (chr, start, end, meta, cosmic)
 	"""
 
 	## parse 500x
-	cov_500_filepath = sample_coverage_folder
-	dir_list = os.listdir(cov_500_filepath)
-
-	## rip sampleid from filename
-	sampleid = sample_id
+	dir_list = os.listdir(sample_coverage_folder)
 
 	for file in dir_list:
-		filepath = os.path.join(cov_500_filepath, file)
+		filepath = os.path.join(sample_coverage_folder, file)
 
 		## parse .totalCoverage for gene level info
-		if (sampleid in file) and (referral_type in file) and (".totalCoverage" in file):
+		if (sample_id in file) and (referral_type in file) and (".totalCoverage" in file):
 			sample_500_gene_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 
 
@@ -234,13 +230,10 @@ def parse_sample_data(sample_coverage_folder, referral_type, sample_id, present)
 			sample_500_gene_df.drop(columns = ['FEATURE'], inplace = True)
 
 		## parse .coverage
-		elif (sampleid in file) and (referral_type in file) and (".coverage" in file):
+		elif (sample_id in file) and (referral_type in file) and (".coverage" in file):
 			sample_500_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 		
-	## rip sampleid from filename
-	sampleid = sample_id
-
-	return sampleid, sample_500_gene_df, sample_500_region_df
+	return sample_id, sample_500_gene_df, sample_500_region_df
 
 def parse_cosmic_data(sample_id, referral_type, cosmic_file_loc):
 	'''
@@ -248,24 +241,18 @@ def parse_cosmic_data(sample_id, referral_type, cosmic_file_loc):
 	'''
 	## list files
 	dir_list = os.listdir(cosmic_file_loc)
-
+	
 	for file in dir_list:
 
 		filepath = os.path.join(cosmic_file_loc, file)
-
+				
 		## parse cosmic file - at 500X
-		if (sampleid in file) and (referral_type in file) and ("cosmic.csv" in file) and (os.path.getsize(filepath) > 0):
+		if (sample_id in file) and (referral_type in file) and ("cosmic.csv" in file):
 
 			cosmic_500_df = pd.read_csv(filepath, sep = ',', index_col = False)
 
-			logger.info('cosmic info read in')
-		else:
-			cosmic_500_df = pd.DataFrame()    
-
-			logger.info('no cosmic info available')    
-
 	return cosmic_500_df
-
+	
 
 def create_output_dict(gene_list, main_gene_df, region_df, present, cosmic_500_df):
 	'''
@@ -312,13 +299,14 @@ def create_output_dict(gene_list, main_gene_df, region_df, present, cosmic_500_d
 
 		## gaps and cosmic - converting into a dictionary instead of a list
 		#cosmic_500_df.columns = ['chr', 'pos_start', 'pos_end', 'info', 'gene', 'count_cosmic','percent_cosmic']
-		if cosmic_500_df.shape[0]!=0:
+		if not cosmic_500_df.empty:
 
 			cosmic_500_list = cosmic_500_df.to_dict(orient='records')
+			print(cosmic_500_list)
 			cosmic_500_final_list = []
-
-			for item in cosmic_500_list:
 		
+			for item in cosmic_500_list:
+				print(item)
 				#Renaming the dictionary keys
 				item['chr'] = item.pop('Chr')
 				item['pos_start'] = item.pop('Start')
@@ -327,9 +315,10 @@ def create_output_dict(gene_list, main_gene_df, region_df, present, cosmic_500_d
 				item['gene'] = item.pop('Gene')
 				item['counts_cosmic'] = item.pop('Counts')
 				item['percent_cosmic'] = item.pop('Percentage')
-
+				
 				if key == item['gene']:
 					cosmic_500_final_list.append(item)
+
 			#For referrals with hotspot that don't have cosmic annotation, gene is not in fourth column so get that info
 				elif isinstance(item['gene'],float):
 					if np.isnan(item['gene']):
@@ -378,7 +367,7 @@ if __name__ == '__main__':
 	ntc_gene_df, ntc_region_df = parse_NTC_data(args.ntc_coverage, args.referral, present)
 
 	### parse sample 135x and 500x files
-	sampleid, sample_500_gene_df, sample_500_region_df = parse_sample_data(args.sample_coverage, args.referral, args.sample_id, present)
+	sample_id, sample_500_gene_df, sample_500_region_df = parse_sample_data(args.sample_coverage, args.referral, args.sample_id, present)
 
 	### parse cosmic annotation output
 	cosmic_500_df = parse_cosmic_data(args.sample_id, args.referral, args.cosmic_file)
