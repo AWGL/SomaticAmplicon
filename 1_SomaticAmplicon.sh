@@ -81,12 +81,11 @@ COVERAGE="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -D
 COVERCALC="singularity exec --bind /Output,/localscratch,/data:/data $SIFCOVER python /opt/conda/bin/CoverageCalculatorPy/CoverageCalculatorPy.py"
 BED="singularity exec --bind /Output,/localscratch,/data:/data $SIFBED Rscript /opt/conda/bin/bed2hgvs-v0.3.0/bed2hgvs.R"
 
-# Activate vcf parse env for converting output into annotated vcf
+# Not running singularity for cosmic and cov2json
 set +u
 source activate vcf_parse_somamp
 set -u
 
-# Not running singularity for cosmic and cov2json
 COSMIC=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/cosmic_filter_table.py
 COV2JSON=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/coverage2json_somamp.py
 VCFPARSE=/data/diagnostics/apps/vcf_parse/vcf_parse-0.1.3/vcf_parse.py
