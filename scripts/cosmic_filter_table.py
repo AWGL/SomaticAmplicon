@@ -31,7 +31,7 @@ def calculate_percentage(x):
         logger.info('percentage of cosmic variants in the gap is {percentage}')
 
     return percentage
-    
+
 
 
 def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, referral_list):
