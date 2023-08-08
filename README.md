@@ -42,7 +42,7 @@ Validated for TruSightMyeloid, NGHS-101X (CRM), NGHS-102X (BRCA)
 The variables files within each panel folder e.g. NGHS-101X should contain variables stating whether or not to execute optional section of the pipeline. For example:
 
 ```
-custom_coverage=true
+custom_coverage=false
 custom_variants=true
 generate_worksheets=false
 merge_reports=false
