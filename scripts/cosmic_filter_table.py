@@ -117,7 +117,7 @@ if __name__ == '__main__':
     gaps_file=args.gaps_file
     intersect_file=args.intersect_file
     bedfile_path=args.bedfile_path
-    referral_list=['melanoma', 'lung', 'colorectal', 'GIST', 'breast']
+    referral_list=['melanoma', 'lung', 'colorectal', 'gist', 'breast']
 
 
     if (referral!= "null"):
