@@ -93,8 +93,6 @@ def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, re
 
     else:
         grouped_file = original_gaps_file
-        grouped_file['Gene', 'Ignore'] = grouped_file.Info.str.split("(",expand=True,)
-        grouped_file = grouped_file.filter(items = ['Chr', 'Start', 'End','Info', 'Gene', 'Counts', 'Percentage'])
         grouped_file['Counts'] = 'N/A'
         grouped_file['Percentage'] = 'N/A'
 	
