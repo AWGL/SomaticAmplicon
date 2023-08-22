@@ -11,7 +11,7 @@ import numpy as np
 
 """
 - script to format the output of CoverageCalculatorPy (.totalcoverage, .coverage) into a JSON format for importing into the new database
-- for use as part of the CRM/BRCA  pipeline
+- for use as part of the TSO500 pipeline
 - file requirements:
 	- for main gene regions:
 		- NGHS-101X/hotspot_coverage/<referral>.groups
@@ -24,7 +24,7 @@ import numpy as np
 	- for gaps (hotspot only):
 		- NGHS-101X/sample_coverage_results_500/<sample_id>_<referral_type>.gaps
 - usage: python coverage2json.py -r <referral type> -g <hotspots_coverage folder path> -s <sample Coverage_results folder> -n <ntc Coverage_results folder> -o <output file name>
-- output: {sample_id}_{referral}_coverage.json file
+- output: {sample_id}_{referral}_db_coverage.json file
 { 
 	"gene1"	:	{
 		"average_depth"		:	<integer>,

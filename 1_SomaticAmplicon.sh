@@ -68,6 +68,7 @@ SIFGATK="/data/resources/envs/sifs/gatk3_3.7-0.sif" # Path to sif
 SIFPISCES="/data/resources/envs/sifs/pisces.sif" # Path to sif
 SIFCOVER="/data/resources/envs/sifs/coverage.sif" # Path to sif
 SIFBED="/data/resources/envs/sifs/bed2hgvs.sif" # Path to sif
+SIFVHOOD="/data/resources/envs/sifs/virtualhood.sif" # Path to sif
 
 # Define Executables
 PICARD="singularity exec --bind /Output,/localscratch,/data:/data $SIF picard -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/localscratch -Xmx32g" # making code look cleaner
@@ -77,9 +78,9 @@ PISCES="singularity exec --bind /Output,/localscratch,/data:/data $SIFPISCES dot
 AMPLICON="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -jar /opt/conda/bin/AmpliconRealigner-1.1.1.jar"
 SOFTCLIP="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Xmx2g -jar /opt/conda/bin/SoftClipPCRPrimer-1.1.0.jar"
 COVERAGE="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Djava.io.tmpdir=/localscratch -Xmx8g -jar /opt/conda/bin/CoverageCalculator-2.0.2.jar"
-#VCFPARSE="singularity exec --bind /Output,/localscratch,/data:/data $SIF python /opt/conda/bin/vcf_parse-0.1.3/vcf_parse.py"
 COVERCALC="singularity exec --bind /Output,/localscratch,/data:/data $SIFCOVER python /opt/conda/bin/CoverageCalculatorPy/CoverageCalculatorPy.py"
 BED="singularity exec --bind /Output,/localscratch,/data:/data $SIFBED Rscript /opt/conda/bin/bed2hgvs-v0.3.0/bed2hgvs.R"
+VHOOD="singularity exec --bind /Output,/localscratch,/data:/data $SIFVHOOD python"
 
 # Not running singularity for cosmic and cov2json
 set +u
@@ -88,7 +89,7 @@ set -u
 
 COSMIC=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/cosmic_filter_table.py
 COV2JSON=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/coverage2json_somamp.py
-VCFPARSE=/data/diagnostics/apps/vcf_parse/vcf_parse-0.1.3/vcf_parse.py
+VCFPARSE=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/vcf_parse.py
 
 ######################################################################
 #			PIPELINE				     #
@@ -497,7 +498,7 @@ if [ $custom_coverage == true ]; then
             # gaps
             grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         fi
-            #rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
+            rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
     done
 
     # Activate overarching env for the analysis
@@ -510,7 +511,6 @@ if [ $custom_coverage == true ]; then
     for gapsFile in $hscoverage_outdir/*nohead.gaps; do
 
         name=$(echo $(basename $gapsFile) | cut -d"." -f1)
-        echo $name
 
         # add hgvs annotations to bedfile
         $BED \
@@ -520,10 +520,11 @@ if [ $custom_coverage == true ]; then
         --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/"$panel"/"$panel"_PreferredTranscripts.txt
     done
 
-    for i in $hscoverage_outdir/*.gaps; do
+    for i in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
+    echo $i
 
         # Need bedtools intersect to add cosmic annotations only NGHS-101X
-        cosmic_referrals=("melanoma" "lung" "colorectal" "gist" "breast" "glioma" "thyroid" "tumour")
+        cosmic_referrals=("melanoma" "lung" "colorectal" "gist" "breast")
 
         if [[ "${cosmic_referrals[*]}" =~ "${referral}" ]];
         then
@@ -531,7 +532,7 @@ if [ $custom_coverage == true ]; then
             bedtools intersect \
                 -F 1 \
                 -a $i \
-                -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed \
+                -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/"$referral".bed \
                 -wao \
             > ${sampleId}_${referral}_intersect.txt
 
@@ -540,7 +541,7 @@ if [ $custom_coverage == true ]; then
         fi
     done
 
-    for i in $hscoverage_outdir/*.gaps; do
+    for i in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
 
         if [[ "${cosmic_referrals[*]}" =~ "${referral}" ]];
         then
@@ -550,7 +551,7 @@ if [ $custom_coverage == true ]; then
                 --referral "$referral" \
                 --gaps_file $i \
                 --intersect_file "$sampleId"_"$referral"_intersect.txt \
-                --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/ \
+                --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/ \
             > ${sampleId}_${referral}_cosmic.csv
 
             # If referral not in list then make empty file
@@ -567,8 +568,8 @@ if [ $custom_variants == true ]; then
 
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants/*.bed); do
 
-        # extract target name
-        target=$(basename "$bedFile" | sed 's/\.bed//g')
+        # extract target name and make lower case (beds are upper)
+        target=$(basename "$bedFile" | sed 's/\.bed//g' | tr '[:upper:]' '[:lower:]')
 
         # select variants
         $GATK VariantFiltration \
@@ -661,7 +662,7 @@ if [ $complete -eq $expected ]; then
 
         $COV2JSON \
         --referral "$referral" \
-        --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage \
+        --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$version/$panel/hotspot_coverage \
         --ntc_coverage ../NTC*/hotspot_coverage \
         --sample_id "$sampleId" \
         --sample_coverage ./hotspot_coverage \
@@ -678,8 +679,43 @@ if [ $complete -eq $expected ]; then
     if [ -f "$sampleId"_"$referral"_coverage.json ]; then
         mv "$sampleId"_"$referral"_coverage.json ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
     fi
+fi
 
-fi    
+    #Needs alot of changing to work with new
+    # virtual hood
+#    if [ $generate_worksheets == true ]; then
+#    
+#        # identify name of NTC
+#        ntc=$(for s in /data/output/results/"$seqId"/"$panel"/*/; do echo $(basename $s);done | grep 'NTC')
+#
+#        # loop over all samples and generate a report
+#        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
+#            
+#            # clear previous instance
+#            unset referral 
+#            
+#            # set variables
+#            sample=$(basename $sample_path)
+#            # Change this path so not hardcoded 
+#            . /data/output/results/"$seqId"/"$panel"/"$sample"/*.variables
+#            echo "Generating worksheet for $sample"
+#
+#            # check that referral variable is defined, if not set as NA
+#            if [ -z $referral ]; then referral=NA; fi
+#
+#            # do not generate report where NTC is the query sample
+#            if [ $sample != $ntc ]; then
+#
+#                if [ $referral == 'melanoma' ] || [ $referral == 'lung' ] || [ $referral == 'colorectal' ] || [ $referral == 'glioma' ] || [ $referral == 'tumour' ] || [ $referral == 'gist' ] || [ $referral == 'thyroid' ]; then
+#                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /data/output/results/"$seqId"/"$panel"/ --artefacts /data/temp/artefacts_lists/
+#                fi
+#            fi
+#        done
+#
+#    fi
+#
+#fi
+
 
 # Get variables needed (sampleId, worklistId, panel, referral)
 for variable in *.variables; do

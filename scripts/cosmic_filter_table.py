@@ -12,6 +12,8 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 pandas.set_option('display.max_columns', 20)
+pandas.set_option('display.max_rows', 200)
+
 
 def calculate_percentage(x):
 
@@ -25,13 +27,13 @@ def calculate_percentage(x):
     else:
         percentage = (x['Counts']/x['Total_counts'])*100
 
-    if percentage == 0:
-        logger.info('percentage of cosmic variants in the gap is 0%')
-    else:
-        logger.info('percentage of cosmic variants in the gap is {percentage}')
+    #if percentage == 0:
+    #    logger.info('percentage of cosmic variants in the gap is 0%')
+    #else:
+    #    logger.info('percentage of cosmic variants in the gap is {percentage}')
 
     return percentage
-
+    
 
 
 def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, referral_list):
@@ -57,10 +59,10 @@ def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, re
                        
         #For regions where there is no overlap make Counts value 0
         file['Counts'] = numpy.where(file['Overlap'] == 0, 0, file['Counts'])
-        
+
         #only keep certain columns
         file[['Gene','Ignore']] = file.Info.str.split("(",expand=True,)
-               
+        
         file=file.filter(items = ['Chr', 'Start', 'End','Info', 'Gene', 'Counts'])
         
         #combine the rows for the same region and add the counts column for these rows
@@ -95,7 +97,6 @@ def filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, re
         grouped_file = original_gaps_file
         grouped_file['Counts'] = 'N/A'
         grouped_file['Percentage'] = 'N/A'
-	
         grouped_file.to_csv(out_prefix+"_cosmic.csv", sep=',', index=False)
 
     return grouped_file
@@ -119,7 +120,6 @@ if __name__ == '__main__':
     intersect_file=args.intersect_file
     bedfile_path=args.bedfile_path
     referral_list=['melanoma', 'lung', 'colorectal', 'gist', 'breast', 'glioma', 'thyroid', 'tumour']
-
 
     if (referral!= "null"):
         filter_table(sampleId, referral, gaps_file, intersect_file, bedfile_path, referral_list)
