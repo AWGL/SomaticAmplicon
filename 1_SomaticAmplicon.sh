@@ -99,6 +99,9 @@ VCFPARSE=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts
 . *.variables
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
+### add start time to timings file
+echo echo $(date +%F_%T) - pipeline started for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
+
 ### Preprocessing ###
 
 #record FASTQC pass/fail
@@ -762,3 +765,6 @@ rm "$seqId"_"$sampleId"_amplicon_realigned_left_sorted.bai "$seqId"_"$sampleId"_
 rm "$seqId"_"$sampleId"_filtered.vcf.idx "$seqId"_"$sampleId"_fixed.vcf "$seqId"_"$sampleId"_fixed.vcf.idx "$seqId"_"$sampleId"_indel_realigned.bam "$seqId"_"$sampleId"_indel_realigned.bai
 rm "$seqId"_"$sampleId"_*_fastqc.zip "$seqId"_"$sampleId"_lcr.vcf "$seqId"_"$sampleId"_lcr.vcf.idx "$seqId"_"$sampleId"_left_aligned_annotated.vcf "$seqId"_"$sampleId"_left_aligned_annotated.vcf.idx
 rm "$seqId"_"$sampleId".vcf
+
+### add end time to timings file 
+echo $(date +%F_%T) - pipeline complete for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
