@@ -90,6 +90,9 @@ VHOOD="singularity exec --bind /Output,/localscratch,/data:/data $SIFVHOOD pytho
 . *.variables
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
+### add start time to timings file
+echo echo $(date +%F_%T) - pipeline started for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
+
 ### Preprocessing ###
 
 #record FASTQC pass/fail
@@ -669,3 +672,6 @@ rm "$seqId"_"$sampleId".vcf
 
 # create complete marker
 touch 1_SomaticAmplicon.sh.e69420
+
+### add end time to timings file 
+echo $(date +%F_%T) - pipeline complete for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
