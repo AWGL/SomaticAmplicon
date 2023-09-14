@@ -99,6 +99,8 @@ VCFPARSE=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts
 . *.variables
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
+echo $(date +%F_%T) - pipeline started for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
+
 ### Preprocessing ###
 
 #record FASTQC pass/fail
@@ -604,7 +606,7 @@ fi
 mkdir -p ../Gathered_Results/Database
 
 # move variant report and json file to database folder
-mv "$seqId"_"$sampleId"_VariantReport.txt ../Gathered_Results/Database/"$sampleId"_variants.tsv
+cp "$seqId"_"$sampleId"_VariantReport.txt ../Gathered_Results/Database/"$sampleId"_variants.tsv
 
 ### Run level steps ###
 ## This block should only be carried out when all samples for the panel have been processed
@@ -665,7 +667,7 @@ if [ $complete -eq $expected ]; then
     fi
 
     # Convert coverage files to json for upload
-    if [ "$referral" != null ] && [ "$custom_coverage == true ]; then
+    if [ "$referral" != null ]; then
 
         $COV2JSON \
         --referral "$referral" \
@@ -762,3 +764,6 @@ rm "$seqId"_"$sampleId"_amplicon_realigned_left_sorted.bai "$seqId"_"$sampleId"_
 rm "$seqId"_"$sampleId"_filtered.vcf.idx "$seqId"_"$sampleId"_fixed.vcf "$seqId"_"$sampleId"_fixed.vcf.idx "$seqId"_"$sampleId"_indel_realigned.bam "$seqId"_"$sampleId"_indel_realigned.bai
 rm "$seqId"_"$sampleId"_*_fastqc.zip "$seqId"_"$sampleId"_lcr.vcf "$seqId"_"$sampleId"_lcr.vcf.idx "$seqId"_"$sampleId"_left_aligned_annotated.vcf "$seqId"_"$sampleId"_left_aligned_annotated.vcf.idx
 rm "$seqId"_"$sampleId".vcf
+
+echo $(date +%F_%T) - pipeline complete for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
+
