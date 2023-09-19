@@ -530,6 +530,9 @@ if [ $custom_coverage == true ]; then
         --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/"$panel"/"$panel"_PreferredTranscripts.txt
     done
 
+    if [[ $referral == sec:familialcancer ]]; then
+        referral="brca"
+
     for i in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
     echo $i
 
@@ -569,7 +572,8 @@ if [ $custom_coverage == true ]; then
   
           echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
         fi    
-    done 
+    done
+    fi 
 fi
 
 # custom variant reporting
@@ -668,6 +672,9 @@ if [ $complete -eq $expected ]; then
     fi
 
     # Convert coverage files to json for upload
+    if [[ $referral == sec:familialcancer ]]; then
+        referral="brca"
+
     if [ "$referral" != null ]; then
 
         $COV2JSON \
@@ -688,6 +695,7 @@ if [ $complete -eq $expected ]; then
 
     if [ -f "$sampleId"_"$referral"_coverage.json ]; then
         mv "$sampleId"_"$referral"_coverage.json ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
+    fi
     fi
 fi
 
@@ -735,6 +743,9 @@ for variable in *.variables; do
     panel="$(grep panel "$variable" | cut -d"=" -f2)"
     referral="$(grep referral "$variable" | cut -d"=" -f2)"
 
+    if [[ $referral == sec:familialcancer ]]; then
+        referral="brca"
+
     # Change panel from NGHS* to CRM/BRCA to align with db models
     if [[ "$panel" == NGHS-101X ]]; then
         panel="CRM"
@@ -745,6 +756,7 @@ for variable in *.variables; do
     # Make database upload sample list
     if [[ "$sample" != NTC* ]]; then
         echo "$sample,$worksheet,$panel,$referral" >> ../Gathered_Results/Database/samples_database_"$worksheet"_"$panel".csv
+    fi
     fi
 done
 
