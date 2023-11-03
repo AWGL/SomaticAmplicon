@@ -7,6 +7,7 @@ dependencies:
   - samtools = 1.12
   - bcftools = 1.12
   - bedtools = 2.30.0
+  - slivar = 0.3.0
   - pip:
     - pytabix
     - pyvariantfilter == 1.6.2

@@ -84,8 +84,11 @@ VHOOD="singularity exec --bind /Output,/localscratch,/data:/data $SIFVHOOD pytho
 
 # Not running singularity for cosmic and cov2json
 set +u
-source activate vcf_parse_somamp
+source activate SomaticAmplicon-v.1.8.2
 set -u
+
+#Annotate with gnomad and cosmic
+GNOMAD=/data/resources/human/gnomad/gnomad.hg37.zip  
 
 COSMIC=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/cosmic_filter_table.py
 COV2JSON=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/coverage2json_somamp.py
@@ -425,6 +428,12 @@ $GATK VariantEval \
 -nt 20 \
 -dt NONE
 
+# Gnomad annotation with slivar
+slivar expr \
+--gnotate $GNOMAD \
+-o "$seqId"_"$sampleId"_filtered_slivar_meta_annotated.vcf \
+-v "$seqId"_"$sampleId"_filtered_meta.vcf
+
 $SINGULARITY vep \
 --verbose \
 --no_progress \
@@ -432,7 +441,7 @@ $SINGULARITY vep \
 --fork 10 \
 --species homo_sapiens \
 --assembly GRCh37 \
---input_file "$seqId"_"$sampleId"_filtered_meta.vcf \
+--input_file "$seqId"_"$sampleId"_filtered_slivar_meta_annotated.vcf \
 --format vcf \
 --output_file "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
 --force_overwrite \
@@ -460,6 +469,13 @@ $GATK ValidateVariants \
 -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
 -dt NONE
 
+#deactivate and activate vcf_parse
+conda deactivate
+
+set +u
+source activate vcf_parse_somamp
+set -u
+
 #wait to continute pipeline until NTC*_filtered_meta_annotated.vcf exists
 until [ -f ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf ]; do
     sleep 60
@@ -475,6 +491,10 @@ if [ -f ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf ]; then
     --ntc_vcf ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf
 fi
 
+#Change referral from sec:familialcancer to brca
+if [[ $referral == sec:familialcancer ]]; then
+    referral="brca"
+fi
 # custom coverage reporting
 if [ $custom_coverage == true ]; then
     ################# Path change to hscoverage_outdir #################
@@ -530,9 +550,6 @@ if [ $custom_coverage == true ]; then
         --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/"$panel"/"$panel"_PreferredTranscripts.txt
     done
 
-    if [[ $referral == sec:familialcancer ]]; then
-        referral="brca"
-
     for i in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
     echo $i
 
@@ -548,9 +565,9 @@ if [ $custom_coverage == true ]; then
                 -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/"$referral".bed \
                 -wao \
             > ${sampleId}_${referral}_intersect.txt
-
+            
         else
-           echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_intersect.txt
+            echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_intersect.txt
         fi
     done
 
@@ -569,11 +586,9 @@ if [ $custom_coverage == true ]; then
 
             # If referral not in list then make empty file
         else
-  
-          echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
+            echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
         fi    
-    done
-    fi 
+    done 
 fi
 
 # custom variant reporting
@@ -671,10 +686,6 @@ if [ $complete -eq $expected ]; then
         done
     fi
 
-    # Convert coverage files to json for upload
-    if [[ $referral == sec:familialcancer ]]; then
-        referral="brca"
-
     if [ "$referral" != null ]; then
 
         $COV2JSON \
@@ -695,7 +706,6 @@ if [ $complete -eq $expected ]; then
 
     if [ -f "$sampleId"_"$referral"_coverage.json ]; then
         mv "$sampleId"_"$referral"_coverage.json ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
-    fi
     fi
 fi
 
@@ -743,9 +753,6 @@ for variable in *.variables; do
     panel="$(grep panel "$variable" | cut -d"=" -f2)"
     referral="$(grep referral "$variable" | cut -d"=" -f2)"
 
-    if [[ $referral == sec:familialcancer ]]; then
-        referral="brca"
-
     # Change panel from NGHS* to CRM/BRCA to align with db models
     if [[ "$panel" == NGHS-101X ]]; then
         panel="CRM"
@@ -755,8 +762,7 @@ for variable in *.variables; do
 
     # Make database upload sample list
     if [[ "$sample" != NTC* ]]; then
-        echo "$sample,$worksheet,$panel,$referral" >> ../Gathered_Results/Database/samples_database_"$worksheet"_"$panel".csv
-    fi
+        echo "$sample,$worksheet,$panel,$referral" >> ../Gathered_Results/Database/"$seqId"_samples_database_"$worksheet"_"$panel".csv
     fi
 done
 

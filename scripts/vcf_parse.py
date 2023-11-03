@@ -38,6 +38,7 @@ def parse_transcripts(pref_trans):
 		else:
 			transcript = line.strip().split('\t')[0]
 			pref_transcript.append(transcript)
+
 	trans.close()
 
 	return(pref_transcript)
@@ -100,7 +101,7 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 	csq_fields = csq_fields[index:len(csq_fields)-2].split('|')
 
 	for record in inp.fetch():
-
+				
 		if 'CSQ' in record.info:
 
 			# Load chrom, pos, ref & alt fields
@@ -117,6 +118,9 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 			# Alt-reads - take second value from AD
 			alt_reads = record.samples[0]['AD'][1]
 
+			#Gnomaad popmax af
+			gnomad = record.info['gnomad_popmax_af']
+
 			# Sample for output filepath
 
 			# Get annotations and go through these
@@ -128,10 +132,24 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 
 			# If any of the 'Feature' values match the preferred transcript
 			for entry in annotations:
-
+				print(entry)
 				# Loop over annotations and if preferred transcript add to transcript list
 				if entry['Feature'] in pref_transcript:
 					gene = entry['SYMBOL']
+
+					hgvs_p = entry['HGVSp']
+					hgvs_c = entry['HGVSc']
+
+					consequence = entry['Consequence']
+					exon = entry['EXON']
+					
+					transcript_info = (gene
+							,hgvs_p
+							,hgvs_c
+							,consequence
+							,exon)
+
+					transcripts.append(transcript_info)
 
 			# If transcripts for variant still empty, add MANE select
 			if len(transcripts) == 0:
@@ -192,6 +210,9 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 
 				transcripts.append(transcript.info)
 
+			#Make variable of full variant for comparison to NTC
+			variant_full = chrom+":"+str(pos)+ref+">"+alt
+
 			#Check if NTC variant list empty
 			if len(ntc_list) == 0:
 				in_ntc = ""
@@ -201,7 +222,7 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 			else:
 				#Check if variant in NTC
 				for entry in ntc_list:
-					variant_full = chrom+":"+str(pos)+ref+">"+alt
+
 					if variant_full == entry[0]:
 						in_ntc = "True"
 						ntc_vaf = entry[1]
@@ -215,7 +236,7 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 
 			#Go through all annotations we're keeping for this variant and add them
 			for keep in transcripts:
-				var = f'{keep[0]}\t{chrom}\t{pos}\t{ref}\t{alt}\t{vaf}\t{depth}\t{keep[1]}\t{keep[2]}\t{keep[3]}\t{keep[4]}\t{alt_reads}\t{in_ntc}\t{ntc_vaf}\t{ntc_depth}\t{ntc_alt_reads}'
+				var = f'{keep[0]}\t{chrom}\t{pos}\t{ref}\t{alt}\t{vaf}\t{depth}\t{keep[1]}\t{keep[2]}\t{keep[3]}\t{keep[4]}\t{alt_reads}\t{in_ntc}\t{ntc_vaf}\t{ntc_depth}\t{ntc_alt_reads}\t{gnomad}'
 				variant_list.append(var)
 
 
@@ -292,7 +313,7 @@ def main(args):
 	if args.pref_trans:
 		pref_transc = parse_transcripts(args.pref_trans)
 	else:
-		logger.info('no preffered transcript file provided - please provide')
+		logger.info('no preferred transcript file provided - please provide')
 
 	# Parse NTC
 	if args.ntc_vcf:
@@ -310,7 +331,7 @@ def main(args):
 	# Header lines
 	logger.info('creating output file')
 
-	outfile_headers = ['gene', 'chr', 'pos', 'ref', 'alt', 'vaf', 'depth', 'hgvs_p', 'hgvs_c', 'consequence', 'exon', 'alt_reads', 'in_ntc', 'ntc_vaf', 'ntc_depth', 'ntc_alt_reads']
+	outfile_headers = ['gene', 'chr', 'pos', 'ref', 'alt', 'vaf', 'depth', 'hgvs_p', 'hgvs_c', 'consequence', 'exon', 'alt_reads', 'in_ntc', 'ntc_vaf', 'ntc_depth', 'ntc_alt_reads', 'gnomad_popmax_af']
 	outfile_headers_string = '\t'.join(outfile_headers)
 
 	#Info
