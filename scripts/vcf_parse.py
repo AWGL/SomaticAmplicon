@@ -132,7 +132,7 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 
 			# If any of the 'Feature' values match the preferred transcript
 			for entry in annotations:
-				print(entry)
+
 				# Loop over annotations and if preferred transcript add to transcript list
 				if entry['Feature'] in pref_transcript:
 					gene = entry['SYMBOL']
@@ -192,7 +192,7 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 								, exon)
 
 						transcripts.append(transcript_info)
-
+						print(transcripts)
 			# If still empty leave empty
 			if len(transcripts) == 0:
 
@@ -215,24 +215,22 @@ def parse_sample(inp, outfile, ntc_list, pref_transcript):
 
 			#Check if NTC variant list empty
 			if len(ntc_list) == 0:
-				in_ntc = ""
+				in_ntc = "False"
 				ntc_vaf = ""
 				ntc_depth = ""
 				ntc_alt_reads = ""
 			else:
 				#Check if variant in NTC
-				for entry in ntc_list:
-
-					if variant_full == entry[0]:
-						in_ntc = "True"
-						ntc_vaf = entry[1]
-						ntc_depth = entry[2]
-						ntc_alt_reads = entry[3]
-					else:
-						in_ntc = "False"
-						ntc_vaf = ""
-						ntc_depth = ""
-						ntc_alt_reads = ""
+				if variant_full in ntc_list:
+					in_ntc = "True"
+					ntc_vaf = entry[1]
+					ntc_depth = entry[2]
+					ntc_alt_reads = entry[3]
+				else:
+					in_ntc = "False"
+					ntc_vaf = ""
+					ntc_depth = ""
+					ntc_alt_reads = ""
 
 			#Go through all annotations we're keeping for this variant and add them
 			for keep in transcripts:
