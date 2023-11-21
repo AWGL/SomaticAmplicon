@@ -78,6 +78,7 @@ PISCES="singularity exec --bind /Output,/localscratch,/data:/data $SIFPISCES dot
 AMPLICON="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -jar /opt/conda/bin/AmpliconRealigner-1.1.1.jar"
 SOFTCLIP="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Xmx2g -jar /opt/conda/bin/SoftClipPCRPrimer-1.1.0.jar"
 COVERAGE="singularity exec --bind /Output,/localscratch,/data:/data $SIF java -Djava.io.tmpdir=/localscratch -Xmx8g -jar /opt/conda/bin/CoverageCalculator-2.0.2.jar"
+VCFPARSE="singularity exec --bind /Output,/localscratch,/data:/data $SIF python /opt/conda/bin/vcf_parse-0.1.2/vcf_parse.py"
 COVERCALC="singularity exec --bind /Output,/localscratch,/data:/data $SIFCOVER python /opt/conda/bin/CoverageCalculatorPy/CoverageCalculatorPy.py"
 BED="singularity exec --bind /Output,/localscratch,/data:/data $SIFBED Rscript /opt/conda/bin/bed2hgvs-v0.3.0/bed2hgvs.R"
 VHOOD="singularity exec --bind /Output,/localscratch,/data:/data $SIFVHOOD python"
@@ -92,7 +93,7 @@ GNOMAD=/data/resources/human/gnomad/gnomad.hg37.zip
 
 COSMIC=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/cosmic_filter_table.py
 COV2JSON=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/coverage2json_somamp.py
-VCFPARSE=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/vcf_parse.py
+#TODO_rename_new_VCFPARSE=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-svd/scripts/vcf_parse.py
 
 ######################################################################
 #			PIPELINE				     #
@@ -434,6 +435,7 @@ slivar expr \
 -o "$seqId"_"$sampleId"_filtered_slivar_meta_annotated.vcf \
 -v "$seqId"_"$sampleId"_filtered_meta.vcf
 
+# annotate with VEP
 $SINGULARITY vep \
 --verbose \
 --no_progress \
@@ -469,32 +471,24 @@ $GATK ValidateVariants \
 -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
 -dt NONE
 
-#deactivate and activate vcf_parse
-conda deactivate
+# create sample level variants text file
+$VCFPARSE \
+--transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
+--transcript_strictness low \
+--known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
+--config /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ReportConfig.txt \
+--filter_non_pass \
+"$seqId"_"$sampleId"_filtered_meta_annotated.vcf
 
-set +u
-source activate vcf_parse_somamp
-set -u
-
-#wait to continute pipeline until NTC*_filtered_meta_annotated.vcf exists
-until [ -f ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf ]; do
-    sleep 60
-done
-echo "NTC file found"
-
-if [ -f ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf ]; then
-
-    $VCFPARSE \
-    --inp "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
-    --outfile "$seqId"_"$sampleId"_VariantReport.txt \
-    --pref_trans /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
-    --ntc_vcf ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf
-fi
+mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
 
 #Change referral from sec:familialcancer to brca
 if [[ $referral == sec:familialcancer ]]; then
     referral="brca"
 fi
+
+### Optional steps ###
+
 # custom coverage reporting
 if [ $custom_coverage == true ]; then
     ################# Path change to hscoverage_outdir #################
@@ -528,15 +522,10 @@ if [ $custom_coverage == true ]; then
             # gaps
             grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         fi
-            rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
+
+        rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
     done
 
-    # Activate overarching env for the analysis
-    conda deactivate
-    
-    set +u
-    source activate SomaticAmplicon-v.1.8.2
-    set -u
 
     for gapsFile in $hscoverage_outdir/*nohead.gaps; do
 
@@ -551,7 +540,7 @@ if [ $custom_coverage == true ]; then
     done
 
     for i in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
-    echo $i
+        echo $i
 
         # Need bedtools intersect to add cosmic annotations only NGHS-101X
         cosmic_referrals=("melanoma" "lung" "colorectal" "gist" "breast")
@@ -584,49 +573,13 @@ if [ $custom_coverage == true ]; then
                 --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/ \
             > ${sampleId}_${referral}_cosmic.csv
 
-            # If referral not in list then make empty file
+        # If referral not in list then make empty file
         else
             echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
         fi    
     done 
 fi
 
-# custom variant reporting
-if [ $custom_variants == true ]; then
-    mkdir hotspot_variants
-
-    for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_variants/*.bed); do
-
-        # extract target name and make lower case (beds are upper)
-        target=$(basename "$bedFile" | sed 's/\.bed//g' | tr '[:upper:]' '[:lower:]')
-
-        # select variants
-        $GATK VariantFiltration \
-          -R /data/resources/human/gatk/2.8/b37/human_g1k_v37.fasta \
-          -V "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
-          -L "$bedFile" \
-          -o hotspot_variants/"$seqId"_"$sampleId"_"$target"_filtered_meta_annotated.vcf \
-          -dt NONE
-
-        # write targeted dataset to table using vcf_parse python utility
-
-        $VCFPARSE \
-          --inp "$seqId"_"$sampleId"_filtered_meta_annotated.vcf \
-          --outfile "$seqId"_"$sampleId"_VariantReport.txt \
-          --pref_trans /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
-          --ntc_vcf ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf \
-
-        # move to hotspot variant directory
-        cp "$seqId"_"$sampleId"_VariantReport.txt hotspot_variants/"$seqId"_"$sampleId"_"$target"_VariantReport.txt
-    
-    done
-fi
-  
-# Make Database folder to move variant report and sample list upload into
-mkdir -p ../Gathered_Results/Database
-
-# move variant report and json file to database folder
-cp "$seqId"_"$sampleId"_VariantReport.txt ../Gathered_Results/Database/"$sampleId"_variants.tsv
 
 ### Run level steps ###
 ## This block should only be carried out when all samples for the panel have been processed
@@ -686,87 +639,81 @@ if [ $complete -eq $expected ]; then
         done
     fi
 
-    if [ "$referral" != null ]; then
 
-        $COV2JSON \
-        --referral "$referral" \
-        --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$version/$panel/hotspot_coverage \
-        --ntc_coverage ../NTC*/hotspot_coverage \
-        --sample_id "$sampleId" \
-        --sample_coverage ./hotspot_coverage \
-        --cosmic_file . \
-        --outfile "$sampleId"_"$referral"_coverage.json
-
-    fi
-
-    if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
-    cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
-    cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
+# TODO - this needs to go in the cosmic loop I think
+#    if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
+#    cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
+#    cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
     #rm $hscoverage_outdir/*.totalCoverage
 
-    if [ -f "$sampleId"_"$referral"_coverage.json ]; then
-        mv "$sampleId"_"$referral"_coverage.json ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
-    fi
-fi
-
-    #Needs alot of changing to work with new
-    # virtual hood
-#    if [ $generate_worksheets == true ]; then
-#    
-#        # identify name of NTC
-#        ntc=$(for s in /data/output/results/"$seqId"/"$panel"/*/; do echo $(basename $s);done | grep 'NTC')
-#
-#        # loop over all samples and generate a report
-#        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
-#            
-#            # clear previous instance
-#            unset referral 
-#            
-#            # set variables
-#            sample=$(basename $sample_path)
-#            # Change this path so not hardcoded 
-#            . /data/output/results/"$seqId"/"$panel"/"$sample"/*.variables
-#            echo "Generating worksheet for $sample"
-#
-#            # check that referral variable is defined, if not set as NA
-#            if [ -z $referral ]; then referral=NA; fi
-#
-#            # do not generate report where NTC is the query sample
-#            if [ $sample != $ntc ]; then
-#
-#                if [ $referral == 'melanoma' ] || [ $referral == 'lung' ] || [ $referral == 'colorectal' ] || [ $referral == 'glioma' ] || [ $referral == 'tumour' ] || [ $referral == 'gist' ] || [ $referral == 'thyroid' ]; then
-#                    $VHOOD /opt/conda/bin/VirtualHood-1.2.0/CRM_report_new_referrals.py --runid $seqId --sampleid $sample --worksheet $worklistId --referral $referral --NTC_name $ntc --path /data/output/results/"$seqId"/"$panel"/ --artefacts /data/temp/artefacts_lists/
-#                fi
-#            fi
-#        done
-#
+#    if [ -f "$sampleId"_"$referral"_coverage.json ]; then
+#        mv "$sampleId"_"$referral"_coverage.json ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
 #    fi
-#
 #fi
 
+    # SVD database folder
+    if [ $svd == true ]; then
+    
+        # Make Database folder to move variant report and sample list upload into
+        mkdir -p ../Gathered_Results/Database
 
-# Get variables needed (sampleId, worklistId, panel, referral)
-for variable in *.variables; do
+        # move variant report and json file to database folder
+        cp "$seqId"_"$sampleId"_VariantReport.txt ../Gathered_Results/Database/"$sampleId"_variants.tsv
 
-    sample="$(grep sampleId "$variable" | cut -d"=" -f2)"
-    worksheet="$(grep worklistId "$variable" | cut -d"=" -f2 | cut -d'"' -f2)"
-    panel="$(grep panel "$variable" | cut -d"=" -f2)"
-    referral="$(grep referral "$variable" | cut -d"=" -f2)"
+        # identify name of NTC
+        ntc=$(for s in /data/output/results/"$seqId"/"$panel"/*/; do echo $(basename $s);done | grep 'NTC')
 
-    # Change panel from NGHS* to CRM/BRCA to align with db models
-    if [[ "$panel" == NGHS-101X ]]; then
-        panel="CRM"
-    else
-        panel="BRCA"
+        # loop over all samples and generate a report
+        for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
+            
+            # clear previous instance
+            unset referral 
+            
+            # set variables
+            sample=$(basename $sample_path)
+            # Change this path so not hardcoded 
+            . /data/output/results/"$seqId"/"$panel"/"$sample"/*.variables
+            echo "Generating SVD files for $sample"
+
+            # check that referral variable is defined, if not set as NA. Not sure this is needed?
+            if [ -z $referral ]; then referral=NA; fi
+
+            # Change panel from NGHS* to CRM/BRCA to align with db models
+            if [[ "$panel" == NGHS-101X ]]; then
+                panel="GeneRead_CRM"
+            else
+                panel="GeneRead_BRCA"
+            fi
+
+            # do not generate report where NTC is the query sample
+            if [ $sample != $ntc ]; then
+
+                ## TODO - run coverage calc, new variant script and samplelist
+                echo "$sample,$worklistId,$panel,$referral,$seqId,GRCh37" >> ../Gathered_Results/Database/"$seqId"_samples_database_"$worksheet"_"$panel".csv
+
+                if [ "$referral" != null ]; then
+                    $COV2JSON \
+                      --referral "$referral" \
+                      --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$version/$panel/hotspot_coverage \
+                      --ntc_coverage ../NTC*/hotspot_coverage \
+                      --sample_id "$sampleId" \
+                      --sample_coverage ./hotspot_coverage \
+                      --cosmic_file . \
+                      --outfile "$sampleId"_"$referral"_coverage.json
+                fi
+
+
+
+            fi
+        done
+
     fi
 
-    # Make database upload sample list
-    if [[ "$sample" != NTC* ]]; then
-        echo "$sample,$worksheet,$panel,$referral" >> ../Gathered_Results/Database/"$seqId"_samples_database_"$worksheet"_"$panel".csv
-    fi
-done
+fi
 
-#load sample & pipeline variables
+
+
+# reload sample & pipeline variables
 . *.variables
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
