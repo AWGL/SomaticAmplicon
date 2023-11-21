@@ -573,11 +573,16 @@ if [ $custom_coverage == true ]; then
                 --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/ \
             > ${sampleId}_${referral}_cosmic.csv
 
-        # If referral not in list then make empty file
+        # If referral not in list then make empty file - TODO - this should be copy of the gaps file?
         else
             echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
         fi    
     done 
+
+    if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
+    cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
+    cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
+    rm $hscoverage_outdir/*.totalCoverage
 fi
 
 
@@ -600,8 +605,8 @@ if [ $complete -eq $expected ]; then
     if [ $merge_reports == true ]; then
 
         # get report headers
-        cat $(ls */*VariantReport.txt | head -n1) | head -n1 > ../"$seqId"_merged_variant_report.txt
-        echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > ../"$seqId"_merged_coverage_report.txt
+        cat $(ls /data/output/results/"$seqId"/"$panel"/*/*VariantReport.txt | head -n1) | head -n1 > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
+        echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
         # loop over all samples and merge reports
         for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
@@ -609,20 +614,20 @@ if [ $complete -eq $expected ]; then
             echo "Merging coverage and variant reports for $sample"
 
             # merge variant report
-            cat *VariantReport.txt | tail -n+2 >> ../"$seqId"_merged_variant_report.txt
+            cat "$sample_path"/*VariantReport.txt | tail -n+2 >> /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_variant_report.txt
 
             # rename percentagecoverage to percentage coverage 500x and 500x gaps file
-            mv "$seqId"_"$sample"_PercentageCoverage.txt "$seqId"_"$sample"_PercentageCoverage_500x.txt
-            mv "$sample"_gaps.bed "$sample"_gaps_500x.bed
+            mv "$sample_path"/"$seqId"_"$sample"_PercentageCoverage.txt "$sample_path"/"$seqId"_"$sample"_PercentageCoverage_500x.txt
+            mv "$sample_path"/"$sample"_gaps.bed "$sample_path"/"$sample"_gaps_500x.bed
 
             # Calculate gene (clinical) percentage coverage at 100x
             $COVERAGE \
-            "$seqId"_"$sample"_DepthOfCoverage \
+            "$sample_path"/"$seqId"_"$sample"_DepthOfCoverage \
             /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_genes.txt \
             /data/resources/human/refseq/ref_GRCh37.p13_top_level.gff3 \
             -p5 \
             -d100 \
-            > "$seqId"_"$sample"_PercentageCoverage_100x.txt
+            > "$sample_path"/"$seqId"_"$sample"_PercentageCoverage_100x.txt
 
             # rename 100x gaps file and move into sample folder
             mv "$sample"_gaps.bed "$sample"_gaps_100x.bed
@@ -632,24 +637,13 @@ if [ $complete -eq $expected ]; then
             brca2_500x=$(grep BRCA2 $sample_path/"$seqId"_"$sample"_PercentageCoverage_500x.txt | cut -f3)
             brca1_100x=$(grep BRCA1 $sample_path/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
             brca2_100x=$(grep BRCA2 $sample_path/"$seqId"_"$sample"_PercentageCoverage_100x.txt | cut -f3)
-            echo -e "$sample\t$brca1_500x\t$brca2_500x\t$brca1_100x\t$brca2_100x" >> ../"$seqId"_merged_coverage_report.txt
+            echo -e "$sample\t$brca1_500x\t$brca2_500x\t$brca1_100x\t$brca2_100x" >> /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
 
             # reset variables
             unset sample brca1_500x brca2_500x brca1_100x brca2_100x
         done
     fi
 
-
-# TODO - this needs to go in the cosmic loop I think
-#    if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
-#    cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
-#    cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
-    #rm $hscoverage_outdir/*.totalCoverage
-
-#    if [ -f "$sampleId"_"$referral"_coverage.json ]; then
-#        mv "$sampleId"_"$referral"_coverage.json ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
-#    fi
-#fi
 
     # SVD database folder
     if [ $svd == true ]; then
@@ -699,10 +693,8 @@ if [ $complete -eq $expected ]; then
                       --sample_id "$sampleId" \
                       --sample_coverage ./hotspot_coverage \
                       --cosmic_file . \
-                      --outfile "$sampleId"_"$referral"_coverage.json
+                      --outfile ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
                 fi
-
-
 
             fi
         done
@@ -712,16 +704,13 @@ if [ $complete -eq $expected ]; then
 fi
 
 
+### Clean up ###
 
 # reload sample & pipeline variables
 . *.variables
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
-# create complete marker
-touch 1_SomaticAmplicon.sh.e69420
-
 #delete unused files
-
 rm "$seqId"_"$sampleId"_*unaligned.bam "$seqId"_"$sampleId"_aligned.bam "$seqId"_"$sampleId"_aligned.bai "$seqId"_"$sampleId"_amplicon_realigned.bam
 rm "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam "$seqId"_"$sampleId"_amplicon_realigned_sorted.bam.bai "$seqId"_"$sampleId"_indel_realigned.intervals
 rm "$seqId"_"$sampleId"_clipped.bam "$seqId"_"$sampleId"_clipped_sorted.bam "$seqId"_"$sampleId"_clipped_sorted.bam.bai "$panel"_ROI.interval_list "$panel"_ROI_b37_thick.bed
@@ -731,5 +720,8 @@ rm "$seqId"_"$sampleId"_filtered.vcf.idx "$seqId"_"$sampleId"_fixed.vcf "$seqId"
 rm "$seqId"_"$sampleId"_*_fastqc.zip "$seqId"_"$sampleId"_lcr.vcf "$seqId"_"$sampleId"_lcr.vcf.idx "$seqId"_"$sampleId"_left_aligned_annotated.vcf "$seqId"_"$sampleId"_left_aligned_annotated.vcf.idx
 rm "$seqId"_"$sampleId".vcf
 
-### add end time to timings file 
+# add end time to timings file 
 echo $(date +%F_%T) - pipeline complete for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
+
+# create complete marker
+touch 1_SomaticAmplicon.sh.e69420
