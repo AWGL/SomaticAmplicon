@@ -686,13 +686,13 @@ if [ $complete -eq $expected ]; then
                 # add to sample list
                 echo "$sample,$worklistId,$svd_panel,$referral,$seqId,GRCh37" >> ../Gathered_Results/Database/"$seqId"_samples_database_"$worklistId"_"$panel".csv
 
-                # TODO - script to make variants tsv file
+                # script to make variants tsv file
                 $VARIANTS2DB \
-                  "$sample_path"/"$seqId"_"$sampleId"_VariantReport.txt \
-                  "$sample_path"/"$seqId"_"$sampleId"_filtered_meta_annotated.vcf.gz \
-                  ../NTC*/"$seqId"_NTC*_VariantReport.txt \
-                  ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf.gz \
-                  > ../Gathered_Results/Database/"$sampleId"_variants.tsv
+                  --sample_tsv "$sample_path"/"$seqId"_"$sampleId"_VariantReport.txt \
+                  --sample_vcf "$sample_path"/"$seqId"_"$sampleId"_filtered_meta_annotated.vcf.gz \
+                  --ntc_tsv ../NTC*/"$seqId"_NTC*_VariantReport.txt \
+                  --ntc_vcf ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf.gz \
+                  --output ../Gathered_Results/Database/"$sampleId"_variants.tsv
 
                 # run coverage calculator - TODO check this, think it needs specific paths 
                 if [ "$referral" != null ]; then

@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+
 import sys
 import csv
 import re
+import argparse
 from pysam import VariantFile
 
 
@@ -84,15 +87,48 @@ def add_from_vcf(var, vcf):
 	}
 	return out_dict
 
-if __name__ == '__main__':
-	# TODO make argparse
-	sample_tsv = sys.argv[1]
-	sample_vcf = VariantFile(sys.argv[2])
-	ntc_tsv = sys.argv[3]
-	ntc_vcf = VariantFile(sys.argv[4])
 
-	ntc_dict = load_ntc_dict(ntc_tsv, ntc_vcf)
+def get_args():
+	""" uses argparse to take arguments from command line """
+	parser = argparse.ArgumentParser()
+
+	parser.add_argument(
+		'--sample_tsv', action='store',
+		help ='Filepath to sample *VariantReport.tsv file. REQUIRED.'
+	)
+	parser.add_argument(
+		'--sample_vcf', action='store',
+		help='Filepath to sample VCF. REQUIRED.'
+	)
+	parser.add_argument(
+		'--ntc_tsv', action='store',
+		help='Filepath to NTC *VariantReport.tsv file. REQUIRED.'
+	)
+	parser.add_argument(
+		'--ntc_vcf', action='store',
+		help='Filepath to NTC VCF. REQUIRED.'
+	)
+	parser.add_argument(
+		'--output', action='store',
+		help='Path to output file. REQUIRED.'
+	)
+
+	return parser.parse_args()
+
+
+if __name__ == '__main__':
+	# get input args
+	args = get_args()
+	sample_tsv = args.sample_tsv
+	sample_vcf = VariantFile(args.sample_vcf)
+	ntc_tsv = args.ntc_tsv
+	ntc_vcf = VariantFile(args.ntc_vcf)
+
 	out_list = []
+	output_location = args.output
+
+	# load in NTC variants
+	ntc_dict = load_ntc_dict(ntc_tsv, ntc_vcf)
 
 	# loop through sample variants TSV file
 	with open(sample_tsv) as f:
@@ -115,12 +151,9 @@ if __name__ == '__main__':
 
 			out_list.append(reformatted_data)
 
-	# TODO - format and output
+	# output
 	headers = ['gene', 'chr', 'pos', 'ref', 'alt', 'vaf', 'depth', 'hgvs_p', 'hgvs_c', 'consequence', 'exon', 'alt_reads', 'in_ntc', 'ntc_vaf', 'ntc_depth', 'ntc_alt_reads', 'gnomad_popmax_AF']
-
-	print('\t'.join(headers))
-	for v in out_list:
-		l = []
-		for field in headers:
-			l.append(str(v[field]))
-		print('\t'.join(l))
+	with open(output_location, 'w') as f:
+		csv_writer = csv.DictWriter(f, fieldnames=headers, delimiter='\t')
+		csv_writer.writeheader()
+		csv_writer.writerows(out_list)

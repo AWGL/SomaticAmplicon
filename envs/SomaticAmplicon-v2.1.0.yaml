@@ -4,6 +4,7 @@ channels:
   - conda-forge
 dependencies:
   - python = 3.7
+  - pandas
   - samtools = 1.12
   - bcftools = 1.12
   - bedtools = 2.30.0
