@@ -13,7 +13,7 @@
 # Mode: BY_SAMPLE
 # Use: sbatch within sample directory
 
-# version=2.0.3
+# version=2.1.0
 
 set -euo pipefail
 
@@ -104,7 +104,7 @@ VARIANTS2DB=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$versio
 . /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel".variables
 
 ### add start time to timings file
- echo $(date +%F_%T) - pipeline started for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
+echo $(date +%F_%T) - pipeline started for "$sampleId" >> /data/output/results/"$seqId"/"$panel"/timings.txt
 
 ### Preprocessing ###
 
