@@ -17,6 +17,7 @@
 
 set -euo pipefail
 
+# TODO update for go live
 #version="master"
 version="svd"
 
@@ -88,9 +89,7 @@ set +u
 source activate SomaticAmplicon-v.2.1.0
 set -u
 
-#Annotate with gnomad and cosmic
-GNOMAD=/data/resources/human/gnomad/gnomad.hg37.zip
-  
+# paths to scripts that dont use singularity
 COSMIC=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/scripts/cosmic_filter_table.py
 COV2JSON=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/scripts/coverage2json_somamp.py
 VARIANTS2DB=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/scripts/variants2db.py
@@ -431,7 +430,7 @@ $GATK VariantEval \
 
 # Gnomad annotation with slivar
 slivar expr \
---gnotate $GNOMAD \
+--gnotate /data/resources/human/gnomad/gnomad.hg37.zip \
 -o "$seqId"_"$sampleId"_filtered_slivar_meta_annotated.vcf \
 -v "$seqId"_"$sampleId"_filtered_meta.vcf
 
@@ -486,8 +485,8 @@ $VCFPARSE \
 
 mv "$sampleId"_VariantReport.txt "$seqId"_"$sampleId"_VariantReport.txt
 
-#Change referral from sec:familialcancer to brca
-if [[ $referral == sec:familialcancer ]]; then
+# Change referral from sec:familialcancer to brca
+if [[ "$panel" == NGHS-102X ]]; then
     referral="brca"
 fi
 
@@ -495,18 +494,18 @@ fi
 
 # custom coverage reporting
 if [ $custom_coverage == true ]; then
-    ################# Path change to hscoverage_outdir #################
-    hscoverage_outdir=hotspot_coverage
+    # path to hscoverage output
+    hscoverage_outdir=./hotspot_coverage
     mkdir $hscoverage_outdir
 
+    # run for each bed file in hotspots coverage folder
     for bedFile in $(ls /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/hotspot_coverage/*.bed); do
 
         #extract target name
         target=$(basename "$bedFile" | sed 's/\.bed//g')
+        echo Running coverage calculator for "$target"
 
-        echo $target
-
-        # calculate coverage
+        # run coverage calculator - will create lots of different coverage/ gaps files
         $COVERCALC \
             -B $bedFile \
             -D "$seqId"_"$sampleId"_DepthOfCoverage.gz \
@@ -518,24 +517,19 @@ if [ $custom_coverage == true ]; then
 
         # remove header from gaps file
         if [[ $(wc -l < $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps) -eq 1 ]]; then
-
-            # no gaps
             touch $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         else
-
-            # gaps
             grep -v '^#' $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps > $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".nohead.gaps
         fi
-
         rm $hscoverage_outdir/"$seqId"_"$sampleId"_"$target".gaps
     done
 
-
+    # run bed2hgvs to annotate all gaps files
     for gapsFile in $hscoverage_outdir/*nohead.gaps; do
-
         name=$(echo $(basename $gapsFile) | cut -d"." -f1)
+        echo Running bed2hgvs for "$name"
 
-        # add hgvs annotations to bedfile
+        # add hgvs annotations to bedfile TODO - check this is still working properly
         $BED \
         --bedfile $gapsFile \
         --outname "$name".gaps \
@@ -543,18 +537,19 @@ if [ $custom_coverage == true ]; then
         --preferred_tx /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt
     done
 
-    for i in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
-        echo $i
+    # run COSMIC on all annotated gaps files
+    for gapsFile in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
+        echo Running COSMIC for $gapsFile
 
         # Need bedtools intersect to add cosmic annotations only NGHS-101X
         cosmic_referrals=("melanoma" "lung" "colorectal" "gist" "breast")
 
+        # make COSMIC intersect
         if [[ "${cosmic_referrals[*]}" =~ "${referral}" ]];
         then
-
             bedtools intersect \
                 -F 1 \
-                -a $i \
+                -a $gapsFile \
                 -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/"$referral".bed \
                 -wao \
             > ${sampleId}_${referral}_intersect.txt
@@ -562,17 +557,15 @@ if [ $custom_coverage == true ]; then
         else
             echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_intersect.txt
         fi
-    done
 
-    for i in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
-
+        # run the COSMIC tool
         if [[ "${cosmic_referrals[*]}" =~ "${referral}" ]];
         then
 
             $COSMIC \
                 --sampleId "$sampleId" \
                 --referral "$referral" \
-                --gaps_file $i \
+                --gaps_file $gapsFile \
                 --intersect_file "$sampleId"_"$referral"_intersect.txt \
                 --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/ \
             > ${sampleId}_${referral}_cosmic.csv
@@ -581,8 +574,9 @@ if [ $custom_coverage == true ]; then
         else
             echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
         fi    
-    done 
+    done
 
+    # remove unneeded files
     if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
     cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
     cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
@@ -700,22 +694,19 @@ if [ $complete -eq $expected ]; then
                   --output ../Gathered_Results/Database/"$sampleId"_variants.tsv
 
                 # run coverage calculator - TODO check this, think it needs specific paths 
-                #if [ "$referral" != null ]; then
-                #    $COV2JSON \
-                #      --referral "$referral" \
-                #      --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$version/$panel/hotspot_coverage \
-                #      --ntc_coverage ../NTC*/hotspot_coverage \
-                #      --sample_id "$sampleId" \
-                #      --sample_coverage "$sample_path"/hotspot_coverage \
-                #      --cosmic_file "$sample_path" \
-                #      --outfile ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
-                #fi
-
+                if [ "$referral" != null ]; then
+                    $COV2JSON \
+                      --referral "$referral" \
+                      --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$version/$panel/hotspot_coverage \
+                      --ntc_coverage ../NTC*/hotspot_coverage \
+                      --sample_id "$sampleId" \
+                      --sample_coverage "$sample_path"/hotspot_coverage \
+                      --cosmic_file "$sample_path" \
+                      --outfile ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
+                fi
             fi
         done
-
     fi
-
 fi
 
 
