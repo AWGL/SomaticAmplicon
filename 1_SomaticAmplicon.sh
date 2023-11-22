@@ -661,6 +661,11 @@ if [ $complete -eq $expected ]; then
         # loop over all samples and generate a report
         for sample_path in /data/output/results/"$seqId"/"$panel"/*/; do
             
+            # prevent pipeline seeing gathered results folder as a sample
+            if [[ "$sample_path" == *"Gathered_Results"* ]]; then
+                break
+            fi
+
             # clear previous instance
             unset referral 
             
@@ -695,16 +700,16 @@ if [ $complete -eq $expected ]; then
                   --output ../Gathered_Results/Database/"$sampleId"_variants.tsv
 
                 # run coverage calculator - TODO check this, think it needs specific paths 
-                if [ "$referral" != null ]; then
-                    $COV2JSON \
-                      --referral "$referral" \
-                      --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$version/$panel/hotspot_coverage \
-                      --ntc_coverage ../NTC*/hotspot_coverage \
-                      --sample_id "$sampleId" \
-                      --sample_coverage "$sample_path"/hotspot_coverage \
-                      --cosmic_file "$sample_path" \
-                      --outfile ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
-                fi
+                #if [ "$referral" != null ]; then
+                #    $COV2JSON \
+                #      --referral "$referral" \
+                #      --groups_folder /data/diagnostics/pipelines/$pipelineName/$pipelineName-$version/$panel/hotspot_coverage \
+                #      --ntc_coverage ../NTC*/hotspot_coverage \
+                #      --sample_id "$sampleId" \
+                #      --sample_coverage "$sample_path"/hotspot_coverage \
+                #      --cosmic_file "$sample_path" \
+                #      --outfile ../Gathered_Results/Database/"$sampleId"_"$referral"_coverage.json
+                #fi
 
             fi
         done
