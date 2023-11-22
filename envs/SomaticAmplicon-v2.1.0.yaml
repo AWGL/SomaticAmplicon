@@ -1,4 +1,4 @@
-name: SomaticAmplicon-v.1.8.2
+name: SomaticAmplicon-v.2.1.0
 channels:
   - bioconda
   - conda-forge
@@ -8,6 +8,7 @@ dependencies:
   - bcftools = 1.12
   - bedtools = 2.30.0
   - slivar = 0.3.0
+  - bioconda::htslib
   - pip:
     - pytabix
-    - pyvariantfilter == 1.6.2
+    - pysam==0.20.0
