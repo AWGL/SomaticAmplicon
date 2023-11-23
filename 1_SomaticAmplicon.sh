@@ -529,7 +529,7 @@ if [ $custom_coverage == true ]; then
         name=$(echo $(basename $gapsFile) | cut -d"." -f1)
         echo Running bed2hgvs for "$name"
 
-        # add hgvs annotations to bedfile TODO - check this is still working properly
+        # add hgvs annotations to bedfile
         $BED \
         --bedfile $gapsFile \
         --outname "$name".gaps \
@@ -570,17 +570,16 @@ if [ $custom_coverage == true ]; then
                 --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/ \
             > ${sampleId}_${referral}_cosmic.csv
 
-        # If referral not in list then make empty file - TODO - this should be copy of the gaps file?
+        # If referral not in list then make empty file - TODO - this should be copy of the gaps file, gaps arent getting pulled for non-COSMIC referrals
         else
             echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
         fi    
     done
 
-    # remove unneeded files
+    # make some extra coverage files
     if [ -f $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt ]; then rm $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt; fi
     cat $hscoverage_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
     cat $hscoverage_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscoverage_outdir/"$seqId"_"$sampleId"_coverage.txt
-    rm $hscoverage_outdir/*.totalCoverage
 fi
 
 
@@ -693,7 +692,7 @@ if [ $complete -eq $expected ]; then
                   --ntc_vcf ../NTC*/"$seqId"_NTC*_filtered_meta_annotated.vcf.gz \
                   --output ../Gathered_Results/Database/"$sampleId"_variants.tsv
 
-                # run coverage calculator - TODO check this, think it needs specific paths 
+                # run coverage calculator 
                 if [ "$referral" != null ]; then
                     $COV2JSON \
                       --referral "$referral" \
