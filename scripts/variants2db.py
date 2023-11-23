@@ -42,7 +42,7 @@ def refomat_data(var):
 		'vaf': var['Frequency'],
 		'depth': var['Depth'],
 		'hgvs_p': var['HGVSp'],
-		'hgvs_c': var['HGVSc'],
+		'hgvs_c': var['Transcript'] + ':' + var['HGVSc'],
 		'consequence': var['Consequence'],
 		'exon': var['EXON'].replace('|', '/'),
 	}
