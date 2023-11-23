@@ -94,6 +94,9 @@ COSMIC=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/sc
 COV2JSON=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/scripts/coverage2json_somamp.py
 VARIANTS2DB=/data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/scripts/variants2db.py
 
+# referrals that need to go through the COSMIC tool
+cosmic_referrals=("melanoma" "lung" "colorectal" "gist" "breast")
+
 ######################################################################
 #			PIPELINE				     #
 ######################################################################
@@ -539,12 +542,15 @@ if [ $custom_coverage == true ]; then
 
     # run COSMIC on all annotated gaps files
     for gapsFile in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
+
+        # dont run for NTC
+        if [[ "$gapsFile" == *"NTC"* ]]; then
+            break
+        fi
+
         echo Running COSMIC for $gapsFile
 
-        # Need bedtools intersect to add cosmic annotations only NGHS-101X
-        cosmic_referrals=("melanoma" "lung" "colorectal" "gist" "breast")
-
-        # make COSMIC intersect
+        # make COSMIC intersect and run COSMIC tool
         if [[ "${cosmic_referrals[*]}" =~ "${referral}" ]];
         then
             bedtools intersect \
@@ -554,14 +560,6 @@ if [ $custom_coverage == true ]; then
                 -wao \
             > ${sampleId}_${referral}_intersect.txt
             
-        else
-            echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_intersect.txt
-        fi
-
-        # run the COSMIC tool
-        if [[ "${cosmic_referrals[*]}" =~ "${referral}" ]];
-        then
-
             $COSMIC \
                 --sampleId "$sampleId" \
                 --referral "$referral" \
@@ -570,9 +568,10 @@ if [ $custom_coverage == true ]; then
                 --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/ \
             > ${sampleId}_${referral}_cosmic.csv
 
-        # If referral not in list then make empty file - TODO - this should be copy of the gaps file, gaps arent getting pulled for non-COSMIC referrals
+        # If referral not in list then make empty file
         else
-            echo "Chr,Start,End,Info,Gene,Counts,Percentage" > ${sampleId}_${referral}_cosmic.csv
+            echo "Chr,Start,End,Info,Gene,Counts,Percentage" > "$sampleId"_"$referral"_cosmic.csv
+            cut -f 1-4 $gapsFile | tr "\t" "," >> "$sampleId"_"$referral"_cosmic.csv
         fi    
     done
 
@@ -666,9 +665,6 @@ if [ $complete -eq $expected ]; then
             sample=$(basename $sample_path)
             . "$sample_path"/*.variables
             echo "Generating SVD files for $sample"
-
-            # check that referral variable is defined, if not set as NA. Not sure this is needed?
-            #if [ -z $referral ]; then referral=NA; fi
 
             # Change panel from NGHS* to CRM/BRCA to align with db models
             if [[ "$panel" == NGHS-101X ]]; then
