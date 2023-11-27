@@ -1,9 +1,0 @@
-name: vcf_parse_somamp
-channels:
-- bioconda
-dependencies:
-- python=3.9.16
-- bedtools=2.27.1
-- pip:
-  - pyvariantfilter==1.6.2
-  - pysam==0.20.0
