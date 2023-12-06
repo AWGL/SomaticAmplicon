@@ -480,7 +480,7 @@ tabix "$seqId"_"$sampleId"_filtered_meta_annotated.vcf.gz
 # create sample level variants text file
 $VCFPARSE \
 --transcripts /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_PreferredTranscripts.txt \
---transcript_strictness low \
+--transcript_strictness high \
 --known_variants /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_KnownVariants.vcf \
 --config /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-"$version"/"$panel"/"$panel"_ReportConfig.txt \
 --filter_non_pass \
