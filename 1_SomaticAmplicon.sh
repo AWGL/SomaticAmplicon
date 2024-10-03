@@ -56,7 +56,7 @@ countQCFlagFails() {
     # grep -v is an invert match, and selects non-matching lines
     # this is basically scanning the summary.txt file from fastqc output and pulling out specfic columns and then omitting those that have PASS or WARN and leaving only FAIL if any
     # it then counts how many lines have failed
-    grep -E "Basic Statistics|Per base sequence quality|Per tile sequence quality|Per sequence quality scores|Per base N content" "$1" | \
+    grep -E "Basic Statistics|Per base sequence quality|Per sequence quality scores|Per base N content" "$1" | \
     grep -v ^PASS | \
     grep -v ^WARN | \
     wc -l | \
