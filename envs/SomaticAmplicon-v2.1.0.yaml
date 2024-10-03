@@ -1,0 +1,15 @@
+name: SomaticAmplicon-v.2.1.0
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - python = 3.7
+  - pandas
+  - samtools = 1.12
+  - bcftools = 1.12
+  - bedtools = 2.30.0
+  - slivar = 0.3.0
+  - bioconda::htslib
+  - pip:
+    - pytabix
+    - pysam==0.20.0

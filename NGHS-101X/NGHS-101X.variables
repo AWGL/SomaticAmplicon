@@ -5,6 +5,5 @@ minimumCoverage=500 # for passing regions. Need to determine during clinical val
 expectedInsertSize=200 #insert size
 
 custom_coverage=true
-custom_variants=true
-generate_worksheets=true
+svd=true
 merge_reports=false
