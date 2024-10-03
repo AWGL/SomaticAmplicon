@@ -8,6 +8,7 @@ It covers all changes made from v2.0.4 onwards
 
 ### Added
 - Added Changelog
+- Added Untracked BED files with lowercase names
 
 ### Changed
 - Removed per tile check for FastQC to reflect AutoQC process
