@@ -543,9 +543,10 @@ if [ $custom_coverage == true ]; then
     # run COSMIC on all annotated gaps files
     for gapsFile in $hscoverage_outdir/"$seqId"_"$sampleId"_"$referral".gaps; do
 
-        # dont run for NTC
+        # make blank files for NTC - required for AutoQC upload
         if [[ "$gapsFile" == *"NTC"* ]]; then
-            break
+            touch "$sampleId"_null_cosmic.csv
+            touch "$sampleId"_null_intersect.txt
         fi
 
         echo Running COSMIC for $gapsFile
@@ -568,10 +569,11 @@ if [ $custom_coverage == true ]; then
                 --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-"$version"/ \
             > ${sampleId}_${referral}_cosmic.csv
 
-        # If referral not in list then make empty file
+        # If referral not in list then make empty file and empty _intersect.txt
         else
             echo "Chr,Start,End,Info,Gene,Counts,Percentage" > "$sampleId"_"$referral"_cosmic.csv
             cut -f 1-4 $gapsFile | tr "\t" "," >> "$sampleId"_"$referral"_cosmic.csv
+            touch "$sampleId"_"$referral"_intersect.txt
         fi    
     done
 
