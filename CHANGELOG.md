@@ -6,6 +6,7 @@ It covers all changes made from v2.0.4 onwards
 
 ### Fixed
 - Made blank *_cosmic.csv and *_intersect.txt required as AutoQC markers
+- Increased time limit to 24 hours
 
 ## [v2.1.0] - 2024-10-03
 
