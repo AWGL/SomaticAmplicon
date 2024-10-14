@@ -545,8 +545,11 @@ if [ $custom_coverage == true ]; then
 
         # make blank files for NTC - required for AutoQC upload
         if [[ "$gapsFile" == *"NTC"* ]]; then
-            touch "$sampleId"_null_cosmic.csv
+            if [[ "$panel" == NGHS-101X ]]; then
+                touch "$sampleId"_null_cosmic.csv
             touch "$sampleId"_null_intersect.txt
+            break
+            fi
         fi
 
         echo Running COSMIC for $gapsFile
