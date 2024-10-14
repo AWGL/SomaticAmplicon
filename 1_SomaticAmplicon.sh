@@ -547,7 +547,7 @@ if [ $custom_coverage == true ]; then
         if [[ "$gapsFile" == *"NTC"* ]]; then
             if [[ "$panel" == NGHS-101X ]]; then
                 touch "$sampleId"_null_cosmic.csv
-            touch "$sampleId"_null_intersect.txt
+                touch "$sampleId"_null_intersect.txt
             break
             fi
         fi
