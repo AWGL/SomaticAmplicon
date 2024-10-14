@@ -2,7 +2,12 @@
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 It covers all changes made from v2.0.4 onwards
 
-## [Unreleased]
+## [v2.1.2] - 2024-10-14
+
+### Fixed
+- Only make blank files for CRM
+
+## [v2.1.1] - 2024-10-07
 
 ### Fixed
 - Made blank *_cosmic.csv and *_intersect.txt required as AutoQC markers
