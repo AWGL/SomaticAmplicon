@@ -68,7 +68,7 @@ VEP Cache: refseq37_v97
 
 ## Issue with NGHS-102X
 
-If NGHS-102X crashes as per #44 you can now navigate to the folder of the sample which has failed and run the following:
+If NGHS-102X crashes as per [#44](https://github.com/AWGL/SomaticAmplicon/issues/44) you can now navigate to the folder of the sample which has failed and run the following:
 ```
 . <sample_id>.variables
 
