@@ -66,6 +66,17 @@ SNPS/Indels for Evaluation: 1000G_omni2.5.b37.vcf, hapmap_3.3.b37.vcf cosmic_78.
 
 VEP Cache: refseq37_v97
 
+## Issue with NGHS-102X
+
+If NGHS-102X crashes as per #44 you can now navigate to the folder of the sample which has failed and run the following:
+```
+. <sample_id>.variables
+
+echo -e "Sample\tBRCA1_500X\tBRCA2_500X\tBRCA1_100X\tBRCA2_100X" > /data/output/results/"$seqId"/"$panel"/"$seqId"_merged_coverage_report.txt
+
+sbatch /data/diagnostics/pipelines/SomaticAmplicon/SomaticAmplicon-master/brca_rerun.sh
+```
+
 ## References
 
 [1] https://github.com/Illumina/Pisces
